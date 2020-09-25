@@ -1,0 +1,77 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Purls: Purl Verwaltung</title>
+<meta th:replace="fragments/page :: html_header" />
+</head>
+<body>
+  <div class="container">
+  <div th:replace="fragments/page :: head"></div>
+    <div th:replace="fragments/page :: navigation"></div>
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title">Search for a user</h3>
+        <form th:action="@{/admin/manager/user/search}" method="post">
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Full name</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" name="searchFullName" th:value="${searchFullName}" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Affiliation</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" name="searchAffiliation" th:value="${searchAffiliation}" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">E-Mail address</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" name="searchEMailAddress" th:value="${searchEMailAddress}" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Login</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" name="searchLogin" th:value="${searchLogin}" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Tombstoned users</label>
+            <div class="col-sm-1">
+              <input type="checkbox" class="form-control float-left w-25" name="searchTombstonedUser" th:checked="${searchTombstonedUser}" value="on" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-3 offset-sm-2">
+              <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <table class="table table-striped table-sm mt-3">
+          <tr>
+            <th>Username</th>
+            <th>Full name</th>
+            <th>affiliation</th>
+            <th>E-mail</th>
+            <th></th>
+            <th></th>
+          </tr>
+          <tr th:each="u : ${users}">
+            <td th:text="${u.login}"></td>
+            <td th:text="${u.fullname}"></td>
+            <td th:text="${u.affiliation}"></td>
+            <td th:text="${u.email}"></td>
+            <td><a th:href="@{/admin/manager/user/modify?id=__${u.id}__}">modify</a></td>
+            <td><a th:href="@{/admin/manager/user/delete?id=__${u.id}__}">delete</a></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script th:replace="fragments/page :: html_footer"></script>
+</body>
+</html>

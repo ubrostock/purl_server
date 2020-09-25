@@ -1,0 +1,69 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Purls: Purl Verwaltung</title>
+<meta th:replace="fragments/page :: html_header" />
+</head>
+<body>
+  <div class="container">
+  <div th:replace="fragments/page :: head"></div>
+    <div th:replace="fragments/page :: navigation"></div>
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title">Search for a PURL</h3>
+        <form th:action="@{/admin/manager/purl/search}" method="post">
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Path</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" th:value="${path}" name="path" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Target URL</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" th:value="${targetURL}" name="targetURL" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Tombstoned PURLs</label>
+            <div class="col-sm-1">
+              <input type="checkbox" class="form-control float-left w-25" th:checked="${tombstoned}" value="on" name="tombstoned" />
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-3 offset-sm-2">
+              <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <table class="table table-striped table-sm mt-3">
+          <tr>
+            <th>name</th>
+            <th>type</th>
+            <th>target</th>
+            <th>created</th>
+            <th>lastmodified</th>
+            <th>status</th>
+            <th></th>
+            <th></th>
+          </tr>
+          <tr th:each="purl : ${purls}">
+            <td th:text="${purl.path}"></td>
+            <td th:text="${purl.type}"></td>
+            <td th:text="${purl.target}"></td>
+            <td th:text="${purl.created}"></td>
+            <td th:text="${purl.lastmodified}"></td>
+            <td th:text="${purl.status}"></td>
+            <td><a th:href="@{/admin/manager/purl/modify?id=__${purl.id}__}">modify</a></td>
+            <td><a th:href="@{/admin/manager/purl/delete?id=__${purl.id}__}">delete</a></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script th:replace="fragments/page :: html_footer"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title></title>
+<meta th:replace="fragments/page :: html_header" />
+<script type="text/javascript" th:src="@{/admin/login/sha1.js}"></script>
+</head>
+<body>
+  <div class="container">
+    <div th:replace="fragments/page :: head"></div>
+	<div class="card">
+	  <div class="card-body">
+	    <h3 class="card-title">Anmeldung</h3>
+	    <div class="alert alert-danger" th:if="${#httpServletRequest.getParameter('error')}">
+	    	<h5 th:utext="#{purl_server.login.error_message.failed}">Login failed!</h5>
+	    	<span th:if="${errorMessage}" th:utext="${errorMessage}">error details</span>
+	    </div>
+	    <form th:action="@{/admin/login}" method="post">
+	      <input id="password_sha1" type="hidden" name="password" />
+		  <div class="form-group row">
+		    <div class="col-sm-6">
+		      <input class="form-control" type="text" name="username" th:placeholder="#{purl_server.login.placeholder.user}" />
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-sm-6">
+		      <input id="password_plain" class="form-control" type="password"	th:placeholder="#{purl_server.login.placeholder.password}" />
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-6">
+		      <button class="btn btn-primary" type="submit"	onclick="encryptPassword();" name="do_login" th:text="#{purl_server.login.button.login}">Login</button>
+		      <a class="btn btn-link float-right" th:href="@{/admin/login/password}" th:text="#{purl_server.login.button.password_reset}">Passwort vergessen</a>
+		    </div>
+		  </div>
+	    </form>
+	  </div>
+    </div>
+  </div>
+  <footer class="fixed-bottom">
+	<div th:replace="fragments/page :: html_footer"></div>
+  </footer>
+  <script type="text/javascript">
+		function encryptPassword() {
+			var shaObj = new jsSHA("SHA-1", "TEXT");
+			shaObj.update(document.getElementById("password_plain").value);
+			var hash = shaObj.getHash("HEX");
+			document.getElementById("password_sha1").value = hash;
+			return true;
+		}
+
+		$(document).ready(
+				function() {
+					$("#locales").change(
+							function() {
+								var selectedOption = $('#locales').val();
+								if (selectedOption != '') {
+									window.location.replace(window.location
+											+ '?lang=' + selectedOption);
+								}
+							});
+				});
+	</script>
+</body>
+</html>

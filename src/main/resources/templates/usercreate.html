@@ -1,12 +1,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title th:text="#{purl_server.title}">Purls: Purl Manager</title>
-<meta th:replace="fragments/page :: html_header" />
-<script type="text/javascript" th:src="@{/admin/login/sha1.js}"></script>
+  <title th:text="#{purl_server.title}">Purls: Purl Manager</title>
+  <meta th:replace="fragments/page :: html_header" />
+  <script type="text/javascript" th:src="@{/admin/login/sha1.js}"></script>
 </head>
 <body>
   <div class="container">
-  <div th:replace="fragments/page :: head"></div>
+    <div th:replace="fragments/page :: head"></div>
     <div th:replace="fragments/page :: navigation"></div>
     <div class="card">
       <div class="card-body">
@@ -20,7 +20,7 @@
             <label class="col-sm-2 col-form-label" th:text="#{purl_server.user.create.admin}">Admin</label>
             <div class="col-sm-1">
               <input type="checkbox" class="form-control float-left w-25" th:field="*{admin}"
-                th:readonly="${#lists.isEmpty(errors) AND created == true}" />
+                    th:readonly="${#lists.isEmpty(errors) AND created == true}" />
             </div>
           </div>
           <div class="form-group row">
@@ -80,23 +80,23 @@
       </div>
     </div>
   </div>
-    <script type="text/javascript">
-      function encryptPassword() {
-    	  var password =  $("#password").val();
-    	  var repassword = $("#repassword").val();
-    	  if(password.localeCompare(repassword) == 0) {
-    		  $("#errorPassword").addClass("d-none");
-    		  var shaObj = new jsSHA("SHA-1", "TEXT");
-    	        shaObj.update(document.getElementById("password").value);
-    	        var hash = shaObj.getHash("HEX");
-    	        document.getElementById("password_sha").value = hash;
-    	        return true;
-    	  } else {
-    		  $("#errorPassword").removeClass("d-none");
-    		  return false;
-    	  }
+  <script type="text/javascript">
+    function encryptPassword() {
+      var password =  $("#password").val();
+      var repassword = $("#repassword").val();
+      if(password.localeCompare(repassword) == 0) {
+        $("#errorPassword").addClass("d-none");
+    	var shaObj = new jsSHA("SHA-1", "TEXT");
+        shaObj.update(document.getElementById("password").value);
+        var hash = shaObj.getHash("HEX");
+        document.getElementById("password_sha").value = hash;
+        return true;
+      } else {
+        $("#errorPassword").removeClass("d-none");
+        return false;
       }
-    </script>
+    }
+  </script>
   <script th:replace="fragments/page :: html_footer"></script>
 </body>
 </html>

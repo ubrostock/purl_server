@@ -1,7 +1,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title th:text="#{purl_server.title}">Purls: Purl Management</title>
-<meta th:replace="fragments/page :: html_header" />
+  <title th:text="#{purl_server.title}">Purls: Purl Management</title>
+  <meta th:replace="fragments/page :: html_header" />
 </head>
 <body>
   <div class="container">
@@ -35,18 +35,18 @@
               <label class="col-sm-2 col-form-label" th:text="#{purl_server.domain.create.user} + ' ' + ${i+1}"></label>
               <div class="col-sm-2">
                 <select class="form-control" th:field="*{domainUserList[__${i}__].user.login}"
-                  th:readonly="${#lists.isEmpty(errors) AND created == true}">
+                        th:readonly="${#lists.isEmpty(errors) AND created == true}">
                   <option value=""></option>
                   <option th:each="user : ${usersLogin}" th:text="${user.fullname}" th:value="${user.login}"></option>
                 </select>
               </div>
               <div class="col-sm-1">
                 <input type="checkbox" class="form-control float-left w-25" th:field="*{domainUserList[__${i}__].canCreate}"
-                  th:readonly="${#lists.isEmpty(errors) AND created == true}" />
+                       th:readonly="${#lists.isEmpty(errors) AND created == true}" />
               </div>
               <div class="col-sm-1">
                 <input type="checkbox" class="form-control float-left w-25" th:field="*{domainUserList[__${i}__].canModify}"
-                  th:readonly="${#lists.isEmpty(errors) AND created == true}" />
+                       th:readonly="${#lists.isEmpty(errors) AND created == true}" />
               </div>
             </div>
           </div>

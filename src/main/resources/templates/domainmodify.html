@@ -1,16 +1,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title th:text="#{purl_server.title}">Purls: Purl Management</title>
-<meta th:replace="fragments/page :: html_header" />
+  <title th:text="#{purl_server.title}">Purls: Purl Management</title>
+  <meta th:replace="fragments/page :: html_header" />
 </head>
 <body>
   <div class="container">
-  <div th:replace="fragments/page :: head"></div>
+    <div th:replace="fragments/page :: head"></div>
     <div th:replace="fragments/page :: navigation"></div>
     <div class="card">
       <div class="card-body">
         <h3 class="card-title" th:text="#{purl_server.domain.modify.title}">Modify a domain</h3>
-
         <div class="alert alert-danger" role="alert" th:if="${errors}" th:each="error : ${errors}">
           <span th:text="${error}"></span>
         </div>
@@ -37,7 +36,7 @@
               <label class="col-sm-2 col-form-label" th:text="#{purl_server.domain.modify.create.user} + ' ' + ${i+1}"></label>
               <div class="col-sm-2">
                 <select class="form-control" th:field="*{domainUserList[__${i}__].user.login}"
-                  th:readonly="${#lists.isEmpty(errors) AND created == true}">
+                        th:readonly="${#lists.isEmpty(errors) AND created == true}">
                   <option value=""></option>
                   <option th:each="user : ${usersLogin}" th:text="${user.fullname}" th:value="${user.login}"></option>
                 </select>
@@ -45,7 +44,6 @@
               <div class="col-sm-1">
                 <input type="checkbox" class="form-control float-left w-25" th:field="*{domainUserList[__${i}__].canCreate}" />
               </div>
-
               <div class="col-sm-1">
                 <input type="checkbox" class="form-control float-left w-25" th:field="*{domainUserList[__${i}__].canModify}" />
               </div>

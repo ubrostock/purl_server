@@ -1,11 +1,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title th:text="#{purl_server.title}">Purls: Purl Management</title>
-<meta th:replace="fragments/page :: html_header" />
+  <title th:text="#{purl_server.title}">Purls: Purl Management</title>
+  <meta th:replace="fragments/page :: html_header" />
 </head>
 <body>
   <div class="container">
-  <div th:replace="fragments/page :: head"></div>
+    <div th:replace="fragments/page :: head"></div>
     <div th:replace="fragments/page :: navigation"></div>
     <div class="card">
       <div class="card-body">
@@ -54,9 +54,14 @@
       <tr th:each="d : ${domains}">
         <td th:text="${d.path}"></td>
         <td th:text="${d.name}"></td>
-        <td><span th:each="du : ${d.domainUserList}"> <span th:text="${du.user.login}"></span><span th:if="${du.canCreate}">(c)</span><span
-            th:if="${du.canModify}">(m)</span><br />
-        </span></td>
+        <td>
+          <span th:each="du : ${d.domainUserList}">
+            <span th:text="${du.user.login}"></span>
+            <span th:if="${du.canCreate}">(c)</span>
+            <span th:if="${du.canModify}">(m)</span>
+            <br />
+          </span>
+        </td>
         <td><a th:href="@{/admin/manager/domain/modify?id=__${d.id}__}" th:text="#{purl_server.domain.search.table.modify}">modify</a></td>
         <td><a th:href="@{/admin/manager/domain/delete?id=__${d.id}__}" th:text="#{purl_server.domain.search.table.delete}">delete</a></td>
       </tr>

@@ -1,6 +1,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Purls: Purl Verwaltung</title>
+<title th:text="#{purl_server.title}">Purls: Purl Management</title>
 <meta th:replace="fragments/page :: html_header" />
 </head>
 <body>
@@ -9,7 +9,7 @@
     <div th:replace="fragments/page :: navigation"></div>
     <div class="card">
       <div class="card-body">
-        <h3 class="card-title">Modify a domain</h3>
+        <h3 class="card-title" th:text="#{purl_server.domain.modify.title}">Modify a domain</h3>
 
         <div class="alert alert-danger" role="alert" th:if="${errors}" th:each="error : ${errors}">
           <span th:text="${error}"></span>
@@ -17,23 +17,24 @@
         <form th:action="@{/admin/manager/domain/modify}" method="post" th:object="${domain}">
           <input type="hidden" th:field="*{id}" />
           <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Path</label>
+            <label class="col-sm-2 col-form-label" th:text="#{purl_server.domain.modify.path}">Path</label>
             <div class="col-sm-4">
               <input type="text" class="form-control" th:field="*{path}" th:readonly="${#lists.isEmpty(errors) AND created == true}" />
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Name</label>
+            <label class="col-sm-2 col-form-label" th:text="#{purl_server.domain.modify.name}">Name</label>
             <div class="col-sm-4">
               <input type="text" class="form-control" th:field="*{name}" th:readonly="${#lists.isEmpty(errors) AND created == true}" />
             </div>
           </div>
           <div class="row">
-            <label class="col-sm-1 offset-sm-4 col-form-label">Create</label> <label class="col-sm-1 col-form-label">Modify</label>
+            <label class="col-sm-1 offset-sm-4 col-form-label" th:text="#{purl_server.domain.modify.create}">Create</label> 
+            <label class="col-sm-1 col-form-label" th:text="#{purl_server.domain.modify.modify}">Modify</label>
           </div>
           <div th:each="i : ${#numbers.sequence(0, __*{#lists.size(domainUserList)}__)}">
             <div class="form-group row">
-              <label class="col-sm-2 col-form-label" th:text="User + ' ' + ${i+1}"></label>
+              <label class="col-sm-2 col-form-label" th:text="#{purl_server.domain.modify.create.user} + ' ' + ${i+1}"></label>
               <div class="col-sm-2">
                 <select class="form-control" th:field="*{domainUserList[__${i}__].user.login}"
                   th:readonly="${#lists.isEmpty(errors) AND created == true}">
@@ -51,24 +52,24 @@
             </div>
           </div>
           <div class="form-group row">
-            <button type="submit" name="addUser" class="btn btn-secondary">Add User</button>
+            <button type="submit" name="addUser" class="btn btn-secondary" th:text="#{purl_server.domain.modify.button.add_user}">Add User</button>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Comment</label>
+            <label class="col-sm-2 col-form-label" th:text="#{purl_server.domain.modify.comment}">Comment</label>
             <div class="col-sm-4">
               <textarea class="form-control" th:field="*{comment}" th:readonly="${#lists.isEmpty(errors) AND created == true}"></textarea>
             </div>
           </div>
           <div class="form-group row" th:unless="${created}">
             <div class="col-sm-3 offset-sm-2">
-              <button type="submit" name ="submit" class="btn btn-primary">Submit</button>
+              <button type="submit" name ="submit" class="btn btn-primary" th:text="#{purl_server.domain.modify.submit}">Submit</button>
             </div>
           </div>
         </form>
       </div>
     </div>
     <div th:if="${created}">
-      <span class="text-success">Domain modified!</span>
+      <span class="text-success" th:text="#{purl_server.domain.modify.modified}">Domain modified!</span>
     </div>
   </div>
   <script th:replace="fragments/page :: html_footer"></script>

@@ -1,6 +1,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Purls: Purl Verwaltung</title>
+<title th:text="#{purl_server.title}">Purls: Purl Manager</title>
 <meta th:replace="fragments/page :: html_header" />
 </head>
 <body>
@@ -9,7 +9,7 @@
     <div th:replace="fragments/page :: navigation"></div>
     <div class="card">
       <div class="card-body">
-        <h3 class="card-title">Delete a user</h3>
+        <h3 class="card-title" th:text="#{purl_server.user.delete.title}">Delete a user</h3>
         <div class="alert alert-danger" role="alert" th:if="${errors}" th:each="error : ${errors}">
           <span th:text="${error}"></span>
         </div>

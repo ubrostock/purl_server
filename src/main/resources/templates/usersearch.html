@@ -1,6 +1,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Purls: Purl Verwaltung</title>
+<title th:text="#{purl_server.title}">Purls: Purl Manager</title>
 <meta th:replace="fragments/page :: html_header" />
 </head>
 <body>
@@ -9,41 +9,41 @@
     <div th:replace="fragments/page :: navigation"></div>
     <div class="card">
       <div class="card-body">
-        <h3 class="card-title">Search for a user</h3>
+        <h3 class="card-title" th:text="#{purl_server.user.search.title}">Search for a user</h3>
         <form th:action="@{/admin/manager/user/search}" method="post">
           <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Full name</label>
+            <label class="col-sm-2 col-form-label" th:text="#{purl_server.user.search.fullname}">Full name</label>
             <div class="col-sm-4">
               <input type="text" class="form-control" name="searchFullName" th:value="${searchFullName}" />
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Affiliation</label>
+            <label class="col-sm-2 col-form-label" th:text="#{purl_server.user.search.affiliation}">Affiliation</label>
             <div class="col-sm-4">
               <input type="text" class="form-control" name="searchAffiliation" th:value="${searchAffiliation}" />
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 col-form-label">E-Mail address</label>
+            <label class="col-sm-2 col-form-label" th:text="#{purl_server.user.search.email}">E-Mail address</label>
             <div class="col-sm-4">
               <input type="text" class="form-control" name="searchEMailAddress" th:value="${searchEMailAddress}" />
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Login</label>
+            <label class="col-sm-2 col-form-label" th:text="#{purl_server.user.search.login}">Login</label>
             <div class="col-sm-4">
               <input type="text" class="form-control" name="searchLogin" th:value="${searchLogin}" />
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Tombstoned users</label>
+            <label class="col-sm-2 col-form-label" th:text="#{purl_server.user.search.tombstoned}">Tombstoned users</label>
             <div class="col-sm-1">
               <input type="checkbox" class="form-control float-left w-25" name="searchTombstonedUser" th:checked="${searchTombstonedUser}" value="on" />
             </div>
           </div>
           <div class="form-group row">
             <div class="col-sm-3 offset-sm-2">
-              <button type="submit" class="btn btn-primary">Search</button>
+              <button type="submit" class="btn btn-primary" th:text="#{purl_server.user.search.search}">Search</button>
             </div>
           </div>
         </form>
@@ -53,10 +53,10 @@
       <div class="col">
         <table class="table table-striped table-sm mt-3">
           <tr>
-            <th>Username</th>
-            <th>Full name</th>
-            <th>affiliation</th>
-            <th>E-mail</th>
+            <th th:text="#{purl_server.user.search.table.username}">Username</th>
+            <th th:text="#{purl_server.user.search.table.fullname}">Full name</th>
+            <th th:text="#{purl_server.user.search.table.affiliation}">affiliation</th>
+            <th th:text="#{purl_server.user.search.table.email}">E-mail</th>
             <th></th>
             <th></th>
           </tr>
@@ -65,8 +65,8 @@
             <td th:text="${u.fullname}"></td>
             <td th:text="${u.affiliation}"></td>
             <td th:text="${u.email}"></td>
-            <td><a th:href="@{/admin/manager/user/modify?id=__${u.id}__}">modify</a></td>
-            <td><a th:href="@{/admin/manager/user/delete?id=__${u.id}__}">delete</a></td>
+            <td><a th:href="@{/admin/manager/user/modify?id=__${u.id}__}" th:text="#{purl_server.user.search.table.modify}">modify</a></td>
+            <td><a th:href="@{/admin/manager/user/delete?id=__${u.id}__}" th:text="#{purl_server.user.search.table.delete}">delete</a></td>
           </tr>
         </table>
       </div>

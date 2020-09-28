@@ -12,7 +12,7 @@
     <div th:replace="fragments/page :: head"></div>
 	<div class="card">
 	  <div class="card-body">
-	    <h3 class="card-title">Anmeldung</h3>
+	    <h3 class="card-title" th:text="#{purl_server.login.title}">Login</h3>
 	    <div class="alert alert-danger" th:if="${#httpServletRequest.getParameter('error')}">
 	    	<h5 th:utext="#{purl_server.login.error_message.failed}">Login failed!</h5>
 	    	<span th:if="${errorMessage}" th:utext="${errorMessage}">error details</span>

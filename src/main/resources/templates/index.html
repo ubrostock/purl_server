@@ -5,8 +5,13 @@
 </head>
 <body>
   <div class="container">
-  <div th:replace="fragments/page :: head"></div>
+    <div th:replace="fragments/page :: head"></div>
     <div th:replace="fragments/page :: navigation"></div>
+    <div class="card">
+      <div class="card-body">
+        Welcome
+      </div>
+    </div>
   </div>
   <script th:replace="fragments/page :: html_footer"></script>
 </body>

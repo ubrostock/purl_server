@@ -1,6 +1,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Purls: Purl Verwaltung</title>
+<title th:text="#{purl_server.title}">Purls: Purl Manager</title>
 <meta th:replace="fragments/page :: html_header" />
 <script type="text/javascript" th:src="@{/admin/login/sha1.js}"></script>
 </head>
@@ -10,72 +10,72 @@
     <div th:replace="fragments/page :: navigation"></div>
     <div class="card">
       <div class="card-body">
-        <h3 class="card-title">Register a new user</h3>
+        <h3 class="card-title" th:text="#{purl_server.user.create.title}">Register a new user</h3>
         <div class="alert alert-danger" role="alert" th:if="${errors}" th:each="error : ${errors}">
           <span th:text="${error}"></span>
         </div>
         <form th:action="@{/admin/manager/user/create}" method="post" th:object="${user}">
         <input type="hidden" id="password_sha" th:field="*{passwordSHA}" />
           <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Admin</label>
+            <label class="col-sm-2 col-form-label" th:text="#{purl_server.user.create.admin}">Admin</label>
             <div class="col-sm-1">
               <input type="checkbox" class="form-control float-left w-25" th:field="*{admin}"
                 th:readonly="${#lists.isEmpty(errors) AND created == true}" />
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Full name</label>
+            <label class="col-sm-2 col-form-label" th:text="#{purl_server.user.create.fullname}">Full name</label>
             <div class="col-sm-4">
               <input type="text" class="form-control" th:field="*{fullname}" th:readonly="${#lists.isEmpty(errors) AND created == true}" />
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Affiliation</label>
+            <label class="col-sm-2 col-form-label" th:text="#{purl_server.user.create.affiliation}">Affiliation</label>
             <div class="col-sm-4">
               <input type="text" class="form-control" th:field="*{affiliation}" th:readonly="${#lists.isEmpty(errors) AND created == true}" />
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 col-form-label">E-Mail address</label>
+            <label class="col-sm-2 col-form-label" th:text="#{purl_server.user.create.email}">E-Mail address</label>
             <div class="col-sm-4">
               <input type="text" class="form-control" th:field="*{email}" th:readonly="${#lists.isEmpty(errors) AND created == true}" />
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Login</label>
+            <label class="col-sm-2 col-form-label" th:text="#{purl_server.user.create.login}">Login</label>
             <div class="col-sm-4">
               <input type="text" class="form-control" th:field="*{login}" th:readonly="${#lists.isEmpty(errors) AND created == true}" />
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Password</label>
+            <label class="col-sm-2 col-form-label" th:text="#{purl_server.user.create.password}">Password</label>
             <div class="col-sm-4">
               <input type="password" id="password" class="form-control" th:readonly="${#lists.isEmpty(errors) AND created == true}" />
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Re-enter password</label>
+            <label class="col-sm-2 col-form-label" th:text="#{purl_server.user.create.repassword}">Re-enter password</label>
             <div class="col-sm-4">
               <input type="password" id="repassword" class="form-control" th:readonly="${#lists.isEmpty(errors) AND created == true}" />
             </div>
           </div>
           <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Comment</label>
+            <label class="col-sm-2 col-form-label" th:text="#{purl_server.user.create.comment}">Comment</label>
             <div class="col-sm-4">
               <textarea class="form-control" th:field="*{comment}" th:readonly="${#lists.isEmpty(errors) AND created == true}"></textarea>
             </div>
           </div>
           <div class="form-group row" th:unless="${created}">
             <div class="col-sm-3 offset-sm-2">
-              <button type="submit" class="btn btn-primary" onclick="return encryptPassword();">Submit</button>
+              <button type="submit" class="btn btn-primary" onclick="return encryptPassword();" th:text="#{purl_server.user.create.submit}">Submit</button>
             </div>
           </div>
         </form>
         <div th:if="${created}">
-          <span class="text-success">User registered!</span>
+          <span class="text-success" th:text="#{purl_server.user.create.created}">User registered!</span>
         </div>
         <div id="errorPassword" class="alert alert-danger d-none">
-          <span>Password and Re-Password are not the same!</span>
+          <span th:text="#{purl_server.user.create.error_password}">Password and Re-Password are not the same!</span>
         </div>
       </div>
     </div>

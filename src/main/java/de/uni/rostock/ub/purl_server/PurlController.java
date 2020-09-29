@@ -67,9 +67,4 @@ public class PurlController {
             return null;
         }
     }
-
-    @RequestMapping(path = "/", method = RequestMethod.GET)
-    public String showStart() {
-        return "start";
-    }
 }

@@ -18,6 +18,7 @@
 package de.uni.rostock.ub.purl_server;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +43,9 @@ public class PurlController {
     @Autowired
     PurlDAO purlDAO;
 
+    @Autowired
+    private MessageSource messages;
+    
     private static Logger LOGGER = LoggerFactory.getLogger(PurlController.class);
     
     /**
@@ -66,7 +71,7 @@ public class PurlController {
             try {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Purl not found!");
             } catch (IOException e) {
-                LOGGER.error("Error while sending error!", e);
+                LOGGER.error(messages.getMessage("purl_server.error.sending.error", null, Locale.getDefault()), e);
             }
             return null;
         }

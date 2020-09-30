@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -65,6 +66,9 @@ public class LoginController {
 
     @Autowired
     private JavaMailSender mailSender;
+    
+    @Autowired
+    private MessageSource messages;
 
     @RequestMapping(value = "/admin/login")
     public ModelAndView login(HttpServletRequest request) {
@@ -75,7 +79,7 @@ public class LoginController {
                 .getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
             if (ex != null) {
                 StringBuffer sbErrorMessage = new StringBuffer(ex.getMessage());
-                LOGGER.error("Login error", ex);
+                LOGGER.error(messages.getMessage("purl_server.error.login", null, Locale.getDefault()), ex);
                 Throwable t = ex;
                 while (t.getCause() != null) {
                     t = t.getCause();
@@ -167,7 +171,7 @@ public class LoginController {
                 + "\n" + uri.toString());
             mailSender.send(mailHelper.getMimeMessage());
         } catch (MessagingException e) {
-            LOGGER.error("Error while sending email", e);
+            LOGGER.error(messages.getMessage("purl_server.error.login.email", null, Locale.getDefault()), e);
         }
     }
 

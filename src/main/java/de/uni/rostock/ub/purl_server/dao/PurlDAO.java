@@ -23,11 +23,13 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -53,6 +55,8 @@ public class PurlDAO {
 	DomainDAO domainDAO;
 	@Autowired
 	PurlAccess purlAccess;
+	@Autowired
+	private MessageSource messages;
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(PurlDAO.class);
 	/**
@@ -167,7 +171,7 @@ public class PurlDAO {
 			jdbcTemplate.update("INSERT INTO purlhistory (purl_id, type, target, modified, status) VALUES(?,?,?,NOW(),? );", purlId.getKey().intValue(), p.getType().name(),
 					p.getTarget(), Status.CREATED.name());
 		}else {
-			LOGGER.error("User not allowed to create purls in domain " + p.getDomainPath() +"!");
+			LOGGER.error(messages.getMessage("purl_server.error.user.create.purl", new Object[] {p.getDomainPath()}, Locale.getDefault()));
 		}
 		return retrievePurl(p.getPath());
 	}
@@ -184,7 +188,7 @@ public class PurlDAO {
 			jdbcTemplate.update("INSERT INTO purlhistory (purl_id, type, target, modified, status) VALUES(?,?,?,NOW(),? );", p.getId(), p.getType().name(),
 					p.getTarget(), Status.MODIFIED.name());
 		}else {
-			LOGGER.error("User not allowed to modify purls in domain " + p.getDomainPath() +"!");
+			LOGGER.error(messages.getMessage("purl_server.error.user.modify.purl", new Object[] {p.getDomainPath()}, Locale.getDefault()));
 		}
 		return retrievePurl(p.getPath());
 	}
@@ -201,7 +205,7 @@ public class PurlDAO {
 			jdbcTemplate.update("INSERT INTO purlhistory (purl_id, type, target, modified, status) VALUES(?,?,?,NOW(),? );", p.getId(), p.getType().name(), p.getTarget(),
 					Status.DELETED.name());
 		}else {
-			LOGGER.error("User not allowed to delete purls in domain " + p.getDomainPath() +"!");
+			LOGGER.error(messages.getMessage("purl_server.error.user.delete.purl", new Object[] {p.getDomainPath()}, Locale.getDefault()));
 		}
 	}
 }

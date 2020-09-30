@@ -25,11 +25,13 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -50,6 +52,9 @@ import de.uni.rostock.ub.purl_server.model.User;
 public class DomainDAO {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	
+	@Autowired
+	private MessageSource messages;
 
 	private static Logger LOGGER = LoggerFactory.getLogger(DomainDAO.class);
 	/**
@@ -163,7 +168,7 @@ public class DomainDAO {
 						du.isCanCreate(), du.isCanModify());
 			}
 		} else {
-			LOGGER.error("User not allowed to create domains!");
+			LOGGER.error(messages.getMessage("purl_server.error.user.create.domain", null, Locale.getDefault()));
 		}
 		
 	}
@@ -183,7 +188,7 @@ public class DomainDAO {
 						du.isCanCreate(), du.isCanModify());
 			}
 		} else {
-			LOGGER.error("User not allowed to modify domains!");
+			LOGGER.error(messages.getMessage("purl_server.error.user.modify.domain", null, Locale.getDefault()));
 		}
 	}
 	
@@ -195,7 +200,7 @@ public class DomainDAO {
 		if(u.isAdmin()) {
 			jdbcTemplate.update("UPDATE domain SET lastmodified = NOW(), status = ? WHERE path = ?", Status.DELETED.name(), path);
 		} else {
-			LOGGER.error("User not allowed to delete domains!");
+			LOGGER.error(messages.getMessage("purl_server.error.user.delete.domain", null, Locale.getDefault()));
 		}
 		
 	}

@@ -23,11 +23,13 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -41,6 +43,9 @@ import de.uni.rostock.ub.purl_server.model.User;
 public class UserDAO {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	
+	@Autowired
+	private MessageSource messages;
 
 	private static Logger LOGGER = LoggerFactory.getLogger(UserDAO.class);
 	/**
@@ -66,7 +71,7 @@ public class UserDAO {
 				return false;
 			}
 		} catch (NoSuchAlgorithmException e) {
-			LOGGER.error("Login error!");
+			LOGGER.error(messages.getMessage("purl_server.error.login", null, Locale.getDefault()));
 		}
 		return false;
 	}
@@ -151,7 +156,7 @@ public class UserDAO {
 					userObject.getLogin(), userObject.getPasswordSHA(), userObject.isAdmin(), userObject.getFullname(), userObject.getAffiliation(), userObject.getEmail(),
 					userObject.getComment(), 1);
 		} else {
-			LOGGER.error("User not allowed to create user!");
+			LOGGER.error(messages.getMessage("purl_server.error.user.create.user", null, Locale.getDefault()));
 		}
 		
 	}
@@ -166,7 +171,7 @@ public class UserDAO {
 					"UPDATE user SET login = ?, password_sha = ?, fullname = ?, affiliation = ?, email = ?, comment = ?, lastmodified = NOW(), status = ? WHERE id = ?;",
 					userObject.getLogin(), userObject.getPasswordSHA(), userObject.getFullname(), userObject.getAffiliation(), userObject.getEmail(), userObject.getComment(), Status.MODIFIED.name() ,userObject.getId());
 		} else {
-			LOGGER.error("User not allowed to modify user!");
+			LOGGER.error(messages.getMessage("purl_server.error.user.modify.user", null, Locale.getDefault()));
 		}
 	}
 
@@ -179,7 +184,7 @@ public class UserDAO {
 		if(u.isAdmin()) {
 			jdbcTemplate.update("UPDATE user SET lastmodified = NOW(), status = ? WHERE id = ?;", Status.DELETED.name(), userObject.getId());
 		} else {
-			LOGGER.error("User not allowed to delete user!");
+			LOGGER.error(messages.getMessage("purl_server.error.user.delete.user", null, Locale.getDefault()));
 		}
 	}
 }

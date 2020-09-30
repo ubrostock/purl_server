@@ -45,7 +45,11 @@
               </div>
             </li>
             <li class="nav-item"><a class="btn btn-link" th:href="@{/admin/manager/help}">Help</a></li>
-            <li class="nav-item"><a class="btn btn-link" th:href="@{/admin/login?logout}">Logout</a></li>
+            <li class="nav-item">
+            	<form th:action="@{/admin/logout}" method="POST">
+            		<button type=submit class="btn btn-link">Logout</button>
+                </form>		
+            </li>
             <li class="nav-item"><span class="btn">User: <span th:text="${#authentication.name}"></span></span></li>
           </ul>
         </div>

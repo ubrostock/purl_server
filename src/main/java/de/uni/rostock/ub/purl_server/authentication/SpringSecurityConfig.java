@@ -55,10 +55,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public static class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher("/admin/**")
+            http.logout(l -> l.logoutUrl("/admin/logout"))
+                .formLogin().loginPage("/admin/login").defaultSuccessUrl("/admin/manager/")
+                .and().antMatcher("/admin/**")
                 .authorizeRequests(auth -> auth.antMatchers("/admin/manager/**").authenticated()
-                    .antMatchers("/admin/login").permitAll().antMatchers("/admin/login/**").permitAll())
-                .formLogin().loginPage("/admin/login").defaultSuccessUrl("/admin/manager/");
+                    .antMatchers("/admin/login").permitAll().antMatchers("/admin/login/**").permitAll());
+                
         }
     }
 
@@ -87,7 +89,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
         auth.jdbcAuthentication().dataSource(dataSource).passwordEncoder(NoOpPasswordEncoder.getInstance())
             .usersByUsernameQuery(
-                "SELECT login,password_sha, (status = 'CREATED' OR status = 'ENABLED') FROM user WHERE login = ?;")
+                "SELECT login,password_sha, (status = 'CREATED' OR status = 'MODIFIED') FROM user WHERE login = ?;")
             .authoritiesByUsernameQuery(
                 "SELECT * FROM (SELECT login, 'USER' FROM user UNION SELECT login, 'ADMIN' FROM user WHERE admin = true) AS x WHERE x.login = ?;");
     }

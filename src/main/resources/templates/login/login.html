@@ -15,6 +15,9 @@
           <h5 th:utext="#{purl_server.login.error_message.failed}">Login failed!</h5>
           <span th:if="${errorMessage}" th:utext="${errorMessage}">error details</span>
         </div>
+        <div class="alert alert-info" th:if="${#httpServletRequest.getParameter('logout')}">
+          <h5 th:utext="#{purl_server.logout.message}">You have been logged off!</h5>
+        </div>
         <form th:action="@{/admin/login}" method="post">
           <input id="password_sha1" type="hidden" name="password" />
           <div class="form-group row">

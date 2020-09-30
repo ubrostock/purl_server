@@ -167,7 +167,7 @@ public class LoginController {
                 + "\n" + uri.toString());
             mailSender.send(mailHelper.getMimeMessage());
         } catch (MessagingException e) {
-            e.printStackTrace();
+            LOGGER.error("Error while sending email", e);
         }
     }
 

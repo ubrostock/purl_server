@@ -72,10 +72,9 @@ public class PurlDAO {
 						new Object[] { path }, new PurlRowMapper());
 				return Optional.of(p2);
 			} catch (DataAccessException e2) {
-				LOGGER.error("Error retrieving purl from database!", e);
+			    return Optional.empty();
 			}
 		}
-		return Optional.empty();
 	}
 
 	/**
@@ -90,9 +89,8 @@ public class PurlDAO {
 			domainDAO.retrieveDomain(p.getDomainId()).ifPresent(d -> p.setDomain(d));
 			return Optional.of(p);
 		} catch (DataAccessException e) {
-			LOGGER.error("Error retrieving purl from database!", e);
+		    return Optional.empty();
 		}
-		return Optional.empty();
 	}
 
 	/**

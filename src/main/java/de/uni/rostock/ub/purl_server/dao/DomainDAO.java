@@ -61,10 +61,10 @@ public class DomainDAO {
 		try {
 			return Optional.of(jdbcTemplate.queryForObject("SELECT * FROM domain WHERE path = ?;", new DomainRowMapper(), path));
 		} catch (DataAccessException e) {
-			LOGGER.debug("Error retrieving domain from database!", e);
+		    return Optional.empty();
 		}
-		return Optional.empty();
 	}
+	
 	public Optional<Domain> retrieveDomain(Purl p) {
 			return retrieveDomain(p.getDomainPath());
 	}
@@ -77,9 +77,8 @@ public class DomainDAO {
 		try {
 			return Optional.of(jdbcTemplate.queryForObject("SELECT * FROM domain WHERE id = ?;", new DomainRowMapper(), id));
 		} catch (DataAccessException e) {
-			LOGGER.error("Error retrieving domain from database!", e);
+		    return Optional.empty();
 		}
-		return Optional.empty();
 	}
 	
 	/**
@@ -94,9 +93,8 @@ public class DomainDAO {
 			d.getDomainUserList().addAll(list);
 			return Optional.of(d);
 		} catch (DataAccessException e) {
-			LOGGER.error("Error retrieving domain from database!", e);
+		    return Optional.empty();
 		}
-		return Optional.empty();
 	}
 
 	/**

@@ -81,9 +81,8 @@ public class UserDAO {
 		    User u = jdbcTemplate.queryForObject("SELECT * FROM user WHERE login = ?;", new UserRowMapper(), login);
 			return Optional.of(u);
 		}catch(DataAccessException e) {
-			LOGGER.error("Cant retrieve user from database!", e);
+		    return Optional.empty();
 		}
-		return Optional.empty();
 	}
 
 	/**
@@ -96,9 +95,8 @@ public class UserDAO {
 		    User u = jdbcTemplate.queryForObject("SELECT * FROM user WHERE id = ?;", new UserRowMapper(), id);
 			return Optional.of(u);
 		} catch(DataAccessException e) {
-			LOGGER.error("Can not retrieve user from database with this id " + id + "!", e);
+		    return Optional.empty();
 		}
-		return Optional.empty();
 	}
 
 	/**

@@ -21,11 +21,13 @@ package de.uni.rostock.ub.purl_server.common;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -51,6 +53,9 @@ public class PurlAccess {
 
     @Autowired
     PurlDAO purlDAO;
+    
+    @Autowired
+    private MessageSource messages;
 
     public PurlAccess() {
 
@@ -154,7 +159,7 @@ public class PurlAccess {
     public List<String> validateCreatePurl(Purl purl, User u) {
         List<String> errorList = new ArrayList<>();
         if (StringUtils.isEmpty(purl.getPath())) {
-            errorList.add("Path not set!");
+            errorList.add(messages.getMessage("purl_server.error.validate.purl.create.path", null, Locale.getDefault()));
             return errorList;
         }
         Optional<Purl> currentPurl = purlDAO.retrievePurl(purl.getPath());
@@ -166,10 +171,10 @@ public class PurlAccess {
             } else {
                 if (currentPurl.get().getType() == Type.PARTIAL) {
                     if (purl.getPath().length() == currentPurl.get().getPath().length()) {
-                        errorList.add("Path exist!");
+                        errorList.add(messages.getMessage("purl_server.error.validate.purl.create.exist", null, Locale.getDefault()));
                     }
                 } else {
-                    errorList.add("Path exist!");
+                    errorList.add(messages.getMessage("purl_server.error.validate.purl.create.exist", null, Locale.getDefault()));
                 }
             }
         }
@@ -178,11 +183,11 @@ public class PurlAccess {
         if (errorList.isEmpty()) {
             Domain d = domainDAO.retrieveDomain(purl).orElseThrow();
             if (d == null) {
-                errorList.add("Domain '" + purl.getDomainPath() + "' does not exist!");
+                errorList.add(messages.getMessage("purl_server.error.validate.domain.exist", new Object[] {purl.getDomainPath()}, Locale.getDefault()));
             } else if (d.getStatus() == Status.DELETED) {
-                errorList.add("Domain " + d.getPath() + " is deleted!");
+                errorList.add(messages.getMessage("purl_server.error.validate.domain.deleted", new Object[] {d.getPath()}, Locale.getDefault()));
             } else if (!canCreatePurl(d, u)) {
-                errorList.add("Not allowed to create a purl!");
+                errorList.add(messages.getMessage("purl_server.error.validate.domain.unauthorized", null, Locale.getDefault()));
             }
         }
         return errorList;
@@ -201,14 +206,14 @@ public class PurlAccess {
             domainDAO.retrieveDomain(purl).ifPresentOrElse(
                 d -> {
                     if (!canModifyPurl(d, u)) {
-                        errorList.add("Not allowed to modify a purl!");
+                        errorList.add(messages.getMessage("purl_server.error.validate.user.modify.purl", null, Locale.getDefault()));
                     }
                 }, () -> {
-                    errorList.add("Domain '" + purl.getDomainPath() + "' does not exist!");
+                    errorList.add(messages.getMessage("purl_server.error.validate.domain.exist", new Object[] {purl.getDomainPath()}, Locale.getDefault()));
                 });
 
             if (purl.getStatus() == Status.DELETED) {
-                errorList.add("Cant modify a deleted Purl!");
+                errorList.add(messages.getMessage("purl_server.error.validate.user.modify.deleted.purl", null, Locale.getDefault()));
             }
         }
         return errorList;
@@ -222,24 +227,24 @@ public class PurlAccess {
     private List<String> validatePurl(Purl purl) {
         List<String> errorList = new ArrayList<>();
         if (StringUtils.isEmpty(purl.getPath())) {
-            errorList.add("Path can not be empty!");
+            errorList.add(messages.getMessage("purl_server.error.validate.purl.path.empty", null, Locale.getDefault()));
         } else {
             if (!purl.getPath().startsWith("/")) {
-                errorList.add("Path must start with '/'!");
+                errorList.add(messages.getMessage("purl_server.error.validate.purl.path.start", null, Locale.getDefault()));
             }
             if (!purl.getPath().matches("\\/[a-zA-Z0-9]+(\\/[a-zA-Z0-9]*)*")) {
-                errorList.add("Path can only contain a-z, A-Z and 0-9!");
+                errorList.add(messages.getMessage("purl_server.error.validate.purl.path.match", null, Locale.getDefault()));
             }
         }
         if (StringUtils.isEmpty(purl.getTarget())) {
-            errorList.add("Target can not be empty!");
+            errorList.add(messages.getMessage("purl_server.error.validate.purl.target.empty", null, Locale.getDefault()));
         } else {
             if (!purl.getTarget().startsWith("https://") && !purl.getTarget().startsWith("http://")) {
-                errorList.add("Target must start with 'http://' or 'https://'!");
+                errorList.add(messages.getMessage("purl_server.error.validate.purl.target.start", null, Locale.getDefault()));
             }
         }
         if (StringUtils.isEmpty(purl.getType())) {
-            errorList.add("Type can not be empty!");
+            errorList.add(messages.getMessage("purl_server.error.validate.purl.type.target", null, Locale.getDefault()));
         }
         return errorList;
     }

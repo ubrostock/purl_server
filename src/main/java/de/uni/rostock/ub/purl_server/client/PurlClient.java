@@ -32,9 +32,12 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 
 public class PurlClient {
     private static Logger LOGGER = LoggerFactory.getLogger(PurlClient.class);
@@ -48,6 +51,9 @@ public class PurlClient {
     private String baiscURL = "";
 
     private HttpClient httpClient = null;
+    
+    @Autowired
+    private MessageSource messages;
 
     public static void main(String[] args) {
         PurlClient app = new PurlClient("http://localhost:8080");
@@ -82,7 +88,7 @@ public class PurlClient {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             LOGGER.debug(response.statusCode() + " - " + response.body());
         } catch (IOException | InterruptedException e) {
-            LOGGER.error("Fehler beim Erstellen der PURL!", e);
+            LOGGER.error(messages.getMessage("purl_server.error.purl.create", null, Locale.getDefault()), e);
             e.printStackTrace();
         }
     }
@@ -96,7 +102,7 @@ public class PurlClient {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             LOGGER.debug(response.statusCode() + " - " + response.body());
         } catch (IOException | InterruptedException e) {
-            LOGGER.error("Fehler beim Aktualisieren der PURL!", e);
+            LOGGER.error(messages.getMessage("purl_server.error.purl.update", null, Locale.getDefault()), e);
             e.printStackTrace();
         }
     }

@@ -21,10 +21,12 @@ package de.uni.rostock.ub.purl_server.admin.controller;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -51,6 +53,9 @@ public class AdminDomainController {
 
     @Autowired
     DomainDAO domainDAO;
+    
+    @Autowired
+    private MessageSource messages;
 
     /**
      * Show the domain create page
@@ -213,7 +218,7 @@ public class AdminDomainController {
                 model.addAttribute("domain", domain);
             } else {
                 List<String> errorList = new ArrayList<>();
-                errorList.add("Not allowed to delete domain!");
+                errorList.add(messages.getMessage("purl_server.error.domain.delete", null, Locale.getDefault()));
                 model.addAttribute("errors", errorList);
             }
         });
@@ -238,7 +243,7 @@ public class AdminDomainController {
     public List<String> validateCreateDomain(Domain d, User u) {
         List<String> errorList = new ArrayList<>();
         domainDAO.retrieveDomain(d.getPath()).ifPresentOrElse(dd -> {
-            errorList.add("Domain '" + dd.getPath() + "' does already exist!");
+            errorList.add(messages.getMessage("purl_server.error.validate.domain.already.exist", new Object[] {dd.getPath()}, Locale.getDefault()));
         }, () -> {
             errorList.addAll(validateDomain(d));
         });
@@ -250,7 +255,7 @@ public class AdminDomainController {
         domainDAO.retrieveDomain(d.getPath()).ifPresentOrElse(dd -> {
             errorList.addAll(validateDomain(d));
         }, () -> {
-            errorList.add("Domain '" + d.getPath() + "' does not exist!");
+            errorList.add(messages.getMessage("purl_server.error.validate.domain.exist", new Object[] {d.getPath()}, Locale.getDefault()));
         });
         return errorList;
     }
@@ -264,25 +269,25 @@ public class AdminDomainController {
     private List<String> validateDomain(Domain domain) {
         List<String> errorList = new ArrayList<>();
         if (StringUtils.isEmpty(domain.getPath())) {
-            errorList.add("Path can not be empty!");
+            errorList.add(messages.getMessage("purl_server.error.validate.domain.path", null, Locale.getDefault()));
         } else {
             if (domain.getPath().startsWith("/admin")) {
-                errorList.add("Path can not start with \"/admin\"");
+                errorList.add(messages.getMessage("purl_server.error.validate.domain.path.start.admin", null, Locale.getDefault()));
             }
             if (!domain.getPath().startsWith("/")) {
-                errorList.add("Path must start with '/'!");
+                errorList.add(messages.getMessage("purl_server.error.validate.domain.path.start", null, Locale.getDefault()));
             }
             if (!domain.getPath().matches("/[a-zA-Z0-9]+")) {
-                errorList.add("Path can only contain a-z, A-Z and 0-9!");
+                errorList.add(messages.getMessage("purl_server.error.validate.domain.path.match", null, Locale.getDefault()));
             }
         }
         if (StringUtils.isEmpty(domain.getName())) {
-            errorList.add("Name can not be empty!");
+            errorList.add(messages.getMessage("purl_server.error.validate.domain.name", null, Locale.getDefault()));
         }
         List<String> logins = userDAO.retrieveLogins();
         for (DomainUser du : domain.getDomainUserList()) {
             if (!logins.contains(du.getUser().getLogin())) {
-                errorList.add("User login does not exist.");
+                errorList.add(messages.getMessage("purl_server.error.validate.domain.user", null, Locale.getDefault()));
             }
         }
         return errorList;

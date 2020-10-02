@@ -20,10 +20,12 @@ package de.uni.rostock.ub.purl_server.admin.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -48,6 +50,9 @@ public class AdminPurlController {
     @Autowired
     DomainDAO domainDAO;
 
+    @Autowired
+    private MessageSource messages;
+    
     /**
      * Show the purl create page
      * 
@@ -155,7 +160,7 @@ public class AdminPurlController {
      * @param id
      * @param model
      * @return the purl delete page
-     */
+    **/
     @RequestMapping(path = "/admin/manager/purl/delete", method = RequestMethod.GET)
     public String showPurlDelete(@RequestParam("id") int id, Model model) {
         model.addAttribute("purl", purlDAO.retrievePurl(id).get());
@@ -180,7 +185,7 @@ public class AdminPurlController {
                 model.addAttribute("purl", deletePurl);
             } else {
                 List<String> errorList = new ArrayList<>();
-                errorList.add("Not allowed to delete purl!");
+                errorList.add(messages.getMessage("purl_server.error.user.delete.purl.unauthorized", null, Locale.getDefault()));
                 model.addAttribute("errors", errorList);
             }
         });

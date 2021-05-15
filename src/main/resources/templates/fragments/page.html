@@ -6,15 +6,14 @@
   <link th:fragment="html_header" rel="stylesheet" th:href="@{/webjars/font-awesome/css/all.css}" />
 </head>
 <body>
-  <div class="card" th:fragment="head">
-    <div class="card-body">
-      <h3 class="card-title" th:text="#{purl_server.fragments.page.title}">UB Rostock PURL Server</h3>
-    </div>
+  <div th:fragment="head">
+      <h2 class="card-title mb-3" th:text="#{purl_server.fragments.page.title}">UB Rostock PURL Server</h2>
   </div>
+  
   <div class="row" th:fragment="navigation">
-    <div class="col bg-light mx-3">
+    <div class="col bg-light mx-3 px-0 mb-3">
       <nav class="navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand" th:href="@{/admin/manager}" th:text="#{purl_server.fragments.page.nav.title}">PURL Manager</a>
+        <a class="navbar-brand" th:href="@{/admin/manager}" th:text="#{purl_server.fragments.page.nav.title}">PURL Administration</a>
         <div class="collapse navbar-collapse">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item dropdown">

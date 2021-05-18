@@ -14,6 +14,12 @@
         <div class="alert alert-danger" role="alert" th:if="${errors}" th:each="error : ${errors}">
           <span th:text="${error}"></span>
         </div>
+        <div th:if="${created}">
+          <span class="text-success" th:text="#{purl_server.user.create.created}">User registered!</span>
+        </div>
+        <div id="errorPassword" class="alert alert-danger d-none">
+          <span th:text="#{purl_server.user.create.error_password}">Password and Re-Password are not the same!</span>
+        </div>
         <form th:action="@{/admin/manager/user/create}" method="post" th:object="${user}">
         <input type="hidden" id="password_sha" th:field="*{passwordSHA}" />
           <div class="form-group row">
@@ -71,12 +77,6 @@
             </div>
           </div>
         </form>
-        <div th:if="${created}">
-          <span class="text-success" th:text="#{purl_server.user.create.created}">User registered!</span>
-        </div>
-        <div id="errorPassword" class="alert alert-danger d-none">
-          <span th:text="#{purl_server.user.create.error_password}">Password and Re-Password are not the same!</span>
-        </div>
       </div>
     </div>
   </div>

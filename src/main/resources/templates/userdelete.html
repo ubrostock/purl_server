@@ -13,6 +13,9 @@
         <div class="alert alert-danger" role="alert" th:if="${errors}" th:each="error : ${errors}">
           <span th:text="${error}"></span>
         </div>
+        <div th:if="${deleted}">
+          <span class="text-success">User deleted!</span>
+        </div>
         <form th:action="@{/admin/manager/user/delete}" method="post" th:object="${user}">
           <input type="hidden" th:field="*{id}" />
           <div class="form-group row">
@@ -45,9 +48,6 @@
             </div>
           </div>
         </form>
-        <div th:if="${deleted}">
-          <span class="text-success">User deleted!</span>
-        </div>
       </div>
     </div>
   </div>

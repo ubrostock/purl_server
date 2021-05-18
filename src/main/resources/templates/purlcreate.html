@@ -13,6 +13,9 @@
         <div class="alert alert-danger" role="alert" th:if="${errors}" th:each="error : ${errors}">
           <span th:text="${error}"></span>
         </div>
+        <div th:if="${created}">
+          <span class="text-success" th:text="#{purl_server.purl.create.created}">Purl created!</span>
+        </div>
         <form th:action="@{/admin/manager/purl/create}" method="post" th:object="${purl}">
           <div class="form-group row">
             <label class="col-sm-2 col-form-label" th:text="#{purl_server.purl.create.path}">Path</label>
@@ -41,9 +44,6 @@
             </div>
           </div>
         </form>
-        <div th:if="${created}">
-          <span class="text-success" th:text="#{purl_server.purl.create.created}">Purl created!</span>
-        </div>
       </div>
     </div>
   </div>

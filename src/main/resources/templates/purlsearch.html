@@ -10,31 +10,36 @@
     <div class="card">
       <div class="card-body">
         <h3 class="card-title">Search for a PURL</h3>
-        <form th:action="@{/admin/manager/purl/search}" method="post">
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Path</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" th:value="${path}" name="path" />
-            </div>
+        <div class="row">
+          <div class="col">
+            <form th:action="@{/admin/manager/purl/search}" method="post">
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Path</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" th:value="${path}" name="path" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Target URL</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" th:value="${targetURL}" name="targetURL" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Tombstoned PURLs</label>
+                <div class="col-sm-2">
+                  <input type="checkbox" class="form-control float-left w-25" th:checked="${tombstoned}" name="tombstoned" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-6 offset-sm-4">
+                  <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+              </div>
+            </form>
           </div>
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Target URL</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" th:value="${targetURL}" name="targetURL" />
-            </div>
-          </div>
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Tombstoned PURLs</label>
-            <div class="col-sm-1">
-              <input type="checkbox" class="form-control float-left w-25" th:checked="${tombstoned}" value="on" name="tombstoned" />
-            </div>
-          </div>
-          <div class="form-group row">
-            <div class="col-sm-3 offset-sm-2">
-              <button type="submit" class="btn btn-primary">Search</button>
-            </div>
-          </div>
-        </form>
+          <div class="col"></div>
+        </div>
       </div>
     </div>
     <div class="row">
@@ -51,7 +56,7 @@
             <th></th>
           </tr>
           <tr th:each="purl : ${purls}">
-            <td th:text="${purl.path}"></td>
+            <td class="text-nowrap" th:text="${purl.path}"></td>
             <td th:text="${purl.type}"></td>
             <td th:text="${purl.target}"></td>
             <td th:text="${purl.created}"></td>

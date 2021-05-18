@@ -10,43 +10,48 @@
     <div class="card">
       <div class="card-body">
         <h3 class="card-title" th:text="#{purl_server.user.search.title}">Search for a user</h3>
-        <form th:action="@{/admin/manager/user/search}" method="post">
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label" th:text="#{purl_server.user.search.fullname}">Full name</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" name="searchFullName" th:value="${searchFullName}" />
-            </div>
+        <div class="row">
+          <div class="col">
+            <form th:action="@{/admin/manager/user/search}" method="post">
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.search.fullname}">Full name</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" name="searchFullName" th:value="${searchFullName}" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.search.affiliation}">Affiliation</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" name="searchAffiliation" th:value="${searchAffiliation}" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.search.email}">E-Mail address</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" name="searchEMailAddress" th:value="${searchEMailAddress}" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.search.login}">Login</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" name="searchLogin" th:value="${searchLogin}" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.search.tombstoned}">Tombstoned users</label>
+                <div class="col-sm-2">
+                  <input type="checkbox" class="form-control float-left w-25" name="searchTombstonedUser" th:checked="${searchTombstonedUser}" value="on" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-6 offset-sm-4">
+                  <button type="submit" class="btn btn-primary" th:text="#{purl_server.user.search.search}">Search</button>
+                </div>
+              </div>
+            </form>
           </div>
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label" th:text="#{purl_server.user.search.affiliation}">Affiliation</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" name="searchAffiliation" th:value="${searchAffiliation}" />
-            </div>
-          </div>
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label" th:text="#{purl_server.user.search.email}">E-Mail address</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" name="searchEMailAddress" th:value="${searchEMailAddress}" />
-            </div>
-          </div>
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label" th:text="#{purl_server.user.search.login}">Login</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" name="searchLogin" th:value="${searchLogin}" />
-            </div>
-          </div>
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label" th:text="#{purl_server.user.search.tombstoned}">Tombstoned users</label>
-            <div class="col-sm-1">
-              <input type="checkbox" class="form-control float-left w-25" name="searchTombstonedUser" th:checked="${searchTombstonedUser}" value="on" />
-            </div>
-          </div>
-          <div class="form-group row">
-            <div class="col-sm-3 offset-sm-2">
-              <button type="submit" class="btn btn-primary" th:text="#{purl_server.user.search.search}">Search</button>
-            </div>
-          </div>
-        </form>
+          <div class="col"></div>
+        </div>
       </div>
     </div>
     <div class="row">

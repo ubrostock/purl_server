@@ -10,41 +10,46 @@
     <div class="card">
       <div class="card-body">
         <h3 class="card-title" th:text="#{purl_server.purl.modify.title}">Modify a PURL</h3>
-        <div class="alert alert-danger" role="alert" th:if="${errors}" th:each="error : ${errors}">
-          <span th:text="${error}"></span>
+        <div class="row">
+          <div class="col">
+            <div class="alert alert-danger" role="alert" th:if="${errors}" th:each="error : ${errors}">
+              <span th:text="${error}"></span>
+            </div>
+            <div th:if="${created}">
+              <span class="text-success" th:text="#{purl_server.purl.modify.modified}">Purl modified!</span>
+            </div>
+            <form th:action="@{/admin/manager/purl/modify}" method="post" th:object="${purl}">
+              <input type="hidden" th:field="*{id}" />
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label" th:text="#{purl_server.purl.modify.path}">Path</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" th:field="*{path}" readonly="readonly" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label" th:text="#{purl_server.purl.modify.type}">Type of PURL</label>
+                <div class="col-sm-8">
+                  <select class="form-control" th:field="*{type}" th:readonly="${#lists.isEmpty(errors) AND created == true}">
+                    <option value="FOUND_302" th:text="#{purl_server.purl.modify.type.found_302}">Simple redirection to a target URL (302)</option>
+                    <option value="PARTIAL" th:text="#{purl_server.purl.modify.type.partial}">Partial-redirect PURL</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label" th:text="#{purl_server.purl.modify.target}">Target URL</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" th:field="*{target}" th:readonly="${#lists.isEmpty(errors) AND created == true}" />
+                </div>
+              </div>
+              <div class="form-group row" th:unless="${created}">
+                <div class="col-sm-6 offset-sm-4">
+                  <button type="submit" class="btn btn-primary" th:text="#{purl_server.purl.modify.submit}">Submit</button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="col"></div>
         </div>
-        <div th:if="${created}">
-          <span class="text-success" th:text="#{purl_server.purl.modify.modified}">Purl modified!</span>
-        </div>
-        <form th:action="@{/admin/manager/purl/modify}" method="post" th:object="${purl}">
-          <input type="hidden" th:field="*{id}" />
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label" th:text="#{purl_server.purl.modify.path}">Path</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{path}" readonly="readonly" />
-            </div>
-          </div>
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label" th:text="#{purl_server.purl.modify.type}">Type of PURL</label>
-            <div class="col-sm-4">
-              <select class="form-control" th:field="*{type}" th:readonly="${#lists.isEmpty(errors) AND created == true}">
-                <option value="FOUND_302" th:text="#{purl_server.purl.modify.type.found_302}">Simple redirection to a target URL (302)</option>
-                <option value="PARTIAL" th:text="#{purl_server.purl.modify.type.partial}">Partial-redirect PURL</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label" th:text="#{purl_server.purl.modify.target}">Target URL</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" th:field="*{target}" th:readonly="${#lists.isEmpty(errors) AND created == true}" />
-            </div>
-          </div>
-          <div class="form-group row" th:unless="${created}">
-            <div class="col-sm-3 offset-sm-2">
-              <button type="submit" class="btn btn-primary" th:text="#{purl_server.purl.modify.submit}">Submit</button>
-            </div>
-          </div>
-        </form>
       </div>
     </div>
   </div>

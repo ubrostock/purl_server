@@ -21,32 +21,32 @@
             <form th:action="@{/admin/manager/user/delete}" method="post" th:object="${user}">
               <input type="hidden" th:field="*{id}" />
               <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Username</label>
-                <div class="col-sm-3">
+                <label class="col-sm-4 col-form-label">Username</label>
+                <div class="col-sm-6">
                   <input type="text" class="form-control" th:field="*{login}" readonly="readonly" />
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Full name</label>
-                <div class="col-sm-3">
+                <label class="col-sm-4 col-form-label">Full name</label>
+                <div class="col-sm-6">
                   <input type="text" class="form-control" th:field="*{fullname}" readonly="readonly" />
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-2 col-form-label">affiliation</label>
-                <div class="col-sm-3">
+                <label class="col-sm-4 col-form-label">affiliation</label>
+                <div class="col-sm-6">
                   <input type="text" class="form-control" th:field="*{affiliation}" readonly="readonly" />
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-2 col-form-label">E-Mail</label>
-                <div class="col-sm-3">
+                <label class="col-sm-4 col-form-label">E-Mail</label>
+                <div class="col-sm-6">
                   <input type="text" class="form-control" th:field="*{email}" readonly="readonly" />
                 </div>
               </div>
               <div class="form-group row">
-                <div class="col-sm-3 offset-sm-2">
-                  <button type="submit" class="btn btn-light btn-lg">delete</button>
+                <div class="col-sm-6 offset-sm-4">
+                  <button type="submit" class="btn btn-danger">delete</button>
                 </div>
               </div>
             </form>

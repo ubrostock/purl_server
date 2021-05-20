@@ -44,7 +44,7 @@ public class PurlClient {
 
     public static String TYPE_302 = "FOUND_302";
 
-    public static String TYPE_PARTIAL = "PARTIAL";
+    public static String TYPE_PARTIAL_302 = "PARTIAL_302";
 
     public static String TYPE_410 = "GONE_410";
 
@@ -58,8 +58,8 @@ public class PurlClient {
     public static void main(String[] args) {
         PurlClient app = new PurlClient("http://localhost:8080");
         app.login("admin", "admin");
-        app.createPURL("/test/bcd", "http://google.de/", TYPE_PARTIAL);
-        app.updatePURL("/test", "http://test1", TYPE_PARTIAL);
+        app.createPURL("/test/bcd", "http://google.de/", TYPE_PARTIAL_302);
+        app.updatePURL("/test", "http://test1", TYPE_PARTIAL_302);
     }
 
     public PurlClient(String basicURL) {

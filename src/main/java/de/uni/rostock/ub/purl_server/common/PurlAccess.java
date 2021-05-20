@@ -169,7 +169,7 @@ public class PurlAccess {
             if (currentPurl.get().getStatus() == Status.DELETED) {
 
             } else {
-                if (currentPurl.get().getType() == Type.PARTIAL) {
+                if (currentPurl.get().getType() == Type.PARTIAL_302) {
                     if (purl.getPath().length() == currentPurl.get().getPath().length()) {
                         errorList.add(messages.getMessage("purl_server.error.validate.purl.create.exist", null, Locale.getDefault()));
                     }

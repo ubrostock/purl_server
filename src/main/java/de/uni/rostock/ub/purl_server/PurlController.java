@@ -62,7 +62,7 @@ public class PurlController {
         Optional<Purl> op = purlDAO.retrievePurl(path);
         if (op.isPresent()) {
             Purl p = op.get();
-            if (p.getType() == Type.PARTIAL) {
+            if (p.getType() == Type.PARTIAL_302) {
                 String restPath = path.substring(p.getPath().length());
                 return "redirect:" + p.getTarget() + restPath;
             }

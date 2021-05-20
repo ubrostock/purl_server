@@ -39,7 +39,7 @@ public class PurlTest {/*
 		try (CloseableHttpClient client = HttpClients.createDefault()) {
 			HttpPost httpPost = new HttpPost(adminHost + purlPath);
 
-			String json = "{\"type\":\"partial\",\"target\":\"http://matrikel.uni-rostock.de/id/\"}";
+			String json = "{\"type\":\"partial_302\",\"target\":\"http://matrikel.uni-rostock.de/id/\"}";
 			StringEntity entity = new StringEntity(json);
 			httpPost.setEntity(entity);
 			httpPost.setHeader("Accept", "application/json");

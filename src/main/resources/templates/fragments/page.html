@@ -7,9 +7,9 @@
 </head>
 <body>
   <div th:fragment="title">
-    <div class="row">
+    <div class="row mt-3">
       <div class="col-8">
-        <h2 class="card-title mb-3" th:text="#{purl_server.fragments.page.title}">UB Rostock PURL Server</h2>
+        <h2 class="card-title mb-3" th:utext="${@environment.getProperty('purl_server.application.title')}">PURL Server</h2>
       </div>
       <div class="col-4">
         <form th:action="@{/admin/logout}" method="POST" class="form-inline border border-secondary" sec:authorize="isAuthenticated()">
@@ -27,7 +27,7 @@
   <div class="row" th:fragment="navigation">
     <div class="col bg-light mx-3 px-0 mb-3">
       <nav class="navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand" th:href="@{/admin/manager}" th:text="#{purl_server.fragments.page.nav.title}">PURL Administration</a>
+        <a class="navbar-brand pt-0" th:href="@{/admin/manager}" th:text="#{purl_server.fragments.page.nav.title}">PURL Administration</a>
         <div class="collapse navbar-collapse">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item dropdown">
@@ -58,7 +58,7 @@
               </div>
             </li>
             <li class="nav-item">
-              <a class="btn btn-link" th:href="@{/admin/manager/help}" th:text="#{purl_server.fragments.page.nav.dropdown.help}">Help</a>
+              <a class="nav-link" th:href="@{/admin/manager/help}" th:text="#{purl_server.fragments.page.nav.dropdown.help}">Help</a>
             </li>
           </ul>
           

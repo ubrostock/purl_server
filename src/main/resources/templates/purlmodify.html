@@ -31,7 +31,7 @@
                 <div class="col-sm-8">
                   <select class="form-control" th:field="*{type}" th:readonly="${#lists.isEmpty(errors) AND created == true}">
                     <option value="FOUND_302" th:text="#{purl_server.purl.modify.type.found_302}">Simple redirection to a target URL (302)</option>
-                    <option value="PARTIAL" th:text="#{purl_server.purl.modify.type.partial}">Partial-redirect PURL</option>
+                    <option value="PARTIAL_302" th:text="#{purl_server.purl.modify.type.partial}">Partial-redirect PURL</option>
                   </select>
                 </div>
               </div>

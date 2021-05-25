@@ -183,8 +183,8 @@ public class PurlDAO {
 	 */
 	public Optional<Purl> modifyPurl(Purl p, User u) {
 		if(purlAccess.canModifyPurl(p, u)) {
-			jdbcTemplate.update("UPDATE purl SET path = ?, target = ?, lastmodified = NOW(), status = ? WHERE id = ?;", p.getPath(), p.getTarget(),
-					Status.MODIFIED.name(), p.getId());
+			jdbcTemplate.update("UPDATE purl SET path = ?, target = ?, lastmodified = NOW(), status = ?, type = ? WHERE id = ?;", p.getPath(), p.getTarget(),
+					Status.MODIFIED.name(), p.getType().name(), p.getId());
 			jdbcTemplate.update("INSERT INTO purlhistory (purl_id, type, target, modified, status) VALUES(?,?,?,NOW(),? );", p.getId(), p.getType().name(),
 					p.getTarget(), Status.MODIFIED.name());
 		}else {

@@ -168,8 +168,8 @@ public class UserDAO {
 	public void modifyUser(User userObject, User u) {
 		if(u.isAdmin()) {
 			jdbcTemplate.update(
-					"UPDATE user SET login = ?, password_sha = ?, fullname = ?, affiliation = ?, email = ?, comment = ?, lastmodified = NOW(), status = ? WHERE id = ?;",
-					userObject.getLogin(), userObject.getPasswordSHA(), userObject.getFullname(), userObject.getAffiliation(), userObject.getEmail(), userObject.getComment(), Status.MODIFIED.name() ,userObject.getId());
+					"UPDATE user SET login = ?, fullname = ?, affiliation = ?, email = ?, comment = ?, lastmodified = NOW(), status = ? WHERE id = ?;",
+					userObject.getLogin(), userObject.getFullname(), userObject.getAffiliation(), userObject.getEmail(), userObject.getComment(), Status.MODIFIED.name() ,userObject.getId());
 		} else {
 			LOGGER.error(messages.getMessage("purl_server.error.user.modify.user", null, Locale.getDefault()));
 		}

@@ -127,7 +127,7 @@ public class DomainDAO {
 		if(isTombstoned) {
 			paramStatus = 10;
 		}
-		List<Domain> domainList = jdbcTemplate.query("SELECT d.*, u.* FROM user u, domain d, domainuser du WHERE du.user_id = du.domain_id AND (path LIKE ?) AND (d.status < ?) AND (name LIKE ?) AND (login LIKE ?) GROUP BY d.id ORDER BY d.path LIMIT 50;", new DomainRowMapper(), paramPath, paramStatus, paramName,paramLogin );
+		List<Domain> domainList = jdbcTemplate.query("SELECT d.* FROM user u, domain d, domainuser du WHERE du.user_id = du.domain_id AND (path LIKE ?) AND (d.status < ?) AND (name LIKE ?) AND (login LIKE ?) GROUP BY d.id ORDER BY d.path LIMIT 50;", new DomainRowMapper(), paramPath, paramStatus, paramName,paramLogin );
 		for(Domain d: domainList){
 		List<DomainUser> list = jdbcTemplate.query("SELECT u.*, du.* FROM user u JOIN domainuser du ON u.id = du.user_id WHERE du.domain_id = ?;", new Object[] {d.getId()}, new DomainUserRowMapper());
 		d.getDomainUserList().addAll(list);

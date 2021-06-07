@@ -171,7 +171,7 @@ public class PurlDAO {
 			jdbcTemplate.update("INSERT INTO purlhistory (purl_id, type, target, modified, status) VALUES(?,?,?,NOW(),? );", purlId.getKey().intValue(), p.getType().name(),
 					p.getTarget(), Status.CREATED.name());
 		}else {
-			LOGGER.error(messages.getMessage("purl_server.error.user.create.purl", new Object[] {p.getDomainPath()}, Locale.getDefault()));
+			LOGGER.error(messages.getMessage("purl_server.error.user.create.purl.unauthorized", new Object[] {p.getDomainPath()}, Locale.getDefault()));
 		}
 		return retrievePurl(p.getPath());
 	}
@@ -188,7 +188,7 @@ public class PurlDAO {
 			jdbcTemplate.update("INSERT INTO purlhistory (purl_id, type, target, modified, status) VALUES(?,?,?,NOW(),? );", p.getId(), p.getType().name(),
 					p.getTarget(), Status.MODIFIED.name());
 		}else {
-			LOGGER.error(messages.getMessage("purl_server.error.user.modify.purl", new Object[] {p.getDomainPath()}, Locale.getDefault()));
+			LOGGER.error(messages.getMessage("purl_server.error.user.modify.purl.unauthorized", new Object[] {p.getDomainPath()}, Locale.getDefault()));
 		}
 		return retrievePurl(p.getPath());
 	}
@@ -205,7 +205,7 @@ public class PurlDAO {
 			jdbcTemplate.update("INSERT INTO purlhistory (purl_id, type, target, modified, status) VALUES(?,?,?,NOW(),? );", p.getId(), p.getType().name(), p.getTarget(),
 					Status.DELETED.name());
 		}else {
-			LOGGER.error(messages.getMessage("purl_server.error.user.delete.purl", new Object[] {p.getDomainPath()}, Locale.getDefault()));
+			LOGGER.error(messages.getMessage("purl_server.error.user.delete.purl.unauthorized", new Object[] {p.getDomainPath()}, Locale.getDefault()));
 		}
 	}
 }

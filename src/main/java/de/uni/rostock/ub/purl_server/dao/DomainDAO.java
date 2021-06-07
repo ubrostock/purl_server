@@ -168,7 +168,7 @@ public class DomainDAO {
 						du.isCanCreate(), du.isCanModify());
 			}
 		} else {
-			LOGGER.error(messages.getMessage("purl_server.error.user.create.domain", null, Locale.getDefault()));
+			LOGGER.error(messages.getMessage("purl_server.error.user.create.domain.unauthorized", null, Locale.getDefault()));
 		}
 		
 	}
@@ -188,7 +188,7 @@ public class DomainDAO {
 						du.isCanCreate(), du.isCanModify());
 			}
 		} else {
-			LOGGER.error(messages.getMessage("purl_server.error.user.modify.domain", null, Locale.getDefault()));
+			LOGGER.error(messages.getMessage("purl_server.error.user.modify.domain.unauthorized", null, Locale.getDefault()));
 		}
 	}
 	
@@ -200,7 +200,7 @@ public class DomainDAO {
 		if(u.isAdmin()) {
 			jdbcTemplate.update("UPDATE domain SET lastmodified = NOW(), status = ? WHERE path = ?", Status.DELETED.name(), path);
 		} else {
-			LOGGER.error(messages.getMessage("purl_server.error.user.delete.domain", null, Locale.getDefault()));
+			LOGGER.error(messages.getMessage("purl_server.error.user.delete.domain.unauthorized", null, Locale.getDefault()));
 		}
 		
 	}

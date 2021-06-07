@@ -269,7 +269,7 @@ public class AdminDomainController {
     private List<String> validateDomain(Domain domain) {
         List<String> errorList = new ArrayList<>();
         if (StringUtils.isEmpty(domain.getPath())) {
-            errorList.add(messages.getMessage("purl_server.error.validate.domain.path", null, Locale.getDefault()));
+            errorList.add(messages.getMessage("purl_server.error.validate.domain.path.empty", null, Locale.getDefault()));
         } else {
             if (domain.getPath().startsWith("/admin")) {
                 errorList.add(messages.getMessage("purl_server.error.validate.domain.path.start.admin", null, Locale.getDefault()));
@@ -282,7 +282,7 @@ public class AdminDomainController {
             }
         }
         if (StringUtils.isEmpty(domain.getName())) {
-            errorList.add(messages.getMessage("purl_server.error.validate.domain.name", null, Locale.getDefault()));
+            errorList.add(messages.getMessage("purl_server.error.validate.domain.name.empty", null, Locale.getDefault()));
         }
         List<String> logins = userDAO.retrieveLogins();
         for (DomainUser du : domain.getDomainUserList()) {

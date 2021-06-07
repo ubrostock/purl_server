@@ -159,7 +159,7 @@ public class PurlAccess {
     public List<String> validateCreatePurl(Purl purl, User u) {
         List<String> errorList = new ArrayList<>();
         if (StringUtils.isEmpty(purl.getPath())) {
-            errorList.add(messages.getMessage("purl_server.error.validate.purl.create.path", null, Locale.getDefault()));
+            errorList.add(messages.getMessage("purl_server.error.validate.purl.create.path.empty", null, Locale.getDefault()));
             return errorList;
         }
         Optional<Purl> currentPurl = purlDAO.retrievePurl(purl.getPath());
@@ -206,14 +206,14 @@ public class PurlAccess {
             domainDAO.retrieveDomain(purl).ifPresentOrElse(
                 d -> {
                     if (!canModifyPurl(d, u)) {
-                        errorList.add(messages.getMessage("purl_server.error.validate.user.modify.purl", null, Locale.getDefault()));
+                        errorList.add(messages.getMessage("purl_server.error.validate.user.modify.purl.unauthorized", null, Locale.getDefault()));
                     }
                 }, () -> {
                     errorList.add(messages.getMessage("purl_server.error.validate.domain.exist", new Object[] {purl.getDomainPath()}, Locale.getDefault()));
                 });
 
             if (purl.getStatus() == Status.DELETED) {
-                errorList.add(messages.getMessage("purl_server.error.validate.user.modify.deleted.purl", null, Locale.getDefault()));
+                errorList.add(messages.getMessage("purl_server.error.validate.user.modify.deleted.purl.unauthorized", null, Locale.getDefault()));
             }
         }
         return errorList;
@@ -244,7 +244,7 @@ public class PurlAccess {
             }
         }
         if (StringUtils.isEmpty(purl.getType())) {
-            errorList.add(messages.getMessage("purl_server.error.validate.purl.type.target", null, Locale.getDefault()));
+            errorList.add(messages.getMessage("purl_server.error.validate.purl.type.target.empty", null, Locale.getDefault()));
         }
         return errorList;
     }

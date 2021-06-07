@@ -156,7 +156,7 @@ public class UserDAO {
 					userObject.getLogin(), userObject.getPasswordSHA(), userObject.isAdmin(), userObject.getFullname(), userObject.getAffiliation(), userObject.getEmail(),
 					userObject.getComment(), 1);
 		} else {
-			LOGGER.error(messages.getMessage("purl_server.error.user.create.user", null, Locale.getDefault()));
+			LOGGER.error(messages.getMessage("purl_server.error.user.create.user.unauthorized", null, Locale.getDefault()));
 		}
 		
 	}
@@ -171,7 +171,7 @@ public class UserDAO {
 					"UPDATE user SET login = ?, fullname = ?, affiliation = ?, email = ?, comment = ?, lastmodified = NOW(), status = ? WHERE id = ?;",
 					userObject.getLogin(), userObject.getFullname(), userObject.getAffiliation(), userObject.getEmail(), userObject.getComment(), Status.MODIFIED.name() ,userObject.getId());
 		} else {
-			LOGGER.error(messages.getMessage("purl_server.error.user.modify.user", null, Locale.getDefault()));
+			LOGGER.error(messages.getMessage("purl_server.error.user.modify.user.unauthorized", null, Locale.getDefault()));
 		}
 	}
 
@@ -184,7 +184,7 @@ public class UserDAO {
 		if(u.isAdmin()) {
 			jdbcTemplate.update("UPDATE user SET lastmodified = NOW(), status = ? WHERE id = ?;", Status.DELETED.name(), userObject.getId());
 		} else {
-			LOGGER.error(messages.getMessage("purl_server.error.user.delete.user", null, Locale.getDefault()));
+			LOGGER.error(messages.getMessage("purl_server.error.user.delete.user.unauthorized", null, Locale.getDefault()));
 		}
 	}
 }

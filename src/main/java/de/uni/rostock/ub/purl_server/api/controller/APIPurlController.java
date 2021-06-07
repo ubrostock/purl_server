@@ -99,7 +99,7 @@ public class APIPurlController {
         String purlPath = "/" + new AntPathMatcher().extractPathWithinPattern("/api/purl/**", request.getRequestURI());
         if (inputPurl == null) {
             PurlServerError e = new PurlServerError(HttpStatus.NOT_FOUND.value(), messages.getMessage("purl_server.error.purl.create", null, Locale.getDefault()),
-                List.of(messages.getMessage("purl_server.error.purl.input", null, Locale.getDefault())));
+                List.of(messages.getMessage("purl_server.error.purl.input.empty", null, Locale.getDefault())));
             return new ResponseEntity<PurlServerError>(e, HttpStatus.NOT_FOUND);
         }
         inputPurl.setPath(purlPath);
@@ -142,7 +142,7 @@ public class APIPurlController {
         String purlPath = "/" + new AntPathMatcher().extractPathWithinPattern("/api/purl/**", request.getRequestURI());
         if (inputPurl == null) {
             PurlServerError e = new PurlServerError(HttpStatus.CONFLICT.value(), messages.getMessage("purl_server.error.purl.update", null, Locale.getDefault()),
-                List.of(messages.getMessage("purl_server.error.purl.input", null, Locale.getDefault())));
+                List.of(messages.getMessage("purl_server.error.purl.input.empty", null, Locale.getDefault())));
             return new ResponseEntity<PurlServerError>(e, HttpStatus.CONFLICT);
         }
         inputPurl.setPath(purlPath);
@@ -173,7 +173,7 @@ public class APIPurlController {
         }
         if (StringUtils.isEmpty(inputPurl.getTarget())) {
             PurlServerError e = new PurlServerError(HttpStatus.NOT_FOUND.value(), messages.getMessage("purl_server.error.purl.update", null, Locale.getDefault()),
-                List.of(messages.getMessage("purl_server.error.purl.target", null, Locale.getDefault())));
+                List.of(messages.getMessage("purl_server.error.purl.target.empty", null, Locale.getDefault())));
             return new ResponseEntity<PurlServerError>(e, HttpStatus.NOT_FOUND);
         } else {
             p.setTarget(inputPurl.getTarget());

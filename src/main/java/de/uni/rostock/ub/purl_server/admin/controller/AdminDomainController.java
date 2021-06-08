@@ -277,7 +277,7 @@ public class AdminDomainController {
             if (!domain.getPath().startsWith("/")) {
                 errorList.add(messages.getMessage("purl_server.error.validate.domain.path.start", null, Locale.getDefault()));
             }
-            if (!domain.getPath().matches("/[a-zA-Z0-9]+")) {
+            if (!domain.getPath().matches("/[-a-zA-Z0-9_]+")) {
                 errorList.add(messages.getMessage("purl_server.error.validate.domain.path.match", null, Locale.getDefault()));
             }
         }

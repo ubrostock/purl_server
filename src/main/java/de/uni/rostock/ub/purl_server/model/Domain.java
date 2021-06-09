@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Domain {
-	private int id;
+	private int id = -1;
 	private String path;
 	private String name;
 	private String comment;

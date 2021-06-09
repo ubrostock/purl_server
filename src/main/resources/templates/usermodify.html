@@ -16,57 +16,14 @@
             <div class="alert alert-danger" role="alert" th:if="${errors}" th:each="error : ${errors}">
               <span th:text="${error}"></span>
             </div>
-            <div th:if="${created}">
-              <span class="text-success" th:text="#{purl_server.user.modify.modified}">User modified!</span>
+            <div th:if="${created}" class="alert alert-success" th:text="#{purl_server.user.modify.modified}">
+              User modified!
             </div>
             <div id="errorPassword" class="alert alert-danger d-none">
               <span th:text="#{purl_server.user.modify.error_password}">Password and Re-Password are not the same!</span>
             </div>
             <form th:action="@{/admin/manager/user/modify}" method="post" th:object="${user}">
-              <input type="hidden" id="password_sha" th:field="*{passwordSHA}" />
-              <input type="hidden" th:field="*{id}" />
-              <div class="form-group row">
-                <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.modify.admin}">Admin</label>
-                <div class="col-sm-2">
-                  <input type="checkbox" class="form-control float-left w-25" th:field="*{admin}"
-                         th:readonly="${#lists.isEmpty(errors) AND created == true}" />
-                </div>
-              </div>
-              <div class="form-group row">
-                <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.modify.fullname}">Full name</label>
-                <div class="col-sm-8">
-                  <input type="text" class="form-control" th:field="*{fullname}" th:readonly="${#lists.isEmpty(errors) AND created == true}" />
-                </div>
-              </div>
-              <div class="form-group row">
-                <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.modify.affiliation}">Affiliation</label>
-                <div class="col-sm-8">
-                  <input type="text" class="form-control" th:field="*{affiliation}" th:readonly="${#lists.isEmpty(errors) AND created == true}" />
-                </div>
-              </div>
-              <div class="form-group row">
-                <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.modify.email}">E-Mail address</label>
-                <div class="col-sm-8">
-                  <input type="text" class="form-control" th:field="*{email}" th:readonly="${#lists.isEmpty(errors) AND created == true}" />
-                </div>
-              </div>
-              <div class="form-group row">
-                <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.modify.login}">Login</label>
-                <div class="col-sm-8">
-                  <input type="text" class="form-control" th:field="*{login}" th:readonly="${#lists.isEmpty(errors) AND created == true}" />
-                </div>
-              </div>
-              <div class="form-group row">
-                <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.modify.comment}">Comment</label>
-                <div class="col-sm-8">
-                  <textarea class="form-control" th:field="*{comment}" th:readonly="${#lists.isEmpty(errors) AND created == true}"></textarea>
-                </div>
-              </div>
-              <div class="form-group row" th:unless="${created}">
-                <div class="col-sm-6 offset-sm-4">
-                  <button type="submit" class="btn btn-primary" onclick="return encryptPassword();" th:text="#{purl_server.user.modify.submit}">Submit</button>
-                </div>
-              </div>
+              <div th:replace="fragments/forms :: userForm"></div>
             </form>
           </div>
           <div class="col">

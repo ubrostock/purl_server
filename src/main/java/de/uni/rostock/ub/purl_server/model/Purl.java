@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class Purl implements PurlServerResponse {
-	private int id;
+	private int id = -1;
 	private String path;
 	private Domain domain;
 	private int domainId;

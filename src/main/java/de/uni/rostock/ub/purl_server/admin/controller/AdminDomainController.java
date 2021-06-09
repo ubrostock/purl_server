@@ -137,6 +137,7 @@ public class AdminDomainController {
             model.addAttribute("created", true);
         } else {
             model.addAttribute("errors", errorList);
+            model.addAttribute("created", false);
         }
         model.addAttribute("domain", domain);
         model.addAttribute("usersLogin", userDAO.searchUsers("", "", "", "", false));

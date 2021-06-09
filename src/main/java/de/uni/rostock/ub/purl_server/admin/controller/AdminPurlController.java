@@ -21,6 +21,7 @@ package de.uni.rostock.ub.purl_server.admin.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -77,12 +78,18 @@ public class AdminPurlController {
         User u = purlAccess.retrieveCurrentUser();
         List<String> errorList = purlAccess.validateCreatePurl(purl, u);
         if (errorList.isEmpty()) {
-            purlDAO.createPurl(purl, u);
+            Optional<Purl> newPurl = purlDAO.createPurl(purl, u);
+            if(newPurl.isPresent()) {
+                model.addAttribute("purl", newPurl.get());
+            } else {
+                model.addAttribute("purl", purl); 
+            }
             model.addAttribute("created", true);
         } else {
+            model.addAttribute("purl", purl); 
             model.addAttribute("errors", errorList);
+            model.addAttribute("created", false);
         }
-        model.addAttribute("purl", purl);
         return "purlcreate";
     }
 
@@ -115,6 +122,7 @@ public class AdminPurlController {
             model.addAttribute("created", true);
         } else {
             model.addAttribute("errors", errorList);
+            model.addAttribute("created", false);
         }
         model.addAttribute("purl", purl);
         return "purlmodify";

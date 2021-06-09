@@ -84,6 +84,7 @@ public class AdminUserController {
 
 		} else {
 			model.addAttribute("errors", errorList);
+			model.addAttribute("created", false);
 		}
 
 		model.addAttribute("user", user);
@@ -124,6 +125,7 @@ public class AdminUserController {
 		}
 		if (!errorList.isEmpty()) {
 			model.addAttribute("errors", errorList);
+			model.addAttribute("created", false);
 		}
 		model.addAttribute("user", user);
 		return "usermodify";

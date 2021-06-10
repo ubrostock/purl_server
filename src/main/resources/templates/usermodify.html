@@ -32,6 +32,13 @@
             </div>
           </div>
         </div>
+        <div class="row mt-3" th:if="${created}">
+          <div class="col">
+            <a class="btn btn-secondary" th:href="@{/admin/manager/user/modify?id=__${user.id}__}" th:text="#{purl_server.user.create.goto.modify}">modify</a>
+            <a class="btn btn-secondary" th:href="@{/admin/manager/user/create}" th:text="#{purl_server.user.create.goto.create}">Register a new user</a> 
+            <a class="btn btn-secondary" th:href="@{/admin/manager/user/search}" th:text="#{purl_server.user.create.goto.search}">Search for a user</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>

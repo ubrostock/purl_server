@@ -27,8 +27,14 @@
             <span th:text="#{purl_server.domain.modify.help}">Help...</span>
           </div>
         </div>
-        
+      </div>
+      <div class="row mt-3" th:if="${created}">
+        <div class="col">
+          <a class="btn btn-secondary" th:href="@{/admin/manager/domain/modify?id=__${domain.id}__}" th:text="#{purl_server.domain.create.goto.modify}">modify</a>
+          <a class="btn btn-secondary" th:href="@{/admin/manager/domain/create}" th:text="#{purl_server.domain.create.goto.create}">Create a new domain</a>
+          <a class="btn btn-secondary" th:href="@{/admin/manager/domain/search}" th:text="#{purl_server.domain.create.goto.search}">Search for a domain</a>
         </div>
+      </div>
       </div>
     </div>
   </div>

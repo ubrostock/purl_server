@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import de.uni.rostock.ub.purl_server.common.PurlAccess;
+import de.uni.rostock.ub.purl_server.common.PurlValidate;
 import de.uni.rostock.ub.purl_server.dao.DomainDAO;
 import de.uni.rostock.ub.purl_server.dao.PurlDAO;
 import de.uni.rostock.ub.purl_server.model.Purl;
@@ -44,6 +45,9 @@ import de.uni.rostock.ub.purl_server.model.User;
 public class AdminPurlController {
     @Autowired
     PurlAccess purlAccess;
+    
+    @Autowired
+    PurlValidate purlValidate;
 
     @Autowired
     PurlDAO purlDAO;
@@ -76,7 +80,7 @@ public class AdminPurlController {
     @RequestMapping(path = "/admin/manager/purl/create", method = RequestMethod.POST)
     public String createPurl(@ModelAttribute Purl purl, HttpServletRequest request, Model model) {
         User u = purlAccess.retrieveCurrentUser();
-        List<String> errorList = purlAccess.validateCreatePurl(purl, u);
+        List<String> errorList = purlValidate.validateCreatePurl(purl, u);
         if (errorList.isEmpty()) {
             Optional<Purl> newPurl = purlDAO.createPurl(purl, u);
             if(newPurl.isPresent()) {
@@ -116,7 +120,7 @@ public class AdminPurlController {
     @RequestMapping(path = "/admin/manager/purl/modify", method = RequestMethod.POST)
     public String modifyPurl(@ModelAttribute Purl purl, HttpServletRequest request, Model model) {
         User u = purlAccess.retrieveCurrentUser();
-        List<String> errorList = purlAccess.validateModifyPurl(purl, u);
+        List<String> errorList = purlValidate.validateModifyPurl(purl, u);
         if (errorList.isEmpty()) {
             purlDAO.modifyPurl(purl, u);
             model.addAttribute("created", true);

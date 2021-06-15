@@ -14,31 +14,31 @@
           <div class="col">
             <form th:action="@{/admin/manager/domain/search}" method="post">
               <div class="form-group row">
-                <label class="col-sm-4 col-form-label" th:text="#{purl_server.domain.search.path}">Path</label>
-                <div class="col-sm-6">
+                <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.search.path}">Path</label>
+                <div class="col-sm-9">
                   <input type="text" class="form-control" th:value="${searchPath}" name="searchPath" />
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-4 col-form-label" th:text="#{purl_server.domain.search.name}">Name</label>
-                <div class="col-sm-6">
+                <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.search.name}">Name</label>
+                <div class="col-sm-9">
                   <input type="text" class="form-control" th:value="${searchName}" name="searchName" />
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-4 col-form-label" th:text="#{purl_server.domain.search.user}">User</label>
-                <div class="col-sm-6">
+                <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.search.user}">User</label>
+                <div class="col-sm-9">
                   <input type="text" class="form-control" th:value=${searchUser} name="searchUser" />
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-4 col-form-label" th:text="#{purl_server.domain.search.tombstoned}">Tombstoned domains</label>
+                <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.search.tombstoned}">Tombstoned domains</label>
                 <div class="col-sm-2">
                   <input type="checkbox" class="form-control float-left w-25" th:checked="${searchTombstonedDomain}" name="searchTombstonedDomain" />
                 </div>
               </div>
               <div class="form-group row">
-                <div class="col-sm-6 offset-sm-4">
+                <div class="col-sm-9 offset-sm-3">
                   <button type="submit" class="btn btn-primary" th:text="#{purl_server.domain.search.search}">Search</button>
                 </div>
               </div>

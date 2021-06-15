@@ -14,25 +14,25 @@
           <div class="col">
             <form th:action="@{/admin/manager/purl/search}" method="post">
               <div class="form-group row">
-                <label class="col-sm-4 col-form-label">Path</label>
-                <div class="col-sm-8">
+                <label class="col-sm-3 col-form-label">Path</label>
+                <div class="col-sm-9">
                   <input type="text" class="form-control" th:value="${path}" name="path" />
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-4 col-form-label">Target URL</label>
-                <div class="col-sm-8">
+                <label class="col-sm-3 col-form-label">Target URL</label>
+                <div class="col-sm-9">
                   <input type="text" class="form-control" th:value="${targetURL}" name="targetURL" />
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-4 col-form-label">Tombstoned PURLs</label>
+                <label class="col-sm-3 col-form-label">Tombstoned PURLs</label>
                 <div class="col-sm-2">
                   <input type="checkbox" class="form-control float-left w-25" th:checked="${tombstoned}" name="tombstoned" />
                 </div>
               </div>
               <div class="form-group row">
-                <div class="col-sm-6 offset-sm-4">
+                <div class="col-sm-9 offset-sm-3">
                   <button type="submit" class="btn btn-primary">Search</button>
                 </div>
               </div>

@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,15 +35,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import de.uni.rostock.ub.purl_server.common.PurlAccess;
 import de.uni.rostock.ub.purl_server.dao.UserDAO;
 import de.uni.rostock.ub.purl_server.model.User;
+import de.uni.rostock.ub.purl_server.validate.UserValidateService;
 
 @Controller
 public class AdminUserController {
 	@Autowired
 	PurlAccess purlAccess;
+	
+	@Autowired
+	UserValidateService userValidateService;
+	
 	@Autowired
 	UserDAO userDAO;
-
-	private static String SHA_EMPTY_STRING = "da39a3ee5e6b4b0d3255bfef95601890afd80709";
 
 	/**
 	 * Show the user create page
@@ -68,7 +70,7 @@ public class AdminUserController {
 	@RequestMapping(path = "/admin/manager/user/create", method = RequestMethod.POST)
 	public String createUser(@ModelAttribute User user, HttpServletRequest request, Model model) {
 		User loginUser = purlAccess.retrieveCurrentUser();
-		List<String> errorList = validateUser(user);
+		List<String> errorList = userValidateService.validateUser(user);
 		if (loginUser.isAdmin()) {
 			try {
 
@@ -114,7 +116,7 @@ public class AdminUserController {
 	@RequestMapping(path = "/admin/manager/user/modify", method = RequestMethod.POST)
 	public String modifyUser(@ModelAttribute User user, HttpServletRequest request, Model model) {
 		User loginUser = purlAccess.retrieveCurrentUser();
-		List<String> errorList = validateUser(user);
+		List<String> errorList = userValidateService.validateUser(user);
 		if (loginUser.isAdmin() || loginUser.getLogin().equals(user.getLogin())) {
 			if (errorList.isEmpty()) {
 				userDAO.modifyUser(user, loginUser);
@@ -210,20 +212,5 @@ public class AdminUserController {
 		return "userdelete";
 	}
 
-	/**
-	 * Validate the user
-	 * 
-	 * @param user
-	 * @return the error list
-	 */
-	private List<String> validateUser(User user) {
-		List<String> errorList = new ArrayList<>();
-		if (SHA_EMPTY_STRING.equals(user.getPasswordSHA())) {
-			errorList.add("Password can not be empty!");
-		}
-		if (StringUtils.isEmpty(user.getLogin())) {
-			errorList.add("Username can not be empty!");
-		}
-		return errorList;
-	}
+	
 }

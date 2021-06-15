@@ -1,4 +1,4 @@
-package de.uni.rostock.ub.purl_server.common;
+package de.uni.rostock.ub.purl_server.validate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,9 +7,10 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import de.uni.rostock.ub.purl_server.common.PurlAccess;
 import de.uni.rostock.ub.purl_server.dao.DomainDAO;
 import de.uni.rostock.ub.purl_server.dao.PurlDAO;
 import de.uni.rostock.ub.purl_server.model.Domain;
@@ -18,8 +19,8 @@ import de.uni.rostock.ub.purl_server.model.Status;
 import de.uni.rostock.ub.purl_server.model.Type;
 import de.uni.rostock.ub.purl_server.model.User;
 
-@Component
-public class PurlValidate {
+@Service
+public class PurlValidateService {
     @Autowired
     DomainDAO domainDAO;
     
@@ -43,6 +44,24 @@ public class PurlValidate {
             errorList.add(messages.getMessage("purl_server.error.validate.purl.create.path.empty", null, Locale.getDefault()));
             return errorList;
         }
+        
+        errorList.addAll(validatePurl(purl));
+        if (errorList.isEmpty()) {
+            Optional<Domain> d = domainDAO.retrieveDomain(purl);
+            if(d.isPresent()) {
+               if (d.get().getStatus() == Status.DELETED) {
+                   errorList.add(messages.getMessage("purl_server.error.validate.domain.deleted", new Object[] {d.get().getPath()}, Locale.getDefault()));
+               } else if (!purlAccess.canCreatePurl(d.get(), u)) {
+                   errorList.add(messages.getMessage("purl_server.error.validate.domain.unauthorized", new Object[] {d.get().getPath()}, Locale.getDefault()));
+               }
+            }else {
+                errorList.add(messages.getMessage("purl_server.error.validate.domain.exist", new Object[] {purl.getDomainPath()}, Locale.getDefault()));
+            }
+        } 
+        if(!errorList.isEmpty()) {
+            return errorList;
+        }
+        
         Optional<Purl> currentPurl = purlDAO.retrievePurl(purl.getPath());
         if (currentPurl.isEmpty()) {
 
@@ -60,17 +79,6 @@ public class PurlValidate {
             }
         }
 
-        errorList.addAll(validatePurl(purl));
-        if (errorList.isEmpty()) {
-            Domain d = domainDAO.retrieveDomain(purl).orElseThrow();
-            if (d == null) {
-                errorList.add(messages.getMessage("purl_server.error.validate.domain.exist", new Object[] {purl.getDomainPath()}, Locale.getDefault()));
-            } else if (d.getStatus() == Status.DELETED) {
-                errorList.add(messages.getMessage("purl_server.error.validate.domain.deleted", new Object[] {d.getPath()}, Locale.getDefault()));
-            } else if (!purlAccess.canCreatePurl(d, u)) {
-                errorList.add(messages.getMessage("purl_server.error.validate.domain.unauthorized", null, Locale.getDefault()));
-            }
-        }
         return errorList;
     }
 

@@ -44,11 +44,11 @@
                 Domains <span class="caret"></span>
               </a>
               <div class="dropdown-menu" aria-labelledby="domainDropdown">
-                <a class="dropdown-item" id="dropdownCreateDomain" th:href="@{/admin/manager/domain/create}" th:text="#{purl_server.fragments.page.nav.dropdown.domain.create}">Create a new domain</a>
+                <a class="dropdown-item" id="dropdownCreateDomain" th:href="@{/admin/manager/domain/create}" th:text="#{purl_server.fragments.page.nav.dropdown.domain.create}" sec:authorize="hasRole('ROLE_ADMIN')">Create a new domain</a>
                 <a class="dropdown-item" id="dropdownSearchDomain" th:href="@{/admin/manager/domain/search}" th:text="#{purl_server.fragments.page.nav.dropdown.domain.search}">Search for a domain</a>
               </div>
             </li>
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown" sec:authorize="hasRole('ROLE_ADMIN')">
               <a class="nav-link dropdown-toggle" id="userDropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" th:text="#{purl_server.fragments.page.nav.dropdown.user.title}">
                 Users <span class="caret"></span>
               </a>

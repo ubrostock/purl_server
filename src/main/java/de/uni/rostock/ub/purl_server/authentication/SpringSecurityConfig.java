@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -32,6 +33,7 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     DataSource dataSource;
@@ -91,7 +93,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
             .usersByUsernameQuery(
                 "SELECT login,password_sha, (status = 'CREATED' OR status = 'MODIFIED') FROM user WHERE login = ?;")
             .authoritiesByUsernameQuery(
-                "SELECT * FROM (SELECT login, 'USER' FROM user UNION SELECT login, 'ADMIN' FROM user WHERE admin = true) AS x WHERE x.login = ?;");
+                "SELECT * FROM (SELECT login, 'ROLE_USER' FROM user UNION SELECT login, 'ROLE_ADMIN' FROM user WHERE admin = true) AS x WHERE x.login = ?;");
     }
 
 }

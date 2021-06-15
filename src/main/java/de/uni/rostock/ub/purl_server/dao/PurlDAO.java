@@ -147,8 +147,6 @@ public class PurlDAO {
 	 * @param p
 	 */
 	public Optional<Purl> createPurl(Purl p, User u) {
-		
-		if(purlAccess.canCreatePurl(p, u)) {
 			int domainId = jdbcTemplate.queryForObject("SELECT id FROM domain WHERE path = ?;", Integer.class, p.getDomainPath());
 			KeyHolder purlId = new GeneratedKeyHolder();
 
@@ -167,12 +165,9 @@ public class PurlDAO {
 	                return ps;
 				}
 			}, purlId);
-			
 			jdbcTemplate.update("INSERT INTO purlhistory (purl_id, type, target, modified, status) VALUES(?,?,?,NOW(),? );", purlId.getKey().intValue(), p.getType().name(),
 					p.getTarget(), Status.CREATED.name());
-		}else {
-			LOGGER.error(messages.getMessage("purl_server.error.user.create.purl.unauthorized", new Object[] {p.getDomainPath()}, Locale.getDefault()));
-		}
+		
 		return retrievePurl(p.getPath());
 	}
 
@@ -182,14 +177,11 @@ public class PurlDAO {
 	 * @param purl
 	 */
 	public Optional<Purl> modifyPurl(Purl p, User u) {
-		if(purlAccess.canModifyPurl(p, u)) {
+
 			jdbcTemplate.update("UPDATE purl SET path = ?, target = ?, lastmodified = NOW(), status = ?, type = ? WHERE id = ?;", p.getPath(), p.getTarget(),
 					Status.MODIFIED.name(), p.getType().name(), p.getId());
 			jdbcTemplate.update("INSERT INTO purlhistory (purl_id, type, target, modified, status) VALUES(?,?,?,NOW(),? );", p.getId(), p.getType().name(),
 					p.getTarget(), Status.MODIFIED.name());
-		}else {
-			LOGGER.error(messages.getMessage("purl_server.error.user.modify.purl.unauthorized", new Object[] {p.getDomainPath()}, Locale.getDefault()));
-		}
 		return retrievePurl(p.getPath());
 	}
 	
@@ -199,13 +191,9 @@ public class PurlDAO {
 	 * @param path
 	 */
 	public void deletePurl(Purl p, User u) {
-		if(purlAccess.canModifyPurl(p, u)) {
 			jdbcTemplate.update("UPDATE purl SET lastmodified = NOW(), status = ?, type = ? WHERE path = ?", Status.DELETED.name(), Type.GONE_410.name(), p.getPath());
 			p.setType(Type.GONE_410);
 			jdbcTemplate.update("INSERT INTO purlhistory (purl_id, type, target, modified, status) VALUES(?,?,?,NOW(),? );", p.getId(), p.getType().name(), p.getTarget(),
 					Status.DELETED.name());
-		}else {
-			LOGGER.error(messages.getMessage("purl_server.error.user.delete.purl.unauthorized", new Object[] {p.getDomainPath()}, Locale.getDefault()));
-		}
 	}
 }

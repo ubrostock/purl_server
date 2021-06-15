@@ -25,13 +25,9 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -53,10 +49,6 @@ public class DomainDAO {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
-	@Autowired
-	private MessageSource messages;
-
-	private static Logger LOGGER = LoggerFactory.getLogger(DomainDAO.class);
 	/**
 	 * Retrieve a domain by their path
 	 * @param path
@@ -139,8 +131,7 @@ public class DomainDAO {
 	 * Create a domain
 	 * @param domain
 	 */
-	public void createDomain(Domain domain, User u) {
-		if(u.isAdmin()) {
+	public Optional<Domain> createDomain(Domain domain, User u) {
 			KeyHolder domainHolder = new GeneratedKeyHolder();
 			jdbcTemplate.update(new PreparedStatementCreator() {
 				@Override
@@ -167,18 +158,14 @@ public class DomainDAO {
 				jdbcTemplate.update("INSERT INTO domainuser (user_id, domain_id, can_create, can_modify) VALUES(?,?,?,?);", userId, domain.getId(),
 						du.isCanCreate(), du.isCanModify());
 			}
-		} else {
-			LOGGER.error(messages.getMessage("purl_server.error.user.create.domain.unauthorized", null, Locale.getDefault()));
-		}
-		
+		return retrieveDomain(domain.getPath());
 	}
 
 	/**
 	 * Modify a domain
 	 * @param domain
 	 */
-	public void modifyDomain(Domain domain, User u) {
-		if(u.isAdmin()) {
+	public Optional<Domain> modifyDomain(Domain domain, User u) {
 			jdbcTemplate.update("UPDATE domain SET path = ?, name = ?, comment = ?, lastmodified = NOW(), status = 2 WHERE id = ?;", domain.getPath(),
 					domain.getName(), domain.getComment(), domain.getId());
 			jdbcTemplate.update("DELETE FROM domainuser WHERE domain_id = ?", domain.getId());
@@ -187,9 +174,7 @@ public class DomainDAO {
 				jdbcTemplate.update("INSERT INTO domainuser (user_id, domain_id, can_create, can_modify) VALUES(?,?,?,?);", userId, domain.getId(),
 						du.isCanCreate(), du.isCanModify());
 			}
-		} else {
-			LOGGER.error(messages.getMessage("purl_server.error.user.modify.domain.unauthorized", null, Locale.getDefault()));
-		}
+			return retrieveDomain(domain.getPath());
 	}
 	
 	/**
@@ -197,11 +182,6 @@ public class DomainDAO {
 	 * @param domain
 	 */
 	public void deleteDomain(String path, User u) {
-		if(u.isAdmin()) {
-			jdbcTemplate.update("UPDATE domain SET lastmodified = NOW(), status = ? WHERE path = ?", Status.DELETED.name(), path);
-		} else {
-			LOGGER.error(messages.getMessage("purl_server.error.user.delete.domain.unauthorized", null, Locale.getDefault()));
-		}
-		
+	    jdbcTemplate.update("UPDATE domain SET lastmodified = NOW(), status = ? WHERE path = ?", Status.DELETED.name(), path);
 	}
 }

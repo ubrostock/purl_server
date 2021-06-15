@@ -37,7 +37,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import de.uni.rostock.ub.purl_server.common.PurlAccess;
-import de.uni.rostock.ub.purl_server.common.PurlValidate;
 import de.uni.rostock.ub.purl_server.dao.DomainDAO;
 import de.uni.rostock.ub.purl_server.dao.PurlDAO;
 import de.uni.rostock.ub.purl_server.dao.UserDAO;
@@ -47,6 +46,7 @@ import de.uni.rostock.ub.purl_server.model.PurlServerError;
 import de.uni.rostock.ub.purl_server.model.PurlServerResponse;
 import de.uni.rostock.ub.purl_server.model.Status;
 import de.uni.rostock.ub.purl_server.model.User;
+import de.uni.rostock.ub.purl_server.validate.PurlValidateService;
 
 @Controller
 public class APIPurlController {
@@ -54,7 +54,7 @@ public class APIPurlController {
     PurlAccess purlAccess;
 
     @Autowired
-    PurlValidate purlValidate;
+    PurlValidateService purlValidateService;
     
     @Autowired
     PurlDAO purlDAO;
@@ -108,7 +108,7 @@ public class APIPurlController {
         }
         inputPurl.setPath(purlPath);
         User u = purlAccess.retrieveUserFromRequest(request);
-        List<String> errorList = purlValidate.validateCreatePurl(inputPurl, u);
+        List<String> errorList = purlValidateService.validateCreatePurl(inputPurl, u);
         if (!errorList.isEmpty()) {
             // TODO Fehlerliste ausgeben als JSON
             PurlServerError e = new PurlServerError(HttpStatus.CONFLICT.value(), messages.getMessage("purl_server.error.purl.create", null, Locale.getDefault()),
@@ -151,7 +151,7 @@ public class APIPurlController {
         }
         inputPurl.setPath(purlPath);
         User u = purlAccess.retrieveUserFromRequest(request);
-        List<String> errorList = purlValidate.validateModifyPurl(inputPurl, u);
+        List<String> errorList = purlValidateService.validateModifyPurl(inputPurl, u);
         if (!errorList.isEmpty()) {
             PurlServerError e = new PurlServerError(HttpStatus.CONFLICT.value(), messages.getMessage("purl_server.error.purl.update", null, Locale.getDefault()),
                 errorList);

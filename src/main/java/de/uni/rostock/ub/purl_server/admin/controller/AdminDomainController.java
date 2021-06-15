@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -42,11 +43,15 @@ import de.uni.rostock.ub.purl_server.dao.UserDAO;
 import de.uni.rostock.ub.purl_server.model.Domain;
 import de.uni.rostock.ub.purl_server.model.DomainUser;
 import de.uni.rostock.ub.purl_server.model.User;
+import de.uni.rostock.ub.purl_server.validate.DomainValidateService;
 
 @Controller
 public class AdminDomainController {
     @Autowired
     PurlAccess purlAccess;
+    
+    @Autowired
+    DomainValidateService domainValidateService;
 
     @Autowired
     UserDAO userDAO;
@@ -63,6 +68,7 @@ public class AdminDomainController {
      * @param model
      * @return the domain create page
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/domain/create", method = RequestMethod.GET)
     public String showDomainCreate(Model model) {
         model.addAttribute("domain", new Domain());
@@ -77,25 +83,30 @@ public class AdminDomainController {
      * @param model
      * @return the domain create page
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/domain/create", method = RequestMethod.POST, params = "submit")
     public String createDomain(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
         cleanUpDomain(domain);
         User u = purlAccess.retrieveCurrentUser();
-        List<String> errorList = validateCreateDomain(domain, u);
+        List<String> errorList = domainValidateService.validateCreateDomain(domain, u);
         if (errorList.isEmpty()) {
-            domainDAO.createDomain(domain, u);
+            Optional<Domain> newDomain = domainDAO.createDomain(domain, u);
+            if(newDomain.isPresent()) {
+                model.addAttribute("domain", newDomain.get());
+            } else {
+                model.addAttribute("domain", domain);
+            }
             model.addAttribute("created", true);
         } else {
+            model.addAttribute("domain", domain);
             model.addAttribute("errors", errorList);
             model.addAttribute("created", false);
         }
-        model.addAttribute("domain", domain);
         model.addAttribute("usersLogin", userDAO.searchUsers("", "", "", "", false));
         return "domaincreate";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/domain/create", method = RequestMethod.POST, params = "addUser")
     public String createDomainAddUser(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
         model.addAttribute("domain", domain);
@@ -126,12 +137,12 @@ public class AdminDomainController {
      * @param model
      * @return the domain modify page
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/domain/modify", method = RequestMethod.POST, params = "submit")
     public String modifyDomain(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
         cleanUpDomain(domain);
         User u = purlAccess.retrieveCurrentUser();
-        List<String> errorList = validateModifyDomain(domain, u);
+        List<String> errorList = domainValidateService.validateModifyDomain(domain, u);
         if (errorList.isEmpty()) {
             domainDAO.modifyDomain(domain, u);
             model.addAttribute("created", true);
@@ -144,7 +155,7 @@ public class AdminDomainController {
         return "domainmodify";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/domain/modify", method = RequestMethod.POST, params = "addUser")
     public String modifyDomainAddUser(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
         model.addAttribute("domain", domain);
@@ -240,58 +251,5 @@ public class AdminDomainController {
                 it.remove();
             }
         }
-    }
-
-    public List<String> validateCreateDomain(Domain d, User u) {
-        List<String> errorList = new ArrayList<>();
-        domainDAO.retrieveDomain(d.getPath()).ifPresentOrElse(dd -> {
-            errorList.add(messages.getMessage("purl_server.error.validate.domain.already.exist", new Object[] {dd.getPath()}, Locale.getDefault()));
-        }, () -> {
-            errorList.addAll(validateDomain(d));
-        });
-        return errorList;
-    }
-
-    public List<String> validateModifyDomain(Domain d, User u) {
-        List<String> errorList = new ArrayList<>();
-        domainDAO.retrieveDomain(d.getPath()).ifPresentOrElse(dd -> {
-            errorList.addAll(validateDomain(d));
-        }, () -> {
-            errorList.add(messages.getMessage("purl_server.error.validate.domain.exist", new Object[] {d.getPath()}, Locale.getDefault()));
-        });
-        return errorList;
-    }
-
-    /**
-     * Validate the domain
-     * 
-     * @param domain
-     * @return the error list
-     */
-    private List<String> validateDomain(Domain domain) {
-        List<String> errorList = new ArrayList<>();
-        if (StringUtils.isEmpty(domain.getPath())) {
-            errorList.add(messages.getMessage("purl_server.error.validate.domain.path.empty", null, Locale.getDefault()));
-        } else {
-            if (domain.getPath().startsWith("/admin")) {
-                errorList.add(messages.getMessage("purl_server.error.validate.domain.path.start.admin", null, Locale.getDefault()));
-            }
-            if (!domain.getPath().startsWith("/")) {
-                errorList.add(messages.getMessage("purl_server.error.validate.domain.path.start", null, Locale.getDefault()));
-            }
-            if (!domain.getPath().matches("/[-a-zA-Z0-9_]+")) {
-                errorList.add(messages.getMessage("purl_server.error.validate.domain.path.match", null, Locale.getDefault()));
-            }
-        }
-        if (StringUtils.isEmpty(domain.getName())) {
-            errorList.add(messages.getMessage("purl_server.error.validate.domain.name.empty", null, Locale.getDefault()));
-        }
-        List<String> logins = userDAO.retrieveLogins();
-        for (DomainUser du : domain.getDomainUserList()) {
-            if (!logins.contains(du.getUser().getLogin())) {
-                errorList.add(messages.getMessage("purl_server.error.validate.domain.user", null, Locale.getDefault()));
-            }
-        }
-        return errorList;
     }
 }

@@ -32,6 +32,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -57,7 +58,7 @@ public class LoginController {
     private static final String SQL_SELECT_FOR_EMAIL = "SELECT login, email, fullname, password_reset_token FROM user WHERE login = ?;";
 
     private static final String SQL_UPATE_PASSWORD = "UPDATE user SET password = ?, password_reset_token=null WHERE password_reset_token = ?;";
-
+    
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -69,6 +70,9 @@ public class LoginController {
     
     @Autowired
     private MessageSource messages;
+    
+    @Value("$(purl_server.mail.from)")
+    private String mailFrom;
 
     @RequestMapping(value = "/admin/login")
     public ModelAndView login(HttpServletRequest request) {
@@ -163,7 +167,7 @@ public class LoginController {
                 .queryParam("token", token).build();
             URI uri = uriComponents.encode().toUri();
             MimeMessageHelper mailHelper = new MimeMessageHelper(mailSender.createMimeMessage(), true);
-            mailHelper.setFrom("digibib.ub@uni-rostock.de");
+            mailHelper.setFrom(mailFrom);
             mailHelper.setTo(email);
             mailHelper
                 .setSubject(context.getMessage("purl_server.email.password_reset.subject", null, Locale.getDefault()));

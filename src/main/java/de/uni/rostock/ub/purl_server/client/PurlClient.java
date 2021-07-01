@@ -32,12 +32,11 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Locale;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 
 public class PurlClient {
     private static Logger LOGGER = LoggerFactory.getLogger(PurlClient.class);
@@ -51,15 +50,15 @@ public class PurlClient {
     private String baiscURL = "";
 
     private HttpClient httpClient = null;
-    
-    @Autowired
-    private MessageSource messages;
 
     public static void main(String[] args) {
         PurlClient app = new PurlClient("http://localhost:8080");
-        app.login("admin", "admin");
-        app.createPURL("/test/bcd", "http://google.de/", TYPE_PARTIAL_302);
-        app.updatePURL("/test", "http://test1", TYPE_PARTIAL_302);
+        app.createPURL("/nureintest/testneu12345", "http://google.de/", TYPE_PARTIAL_302);
+        app.login("test", "test");
+  //      app.createPURL("/test/bcd", "http://google.de/", TYPE_PARTIAL_302);
+        app.createPURL("/nureintest/testneu12345", "http://google.de/", TYPE_PARTIAL_302);
+        app.updatePURL("/nureintest/testneu12345", "http://test1", TYPE_PARTIAL_302);
+        app.logout();
     }
 
     public PurlClient(String basicURL) {
@@ -80,33 +79,56 @@ public class PurlClient {
         httpClient = HttpClient.newBuilder().build();
     }
 
-    public void createPURL(String purl, String target, String type) {
+    public boolean createPURL(String purl, String target, String type) {
         String purlJson = "{\"type\":\"" + type + "\",\"target\":\"" + target + "\"}";
         HttpRequest request = HttpRequest.newBuilder().POST(BodyPublishers.ofString(purlJson))
             .header("Content-Type", "application/json").uri(URI.create(baiscURL + purl)).build();
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            LOGGER.debug(response.statusCode() + " - " + response.body());
+            if(response.statusCode() == HttpServletResponse.SC_CREATED) {
+                return true;
+            }
+            LOGGER.info(response.statusCode() + " - " + response.body());
         } catch (IOException | InterruptedException e) {
-            LOGGER.error(messages.getMessage("purl_server.error.purl.create", null, Locale.getDefault()), e);
-            e.printStackTrace();
+            LOGGER.error("Error creating a PURL!", e);
         }
+        return false;
     }
 
-    public void updatePURL(String purl, String target, String type) {
+    public boolean updatePURL(String purl, String target, String type) {
         String purlJson = "{\"type\":\"" + type + "\",\"target\":\"" + target + "\"}";
         HttpRequest request = HttpRequest.newBuilder().PUT(BodyPublishers.ofString(purlJson))
             .header("Content-Type", "application/json").uri(URI.create(baiscURL + purl))
             .build();
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            LOGGER.debug(response.statusCode() + " - " + response.body());
+            if(response.statusCode() == HttpServletResponse.SC_OK) {
+                return true;
+            }
+            LOGGER.info(response.statusCode() + " - " + response.body());
         } catch (IOException | InterruptedException e) {
-            LOGGER.error(messages.getMessage("purl_server.error.purl.update", null, Locale.getDefault()), e);
-            e.printStackTrace();
+            LOGGER.error("Error updating a PURL!", e);
         }
+        return false;
     }
 
+    public String showPURL(String purl) {
+       HttpRequest request = HttpRequest.newBuilder().GET()
+            .uri(URI.create(baiscURL + purl)).build();
+       try {
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        if(response.statusCode() == HttpServletResponse.SC_OK) {
+            return response.body();
+        }
+        if(response.statusCode() == HttpServletResponse.SC_NOT_FOUND) {
+            LOGGER.info("PURL " + purl + " not found!");
+        }
+       } catch (IOException | InterruptedException e) {
+           LOGGER.error("Error displaying a PURL!", e);
+       }
+       return null;
+    }
+    
     private static String sha1(String plain) {
         try {
             byte[] sha1 = MessageDigest.getInstance("SHA-1").digest(plain.getBytes());
@@ -116,5 +138,4 @@ public class PurlClient {
         }
         return null;
     }
-
 }

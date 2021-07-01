@@ -9,31 +9,31 @@
     <div th:replace="fragments/page :: navigation"></div>
     <div class="card border">
       <div class="card-body">
-        <h3 class="card-title">Search for a PURL</h3>
+        <h3 class="card-title" th:text="#{purl_server.purl.search.title}">Search for a PURL</h3>
         <div class="row">
           <div class="col">
             <form th:action="@{/admin/manager/purl/search}" method="post">
               <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Path</label>
+                <label class="col-sm-3 col-form-label" th:text="#{purl_server.purl.search.path}">Path</label>
                 <div class="col-sm-9">
                   <input type="text" class="form-control" th:value="${path}" name="path" />
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Target URL</label>
+                <label class="col-sm-3 col-form-label" th:text="#{purl_server.purl.search.target}">Target URL</label>
                 <div class="col-sm-9">
                   <input type="text" class="form-control" th:value="${targetURL}" name="targetURL" />
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Tombstoned PURLs</label>
+                <label class="col-sm-3 col-form-label" th:text="#{purl_server.purl.search.tombstoned}">Tombstoned PURLs</label>
                 <div class="col-sm-2">
                   <input type="checkbox" class="form-control float-left w-25" th:checked="${tombstoned}" name="tombstoned" />
                 </div>
               </div>
               <div class="form-group row">
                 <div class="col-sm-9 offset-sm-3">
-                  <button type="submit" class="btn btn-primary">Search</button>
+                  <button type="submit" class="btn btn-primary" th:text="#{purl_server.purl.search.search}">Search</button>
                 </div>
               </div>
             </form>

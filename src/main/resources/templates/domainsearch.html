@@ -71,8 +71,8 @@
             <br />
           </span>
         </td>
-        <td><a th:href="@{/admin/manager/domain/modify?id=__${d.id}__}" th:text="#{purl_server.domain.search.table.modify}">modify</a></td>
-        <td><a th:href="@{/admin/manager/domain/delete?id=__${d.id}__}" th:text="#{purl_server.domain.search.table.delete}">delete</a></td>
+        <td><a th:href="@{/admin/manager/domain/modify?id=__${d.id}__}" th:text="#{purl_server.domain.search.table.modify}" sec:authorize="hasRole('ROLE_ADMIN')">modify</a></td>
+        <td><a th:href="@{/admin/manager/domain/delete?id=__${d.id}__}" th:text="#{purl_server.domain.search.table.delete}" sec:authorize="hasRole('ROLE_ADMIN')">delete</a></td>
       </tr>
     </table>
   </div>

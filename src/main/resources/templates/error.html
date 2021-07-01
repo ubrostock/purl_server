@@ -1,0 +1,30 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="#{purl_server.title}">Home: Purl Manager</title>
+  <meta th:replace="fragments/page :: html_header" />
+</head>
+<body>
+  <div class="container">
+    <div th:replace="fragments/page :: title"></div>
+    <div sec:authorize="isAuthenticated()" th:replace="fragments/page :: navigation"></div>
+    <div class="card">
+      <div class="card-body">
+      <h1>Error</h1>
+      <table></table>
+        <h1 th:text="'time:'+${timestamp}"></h1>
+<h1 th:text="'Error prompt:'+${error}"></h1>
+<!-- <h1 th:text="'Exception object:'+${exception}"></h1> -->
+<h1 th:text="'Abnormal information:'+${message}"></h1>
+<span th:text="'Status code:'+${status}"></span>
+
+
+button collapse
+<span th:text="'Trace:'+${trace}"></span>
+
+
+      </div>
+    </div>
+  </div>
+  <script th:replace="fragments/page :: html_footer"></script>
+</body>
+</html>

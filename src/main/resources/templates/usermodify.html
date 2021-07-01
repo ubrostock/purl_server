@@ -16,7 +16,7 @@
             <div class="alert alert-danger" role="alert" th:if="${errors}" th:each="error : ${errors}">
               <span th:text="${error}"></span>
             </div>
-            <div th:if="${created}" class="alert alert-success" th:text="#{purl_server.user.modify.modified}">
+            <div th:if="${submitted}" class="alert alert-success" th:text="#{purl_server.user.modify.modified}">
               User modified!
             </div>
             <div id="errorPassword" class="alert alert-danger d-none">
@@ -32,11 +32,11 @@
             </div>
           </div>
         </div>
-        <div class="row mt-3" th:if="${created}">
+        <div class="row mt-3" th:if="${submitted}">
           <div class="col">
-            <a class="btn btn-secondary" th:href="@{/admin/manager/user/modify?id=__${user.id}__}" th:text="#{purl_server.user.create.goto.modify}">modify</a>
-            <a class="btn btn-secondary" th:href="@{/admin/manager/user/create}" th:text="#{purl_server.user.create.goto.create}">Register a new user</a> 
-            <a class="btn btn-secondary" th:href="@{/admin/manager/user/search}" th:text="#{purl_server.user.create.goto.search}">Search for a user</a>
+            <a class="btn btn-secondary" th:href="@{/admin/manager/user/modify?id=__${user.id}__}" th:text="#{purl_server.user.goto.modify}">modify</a>
+            <a class="btn btn-secondary" th:href="@{/admin/manager/user/create}" th:text="#{purl_server.user.goto.create}">Register a new user</a> 
+            <a class="btn btn-secondary" th:href="@{/admin/manager/user/search}" th:text="#{purl_server.user.goto.search}">Search for a user</a>
           </div>
         </div>
       </div>

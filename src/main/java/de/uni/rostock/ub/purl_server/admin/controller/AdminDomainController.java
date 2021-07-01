@@ -71,6 +71,7 @@ public class AdminDomainController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/domain/create", method = RequestMethod.GET)
     public String showDomainCreate(Model model) {
+        model.addAttribute("form", "create");
         model.addAttribute("domain", new Domain());
         model.addAttribute("usersLogin", userDAO.searchUsers("", "", "", "", false));
         return "domaincreate";
@@ -86,6 +87,7 @@ public class AdminDomainController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/domain/create", method = RequestMethod.POST, params = "submit")
     public String createDomain(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
+        model.addAttribute("form", "create");
         cleanUpDomain(domain);
         User u = purlAccess.retrieveCurrentUser();
         List<String> errorList = domainValidateService.validateCreateDomain(domain, u);
@@ -100,7 +102,7 @@ public class AdminDomainController {
         } else {
             model.addAttribute("domain", domain);
             model.addAttribute("errors", errorList);
-            model.addAttribute("created", false);
+            model.addAttribute("submitted", false);
         }
         model.addAttribute("usersLogin", userDAO.searchUsers("", "", "", "", false));
         return "domaincreate";
@@ -109,6 +111,7 @@ public class AdminDomainController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/domain/create", method = RequestMethod.POST, params = "addUser")
     public String createDomainAddUser(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
+        model.addAttribute("form", "create");
         model.addAttribute("domain", domain);
         List<User> list = userDAO.searchUsers("", "", "", "", false);
         list.add(new User());
@@ -123,8 +126,10 @@ public class AdminDomainController {
      * @param model
      * @return the domain modify page
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/domain/modify", method = RequestMethod.GET)
     public String showDomainModify(@RequestParam("id") int id, Model model) {
+        model.addAttribute("form", "modify");
         model.addAttribute("domain", domainDAO.retrieveDomainWithUser(id).get());
         model.addAttribute("usersLogin", userDAO.searchUsers("", "", "", "", false));
         return "domainmodify";
@@ -140,15 +145,16 @@ public class AdminDomainController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/domain/modify", method = RequestMethod.POST, params = "submit")
     public String modifyDomain(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
+        model.addAttribute("form", "modify");
         cleanUpDomain(domain);
         User u = purlAccess.retrieveCurrentUser();
         List<String> errorList = domainValidateService.validateModifyDomain(domain, u);
         if (errorList.isEmpty()) {
             domainDAO.modifyDomain(domain, u);
-            model.addAttribute("created", true);
+            model.addAttribute("submitted", true);
         } else {
             model.addAttribute("errors", errorList);
-            model.addAttribute("created", false);
+            model.addAttribute("submitted", false);
         }
         model.addAttribute("domain", domain);
         model.addAttribute("usersLogin", userDAO.searchUsers("", "", "", "", false));

@@ -66,6 +66,7 @@ public class AdminPurlController {
      */
     @RequestMapping(path = "/admin/manager/purl/create", method = RequestMethod.GET)
     public String showPurlCreate(Model model) {
+        model.addAttribute("form", "create");
         model.addAttribute("purl", new Purl());
         return "purlcreate";
     }
@@ -79,6 +80,7 @@ public class AdminPurlController {
      */
     @RequestMapping(path = "/admin/manager/purl/create", method = RequestMethod.POST)
     public String createPurl(@ModelAttribute Purl purl, HttpServletRequest request, Model model) {
+        model.addAttribute("form", "create");
         User u = purlAccess.retrieveCurrentUser();
         List<String> errorList = purlValidateService.validateCreatePurl(purl, u);
         if (errorList.isEmpty()) {
@@ -88,11 +90,11 @@ public class AdminPurlController {
             } else {
                 model.addAttribute("purl", purl); 
             }
-            model.addAttribute("created", true);
+            model.addAttribute("submitted", true);
         } else {
             model.addAttribute("purl", purl); 
             model.addAttribute("errors", errorList);
-            model.addAttribute("created", false);
+            model.addAttribute("submitted", false);
         }
         return "purlcreate";
     }
@@ -106,6 +108,7 @@ public class AdminPurlController {
      */
     @RequestMapping(path = "/admin/manager/purl/modify", method = RequestMethod.GET)
     public String showPurlModify(@RequestParam("id") int id, Model model) {
+        model.addAttribute("form", "modify");
         model.addAttribute("purl", purlDAO.retrievePurl(id).get());
         return "purlmodify";
     }
@@ -119,14 +122,15 @@ public class AdminPurlController {
      */
     @RequestMapping(path = "/admin/manager/purl/modify", method = RequestMethod.POST)
     public String modifyPurl(@ModelAttribute Purl purl, HttpServletRequest request, Model model) {
+        model.addAttribute("form", "modify");
         User u = purlAccess.retrieveCurrentUser();
         List<String> errorList = purlValidateService.validateModifyPurl(purl, u);
         if (errorList.isEmpty()) {
             purlDAO.modifyPurl(purl, u);
-            model.addAttribute("created", true);
+            model.addAttribute("submitted", true);
         } else {
             model.addAttribute("errors", errorList);
-            model.addAttribute("created", false);
+            model.addAttribute("submitted", false);
         }
         model.addAttribute("purl", purl);
         return "purlmodify";

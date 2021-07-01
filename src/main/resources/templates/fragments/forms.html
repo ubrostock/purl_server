@@ -5,55 +5,55 @@
   <div th:fragment="domainForm">
     <input type="hidden" th:field="*{id}" />
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.create.path}">Path</label>
+        <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.form.path}">Path</label>
         <div class="col-sm-9">
-          <input type="text" class="form-control" th:field="*{path}" th:readonly="*{id != -1}" th:disabled="${created}" />
+          <input type="text" class="form-control" th:field="*{path}" th:readonly="*{id != -1}" th:disabled="${submitted}" />
         </div>
       </div>
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.create.name}">Name</label>
+        <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.form.name}">Name</label>
         <div class="col-sm-9">
-          <input type="text" class="form-control" th:field="*{name}" th:readonly="${created}" />
+          <input type="text" class="form-control" th:field="*{name}" th:readonly="${submitted}" />
         </div>
       </div>
       <div class="row">
-        <label class="col-sm-3 offset-sm-9 col-form-label text-right" th:text="#{purl_server.domain.create.create_modify}">Create / Modify</label>
+        <label class="col-sm-3 offset-sm-9 col-form-label text-right" th:text="#{purl_server.domain.form.create_modify}">Create / Modify</label>
       </div>
       <div th:each="i : ${#numbers.sequence(0, __*{#lists.size(domainUserList)}__)}">
         <div class="form-group row">
-          <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.create.user} + ' ' + ${i+1}"></label>
+          <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.form.user} + ' ' + ${i+1}"></label>
           <div class="col-sm-7">
             <select class="form-control" th:field="*{domainUserList[__${i}__].user.login}"
-                    th:disabled="${created}">
+                    th:disabled="${submitted}">
               <option value=""></option>
               <option th:each="user : ${usersLogin}" th:text="${user.fullname}" th:value="${user.login}"></option>
             </select>
           </div>
           <div class="col-sm-1">
             <input type="checkbox" class="form-control float-left" th:field="*{domainUserList[__${i}__].canCreate}"
-                   th:disabled="${created}" />
+                   th:disabled="${submitted}" />
           </div>
           <div class="col-sm-1">
             <input type="checkbox" class="form-control float-left" th:field="*{domainUserList[__${i}__].canModify}"
-                   th:disabled="${created}" />
+                   th:disabled="${submitted}" />
           </div>
         </div>
       </div>
       <div class="form-group row">
         <div class="col-sm-3"></div>
         <div class="col-sm-9">
-          <button type="submit" name="addUser" class="btn btn-sm btn-secondary" th:disabled=${created} th:text="#{purl_server.domain.create.button.add_user}">Add User</button>
+          <button type="submit" name="addUser" class="btn btn-sm btn-secondary" th:disabled=${submitted} th:text="#{purl_server.domain.form.button.add_user}">Add User</button>
         </div>
       </div>
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.create.comment}">Comment</label>
+        <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.form.comment}">Comment</label>
         <div class="col-sm-9">
-          <textarea class="form-control" th:field="*{comment}" th:readonly="${created}"></textarea>
+          <textarea class="form-control" th:field="*{comment}" th:readonly="${submitted}"></textarea>
         </div>
       </div>
-      <div class="form-group row" th:unless="${created}">
+      <div class="form-group row" th:unless="${submitted}">
         <div class="col-sm-9 offset-sm-3">
-          <button type="submit" name="submit" class="btn btn-primary" th:text="#{purl_server.domain.create.submit}">Submit</button>
+          <button type="submit" name="submit" class="btn btn-primary" th:text="#{purl_server.domain.__${form}__.submit}">Submit</button>
         </div>
       </div>
   </div>
@@ -62,57 +62,57 @@
     <input type="hidden" th:field="*{id}" />
       <input type="hidden" id="password_sha" th:field="*{passwordSHA}" />
       <div class="form-group row">
-        <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.create.admin}">Admin</label>
+        <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.admin}">Admin</label>
         <div class="col-sm-2">
           <input type="checkbox" class="form-control float-left w-25" th:field="*{admin}"
-                 th:disabled="${created}" />
+                 th:disabled="${submitted}" />
         </div>
       </div>
       <div class="form-group row">
-        <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.create.fullname}">Full name</label>
+        <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.fullname}">Full name</label>
         <div class="col-sm-8">
-          <input type="text" class="form-control" th:field="*{fullname}" th:readonly="${created}" />
+          <input type="text" class="form-control" th:field="*{fullname}" th:readonly="${submitted}" />
         </div>
       </div>
       <div class="form-group row">
-        <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.create.affiliation}">Affiliation</label>
+        <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.affiliation}">Affiliation</label>
         <div class="col-sm-8">
-          <input type="text" class="form-control" th:field="*{affiliation}" th:readonly="${created}" />
+          <input type="text" class="form-control" th:field="*{affiliation}" th:readonly="${submitted}" />
         </div>
       </div>
       <div class="form-group row">
-        <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.create.email}">E-Mail address</label>
+        <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.email}">E-Mail address</label>
         <div class="col-sm-8">
-          <input type="text" class="form-control" th:field="*{email}" th:readonly="${created}" />
+          <input type="text" class="form-control" th:field="*{email}" th:readonly="${submitted}" />
         </div>
       </div>
       <div class="form-group row">
-        <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.create.login}">Login</label>
+        <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.login}">Login</label>
         <div class="col-sm-8">
-          <input type="text" class="form-control" th:field="*{login}" th:readonly="${created}" />
+          <input type="text" class="form-control" th:field="*{login}" th:readonly="${submitted}" />
         </div>
       </div>
       <div class="form-group row">
-        <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.create.password}">Password</label>
+        <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.password}">Password</label>
         <div class="col-sm-8">
-          <input type="password" id="password" class="form-control" th:readonly="${created}" />
+          <input type="password" id="password" class="form-control" th:readonly="${submitted}" />
         </div>
       </div>
       <div class="form-group row">
-        <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.create.repassword}">Re-enter password</label>
+        <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.repassword}">Re-enter password</label>
         <div class="col-sm-8">
-          <input type="password" id="repassword" class="form-control" th:readonly="${created}" />
+          <input type="password" id="repassword" class="form-control" th:readonly="${submitted}" />
         </div>
       </div>
       <div class="form-group row">
-        <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.create.comment}">Comment</label>
+        <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.comment}">Comment</label>
         <div class="col-sm-8">
-          <textarea class="form-control" th:field="*{comment}" th:readonly="${created}"></textarea>
+          <textarea class="form-control" th:field="*{comment}" th:readonly="${submitted}"></textarea>
         </div>
       </div>
-      <div class="form-group row" th:unless="${created}">
+      <div class="form-group row" th:unless="${submitted}">
         <div class="col-sm-6 offset-sm-4">
-          <button type="submit" class="btn btn-primary" onclick="return encryptPassword();" th:text="#{purl_server.user.create.submit}">Submit</button>
+          <button type="submit" class="btn btn-primary" onclick="return encryptPassword();" th:text="#{purl_server.user.__${form}__.submit}">Submit</button>
         </div>
       </div>
 
@@ -122,29 +122,29 @@
     
       <input type="hidden" th:field="*{id}" />
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label" th:text="#{purl_server.purl.modify.path}">Path</label>
+        <label class="col-sm-3 col-form-label" th:text="#{purl_server.purl.form.path}">Path</label>
         <div class="col-sm-9">
-          <input type="text" class="form-control" th:field="*{path}" th:readonly="*{id != -1}" th:disabled="${created}" />
+          <input type="text" class="form-control" th:field="*{path}" th:readonly="*{id != -1}" th:disabled="${submitted}" />
         </div>
       </div>
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label" th:text="#{purl_server.purl.modify.type}">Type of PURL</label>
+        <label class="col-sm-3 col-form-label" th:text="#{purl_server.purl.form.type}">Type of PURL</label>
         <div class="col-sm-9">
-          <select class="form-control" th:field="*{type}" th:disabled="${created}">
-            <option value="FOUND_302" th:text="#{purl_server.purl.modify.type.found_302}">Simple redirection to a target URL (302)</option>
-            <option value="PARTIAL_302" th:text="#{purl_server.purl.modify.type.partial}">Partial-redirect PURL</option>
+          <select class="form-control" th:field="*{type}" th:disabled="${submitted}">
+            <option value="FOUND_302" th:text="#{purl_server.purl.form.type.found_302}">Simple redirection to a target URL (302)</option>
+            <option value="PARTIAL_302" th:text="#{purl_server.purl.form.type.partial}">Partial-redirect PURL</option>
           </select>
         </div>
       </div>
       <div class="form-group row">
-        <label class="col-sm-3 col-form-label" th:text="#{purl_server.purl.modify.target}">Target URL</label>
+        <label class="col-sm-3 col-form-label" th:text="#{purl_server.purl.form.target}">Target URL</label>
         <div class="col-sm-9">
-          <input type="text" class="form-control" th:field="*{target}" th:readonly="${created}" />
+          <input type="text" class="form-control" th:field="*{target}" th:readonly="${submitted}" />
         </div>
       </div>
-      <div class="form-group row" th:unless="${created}">
+      <div class="form-group row" th:unless="${submitted}">
         <div class="col-sm-9 offset-sm-3">
-          <button type="submit" class="btn btn-primary" th:text="#{purl_server.purl.modify.submit}">Submit</button>
+          <button type="submit" class="btn btn-primary" th:text="#{purl_server.purl.__${form}__.submit}">Submit</button>
         </div>
       </div>
 

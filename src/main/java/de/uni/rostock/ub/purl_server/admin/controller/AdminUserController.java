@@ -20,11 +20,12 @@ package de.uni.rostock.ub.purl_server.admin.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -47,6 +48,9 @@ public class AdminUserController {
 	
 	@Autowired
 	UserDAO userDAO;
+	
+	@Autowired
+	private MessageSource messages;
 
 	/**
 	 * Show the user create page
@@ -56,7 +60,8 @@ public class AdminUserController {
 	 */
 	@RequestMapping(path = "/admin/manager/user/create", method = RequestMethod.GET)
 	public String showUserCreate(Model model) {
-		model.addAttribute("user", new User());
+		model.addAttribute("form", "create");
+	    model.addAttribute("user", new User());
 		return "usercreate";
 	}
 
@@ -69,26 +74,22 @@ public class AdminUserController {
 	 */
 	@RequestMapping(path = "/admin/manager/user/create", method = RequestMethod.POST)
 	public String createUser(@ModelAttribute User user, HttpServletRequest request, Model model) {
-		User loginUser = purlAccess.retrieveCurrentUser();
-		List<String> errorList = userValidateService.validateUser(user);
+	    model.addAttribute("form", "create");
+	    User loginUser = purlAccess.retrieveCurrentUser();
 		if (loginUser.isAdmin()) {
-			try {
+		    List<String> errorList = userValidateService.validateUser(user);
+		    if (errorList.isEmpty()) {
+                userDAO.createUser(user, loginUser);
+                model.addAttribute("submitted", true);
 
-			} catch (DuplicateKeyException e) {
-				errorList.add("user exist in database");
-			}
+            } else {
+                model.addAttribute("errors", errorList);
+                model.addAttribute("submitted", false);
+            }
 		} else {
-			errorList.add("Not allowed to create user!");
+		    model.addAttribute("errors", List.of(messages.getMessage("purl_server.error.user.create.user.unauthorized", null, Locale.getDefault())));
+		    model.addAttribute("submitted", false);
 		}
-		if (errorList.isEmpty()) {
-			userDAO.createUser(user, loginUser);
-			model.addAttribute("created", true);
-
-		} else {
-			model.addAttribute("errors", errorList);
-			model.addAttribute("created", false);
-		}
-
 		model.addAttribute("user", user);
 		return "usercreate";
 	}
@@ -102,7 +103,8 @@ public class AdminUserController {
 	 */
 	@RequestMapping(path = "/admin/manager/user/modify", method = RequestMethod.GET)
 	public String showUserModify(@RequestParam("id") int id, Model model) {
-		model.addAttribute("user", userDAO.retrieveUser(id).get());
+	    model.addAttribute("form", "modify");
+	    model.addAttribute("user", userDAO.retrieveUser(id).get());
 		return "usermodify";
 	}
 
@@ -115,19 +117,20 @@ public class AdminUserController {
 	 */
 	@RequestMapping(path = "/admin/manager/user/modify", method = RequestMethod.POST)
 	public String modifyUser(@ModelAttribute User user, HttpServletRequest request, Model model) {
-		User loginUser = purlAccess.retrieveCurrentUser();
+	    model.addAttribute("form", "modify");
+	    User loginUser = purlAccess.retrieveCurrentUser();
 		List<String> errorList = userValidateService.validateUser(user);
 		if (loginUser.isAdmin() || loginUser.getLogin().equals(user.getLogin())) {
 			if (errorList.isEmpty()) {
 				userDAO.modifyUser(user, loginUser);
-				model.addAttribute("created", true);
+				model.addAttribute("submitted", true);
+			} else {
+			    model.addAttribute("errors", errorList);
+	            model.addAttribute("submitted", false);
 			}
 		} else {
-			errorList.add("Not allowed to modify user!");
-		}
-		if (!errorList.isEmpty()) {
-			model.addAttribute("errors", errorList);
-			model.addAttribute("created", false);
+			errorList.add(messages.getMessage("purl_server.error.user.modify.user.unauthorized", null, Locale.getDefault()));
+			model.addAttribute("submitted", false);
 		}
 		model.addAttribute("user", user);
 		return "usermodify";
@@ -206,7 +209,7 @@ public class AdminUserController {
 			model.addAttribute("user", user);
 		} else {
 			List<String> errorList = new ArrayList<>();
-			errorList.add("Not allowed to delete user!");
+			errorList.add(messages.getMessage("purl_server.error.user.delete.user.unauthorized", null, Locale.getDefault()));
 			model.addAttribute("errors", errorList);
 		}
 		return "userdelete";

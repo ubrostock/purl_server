@@ -15,7 +15,7 @@
         <div class="alert alert-danger" role="alert" th:if="${errors}" th:each="error : ${errors}">
           <span th:text="${error}"></span>
         </div>
-        <div th:if="${created}" class="alert alert-success" th:text="#{purl_server.domain.create.created}">
+        <div th:if="${submitted}" class="alert alert-success" th:text="#{purl_server.domain.create.created}">
           Domain created!
         </div>
         <form th:action="@{/admin/manager/domain/create}" method="post" th:object="${domain}">
@@ -24,15 +24,15 @@
         </div>
         <div class="col">
           <div class="border p-3 overflow-auto position-absolute" style="top: 0; left:0; bottom: 0; right: 0;">
-            <span th:text="#{purl_server.domain.delete.help}">Help...</span>
+            <span th:text="#{purl_server.domain.create.help}">Help...</span>
           </div>
         </div>
         </div>
-        <div class="row mt-3" th:if="${created}">
+        <div class="row mt-3" th:if="${submitted}">
           <div class="col">
-            <a class="btn btn-secondary" th:href="@{/admin/manager/domain/modify?id=__${domain.id}__}" th:text="#{purl_server.domain.create.goto.modify}">modify</a>
-            <a class="btn btn-secondary" th:href="@{/admin/manager/domain/create}" th:text="#{purl_server.domain.create.goto.create}">Create a new domain</a>
-            <a class="btn btn-secondary" th:href="@{/admin/manager/domain/search}" th:text="#{purl_server.domain.create.goto.search}">Search for a domain</a>
+            <a class="btn btn-secondary" th:href="@{/admin/manager/domain/modify?id=__${domain.id}__}" th:text="#{purl_server.domain.goto.modify}">modify</a>
+            <a class="btn btn-secondary" th:href="@{/admin/manager/domain/create}" th:text="#{purl_server.domain.goto.create}">Create a new domain</a>
+            <a class="btn btn-secondary" th:href="@{/admin/manager/domain/search}" th:text="#{purl_server.domain.goto.search}">Search for a domain</a>
           </div>
         </div>
       </div>

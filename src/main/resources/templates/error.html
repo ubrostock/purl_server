@@ -1,7 +1,7 @@
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-  <title th:text="#{purl_server.title}">Home: Purl Manager</title>
-  <meta th:replace="fragments/page :: html_header" />
+<title th:text="#{purl_server.title}">Home: Purl Manager</title>
+<meta th:replace="fragments/page :: html_header" />
 </head>
 <body>
   <div class="container">
@@ -9,19 +9,37 @@
     <div sec:authorize="isAuthenticated()" th:replace="fragments/page :: navigation"></div>
     <div class="card">
       <div class="card-body">
-      <h1>Error</h1>
-      <table></table>
-        <h1 th:text="'time:'+${timestamp}"></h1>
-<h1 th:text="'Error prompt:'+${error}"></h1>
-<!-- <h1 th:text="'Exception object:'+${exception}"></h1> -->
-<h1 th:text="'Abnormal information:'+${message}"></h1>
-<span th:text="'Status code:'+${status}"></span>
-
-
-button collapse
-<span th:text="'Trace:'+${trace}"></span>
-
-
+        <h2>Error</h2>
+        <table class="table table-sm">
+          <colgroup>
+            <col style="min-width: 10em; width: 10em" />
+          </colgroup>
+          <tr>
+            <th>timestamp</th>
+            <td th:text="${timestamp}"></td>
+          </tr>
+          <tr>
+            <th>error</th>
+            <td th:text="${error}"></td>
+          </tr>
+          <tr>
+            <th>message</th>
+            <td th:text="${message}"></td>
+          </tr>
+          <tr>
+            <th>status code</th>
+            <td th:text="${status}"></td>
+          </tr>
+          <tr th:if="${trace}">
+            <th>stack trace</th>
+            <td>
+              <a class="btn btn-secondary btn-sm" data-toggle="collapse" href="#collapseTrace" role="button">...</a>
+              <div class="collapse" id="collapseTrace">
+                <textarea th:text="${trace}" class="w-100" disabled rows="20" style="white-space: pre; font-family:monospace "></textarea>
+              </div>
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
   </div>

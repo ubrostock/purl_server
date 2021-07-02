@@ -9,33 +9,33 @@
     <div sec:authorize="isAuthenticated()" th:replace="fragments/page :: navigation"></div>
     <div class="card">
       <div class="card-body">
-        <h2>Error</h2>
+        <h2 th:text="#{purl_server.error.title}">Error</h2>
         <table class="table table-sm">
           <colgroup>
             <col style="min-width: 10em; width: 10em" />
           </colgroup>
           <tr>
-            <th>timestamp</th>
+            <th th:text="#{purl_server.error.table.timestamp}">timestamp</th>
             <td th:text="${timestamp}"></td>
           </tr>
           <tr>
-            <th>error</th>
+            <th th:text="#{purl_server.error.table.error}">error</th>
             <td th:text="${error}"></td>
           </tr>
           <tr>
-            <th>message</th>
+            <th th:text="#{purl_server.error.table.message}">message</th>
             <td th:text="${message}"></td>
           </tr>
           <tr>
-            <th>status code</th>
+            <th th:text="#{purl_server.error.table.status_code}">status code</th>
             <td th:text="${status}"></td>
           </tr>
           <tr th:if="${trace}">
-            <th>stack trace</th>
+            <th th:text="#{purl_server.error.table.stack_trace}">stack trace</th>
             <td>
               <a class="btn btn-secondary btn-sm" data-toggle="collapse" href="#collapseTrace" role="button">...</a>
               <div class="collapse" id="collapseTrace">
-                <textarea th:text="${trace}" class="w-100" disabled rows="20" style="white-space: pre; font-family:monospace "></textarea>
+                <textarea th:text="${trace}" class="w-100" disabled rows="20" style="white-space: pre; font-family:monospace"></textarea>
               </div>
             </td>
           </tr>

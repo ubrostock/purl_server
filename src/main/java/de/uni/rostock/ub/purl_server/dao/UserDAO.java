@@ -81,31 +81,40 @@ public class UserDAO {
 	 * @param isTombstoned
 	 * @return a list of founded users
 	 */
-    public List<User> searchUsers(String login, String fullName, String affiliation, String email, boolean isTombstoned) {
-        String paramFullName = "%";
-        if(!StringUtils.hasText(fullName)) {
-            paramFullName = "%" + fullName + "%";
-        }
-        String paramAffiliation = "%";
-        if(!StringUtils.hasText(affiliation)) {
-            paramAffiliation = "%" + affiliation + "%";
-        }
-        String paramEmail = "%";
-        if(!StringUtils.hasText(email)) {
-            paramEmail = "%" + email + "%";
-        }
-        String paramLogin = "%";
-        if(!StringUtils.hasText(login)) {
-            paramLogin = "%" + login + "%";
-        }
-        String sqlStatus = " AND (status='CREATED' OR status='MODIFIED')";
-        if(isTombstoned) {
-                sqlStatus = "";
-        }
-        return jdbcTemplate.query("SELECT * FROM user WHERE (login LIKE ?) AND (fullname LIKE ?) AND (affiliation LIKE ?) AND (email LIKE ?)"
-            + sqlStatus
-            + " LIMIT 50;", new UserRowMapper(), paramLogin, paramFullName, paramAffiliation, paramEmail);
-    }
+	public List<User> searchUsers(String login, String fullName, String affiliation, String email, boolean isTombstoned) {
+		String paramFullName = "%";
+		if(StringUtils.hasText(fullName)) {
+			paramFullName = "%" + fullName + "%";
+		}
+		String paramAffiliation = "%";
+		if(StringUtils.hasText(affiliation)) {
+			paramAffiliation = "%" + affiliation + "%";
+		}
+		String paramEmail = "%";
+		if(StringUtils.hasText(email)) {
+			paramEmail = "%" + email + "%";
+		}
+		String paramLogin = "%";
+		if(StringUtils.hasText(login)) {
+			paramLogin = "%" + login + "%";
+		}
+	    String sqlStatus = " AND (status='CREATED' OR status='MODIFIED')";
+	    if(isTombstoned) {
+	            sqlStatus = "";
+	    }
+		return jdbcTemplate.query("SELECT * FROM user WHERE (login LIKE ?) AND (fullname LIKE ?) AND (affiliation LIKE ?) AND (email LIKE ?)"
+		    + sqlStatus
+		    + " ORDER BY login LIMIT 50;", new UserRowMapper(), paramLogin, paramFullName, paramAffiliation, paramEmail);
+	}
+	
+	/**
+	 * List all currently active Users.
+	 * @return list of users
+	 */
+	public List<User> retrieveActiveUsers() {
+	    return jdbcTemplate.query("SELECT * FROM user WHERE (status='CREATED' OR status='MODIFIED') ORDER BY login;",
+            new UserRowMapper());
+	}
 
 	/**
 	 * Create a user
@@ -115,7 +124,7 @@ public class UserDAO {
 			jdbcTemplate.update(
 					"INSERT INTO user (login, password_sha, admin, fullname, affiliation, email, comment, created, lastmodified, status) VALUES (?,?,?,?,   ?,?,?,NOW(),NOW(),   ?)",
 					userObject.getLogin(), userObject.getPasswordSHA(), userObject.isAdmin(), userObject.getFullname(), userObject.getAffiliation(), userObject.getEmail(),
-					userObject.getComment(), 1);
+					userObject.getComment(), Status.CREATED.name());
 	}
 
 	/**

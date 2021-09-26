@@ -73,7 +73,7 @@ public class AdminDomainController {
     public String showDomainCreate(Model model) {
         model.addAttribute("form", "create");
         model.addAttribute("domain", new Domain());
-        model.addAttribute("usersLogin", userDAO.searchUsers("", "", "", "", false));
+        model.addAttribute("usersLogin", userDAO.retrieveActiveUsers());
         return "domaincreate";
     }
 
@@ -104,7 +104,7 @@ public class AdminDomainController {
             model.addAttribute("errors", errorList);
             model.addAttribute("submitted", false);
         }
-        model.addAttribute("usersLogin", userDAO.searchUsers("", "", "", "", false));
+        model.addAttribute("usersLogin", userDAO.retrieveActiveUsers());
         return "domaincreate";
     }
 
@@ -113,7 +113,7 @@ public class AdminDomainController {
     public String createDomainAddUser(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
         model.addAttribute("form", "create");
         model.addAttribute("domain", domain);
-        List<User> list = userDAO.searchUsers("", "", "", "", false);
+        List<User> list = userDAO.retrieveActiveUsers();
         list.add(new User());
         model.addAttribute("usersLogin", list);
         return "domaincreate";
@@ -131,7 +131,7 @@ public class AdminDomainController {
     public String showDomainModify(@RequestParam("id") int id, Model model) {
         model.addAttribute("form", "modify");
         model.addAttribute("domain", domainDAO.retrieveDomainWithUser(id).get());
-        model.addAttribute("usersLogin", userDAO.searchUsers("", "", "", "", false));
+        model.addAttribute("usersLogin", userDAO.retrieveActiveUsers());
         return "domainmodify";
     }
 
@@ -157,7 +157,7 @@ public class AdminDomainController {
             model.addAttribute("submitted", false);
         }
         model.addAttribute("domain", domain);
-        model.addAttribute("usersLogin", userDAO.searchUsers("", "", "", "", false));
+        model.addAttribute("usersLogin", userDAO.retrieveActiveUsers());
         return "domainmodify";
     }
 
@@ -165,7 +165,7 @@ public class AdminDomainController {
     @RequestMapping(path = "/admin/manager/domain/modify", method = RequestMethod.POST, params = "addUser")
     public String modifyDomainAddUser(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
         model.addAttribute("domain", domain);
-        List<User> list = userDAO.searchUsers("", "", "", "", false);
+        List<User> list = userDAO.retrieveActiveUsers();
         list.add(new User());
         model.addAttribute("usersLogin", list);
         return "domainmodify";

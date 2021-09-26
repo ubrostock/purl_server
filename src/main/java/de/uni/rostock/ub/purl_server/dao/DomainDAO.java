@@ -104,15 +104,15 @@ public class DomainDAO {
 	 */
 	public List<Domain> searchDomains(String path, String name, String login, Boolean isTombstoned) {
 		String paramPath = "%";
-		if(!StringUtils.isEmpty(path)) {
+		if(StringUtils.hasText(path)) {
 			paramPath = "%" + path + "%";
 		}
 		String paramName = "%";
-		if(!StringUtils.isEmpty(name)) {
+		if(StringUtils.hasText(name)) {
 			paramName = "%" + name + "%";
 		}
 		String paramLogin = "%";
-		if(!StringUtils.isEmpty(login)) {
+		if(StringUtils.hasText(login)) {
 			paramLogin = "%" + login + "%";
 		}
 		int paramStatus = 3;

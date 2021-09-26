@@ -14,6 +14,12 @@
           <div class="col">
             <form th:action="@{/admin/manager/user/search}" method="post">
               <div class="form-group row">
+                <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.search.login}">Login</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" name="searchLogin" th:value="${searchLogin}" />
+                </div>
+              </div>
+              <div class="form-group row">
                 <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.search.fullname}">Full name</label>
                 <div class="col-sm-8">
                   <input type="text" class="form-control" name="searchFullName" th:value="${searchFullName}" />
@@ -32,15 +38,10 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.search.login}">Login</label>
+                <div class="col-sm-4"></div>
                 <div class="col-sm-8">
-                  <input type="text" class="form-control" name="searchLogin" th:value="${searchLogin}" />
-                </div>
-              </div>
-              <div class="form-group row">
-                <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.search.tombstoned}">Tombstoned users</label>
-                <div class="col-sm-2">
-                  <input type="checkbox" class="form-control float-left w-25" name="searchTombstonedUser" th:checked="${searchTombstonedUser}" value="on" />
+                  <input type="checkbox" name="searchTombstonedUser" th:checked="${searchTombstonedUser}" value="on" />
+                  <label class="col-form-label ml-2" th:text="#{purl_server.user.search.tombstoned}">Tombstoned users</label>
                 </div>
               </div>
               <div class="form-group row">

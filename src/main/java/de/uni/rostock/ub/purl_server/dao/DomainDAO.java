@@ -103,7 +103,7 @@ public class DomainDAO {
 	 * @param isTombstoned
 	 * @return a list of founded domains
 	 */
-	public List<Domain> searchDomains(String path, String name, String login, Boolean isTombstoned) {
+	public List<Domain> searchDomains(String path, String name, String login, boolean isTombstoned) {
 		String paramPath = "%";
 		if(StringUtils.hasText(path)) {
 			paramPath = "%" + path + "%";

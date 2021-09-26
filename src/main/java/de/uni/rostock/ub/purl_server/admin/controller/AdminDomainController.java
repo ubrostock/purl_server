@@ -199,7 +199,7 @@ public class AdminDomainController {
     public String domainSearch(@RequestParam(value = "searchPath", required = false, defaultValue = "") String path,
         @RequestParam(value = "searchName", required = false, defaultValue = "") String name,
         @RequestParam(value = "searchUser", required = false, defaultValue = "") String login,
-        @RequestParam(value = "searchTombstonedDomain", required = false, defaultValue = "false") Boolean isTombstoned,
+        @RequestParam(value = "searchTombstonedDomain", required = false, defaultValue = "false") boolean isTombstoned,
         Model model) {
         model.addAttribute("domains", domainDAO.searchDomains(path, name, login, isTombstoned));
         model.addAttribute("searchPath", path);

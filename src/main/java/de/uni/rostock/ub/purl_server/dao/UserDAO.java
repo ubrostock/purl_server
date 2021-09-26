@@ -81,29 +81,31 @@ public class UserDAO {
 	 * @param isTombstoned
 	 * @return a list of founded users
 	 */
-	public List<User> searchUsers(String fullName, String affiliation, String email, String login, Boolean isTombstoned) {
-		String paramFullName = "%";
-		if(!StringUtils.isEmpty(fullName)) {
-			paramFullName = "%" + fullName + "%";
-		}
-		String paramAffiliation = "%";
-		if(!StringUtils.isEmpty(affiliation)) {
-			paramAffiliation = "%" + affiliation + "%";
-		}
-		String paramEmail = "%";
-		if(!StringUtils.isEmpty(email)) {
-			paramEmail = "%" + email + "%";
-		}
-		String paramLogin = "%";
-		if(!StringUtils.isEmpty(login)) {
-			paramLogin = "%" + login + "%";
-		}
-		int paramStatus = 3;
-		if(isTombstoned) {
-			paramStatus = 10;
-		}
-		return jdbcTemplate.query("SELECT * FROM user WHERE (fullname LIKE ?) AND (affiliation LIKE ?) AND (email LIKE ?) AND (login LIKE ?) AND (status < ?)  LIMIT 50;", new UserRowMapper(), paramFullName, paramAffiliation, paramEmail, paramLogin, paramStatus);
-	}
+    public List<User> searchUsers(String login, String fullName, String affiliation, String email, boolean isTombstoned) {
+        String paramFullName = "%";
+        if(!StringUtils.hasText(fullName)) {
+            paramFullName = "%" + fullName + "%";
+        }
+        String paramAffiliation = "%";
+        if(!StringUtils.hasText(affiliation)) {
+            paramAffiliation = "%" + affiliation + "%";
+        }
+        String paramEmail = "%";
+        if(!StringUtils.hasText(email)) {
+            paramEmail = "%" + email + "%";
+        }
+        String paramLogin = "%";
+        if(!StringUtils.hasText(login)) {
+            paramLogin = "%" + login + "%";
+        }
+        String sqlStatus = " AND (status='CREATED' OR status='MODIFIED')";
+        if(isTombstoned) {
+                sqlStatus = "";
+        }
+        return jdbcTemplate.query("SELECT * FROM user WHERE (login LIKE ?) AND (fullname LIKE ?) AND (affiliation LIKE ?) AND (email LIKE ?)"
+            + sqlStatus
+            + " LIMIT 50;", new UserRowMapper(), paramLogin, paramFullName, paramAffiliation, paramEmail);
+    }
 
 	/**
 	 * Create a user

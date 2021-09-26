@@ -168,9 +168,9 @@ public class AdminUserController {
 			@RequestParam(value = "searchAffiliation", required = false, defaultValue = "") String affiliation,
 			@RequestParam(value = "searchEMailAddress", required = false, defaultValue = "") String email,
 			@RequestParam(value = "searchLogin", required = false, defaultValue = "") String login,
-			@RequestParam(value = "searchTombstonedUser", required = false, defaultValue = "false") Boolean isTombstoned,
+			@RequestParam(value = "searchTombstonedUser", required = false, defaultValue = "false") boolean isTombstoned,
 			Model model) {
-		model.addAttribute("users", userDAO.searchUsers(fullName, affiliation, email, login, isTombstoned));
+		model.addAttribute("users", userDAO.searchUsers(login, fullName, affiliation, email, isTombstoned));
 		model.addAttribute("searchFullName", fullName);
 		model.addAttribute("searchAffiliation", affiliation);
 		model.addAttribute("searchEMailAddress", email);

@@ -86,7 +86,8 @@ public class DomainDAO {
 	public Optional<Domain> retrieveDomainWithUser(int id) {
 		try {
 			Domain d = jdbcTemplate.queryForObject("SELECT * FROM domain WHERE id = ?;", new DomainRowMapper(), id);
-			List<DomainUser> list = jdbcTemplate.query("SELECT u.*, du.* FROM user u JOIN domainuser du ON u.id = du.user_id WHERE du.domain_id = ?;", new Object[] {d.getId()}, new DomainUserRowMapper());
+			List<DomainUser> list = jdbcTemplate.query("SELECT u.*, du.* FROM user u JOIN domainuser du ON u.id = du.user_id WHERE du.domain_id = ?;",
+			    new DomainUserRowMapper(), d.getId());
 			d.getDomainUserList().addAll(list);
 			return Optional.of(d);
 		} catch (DataAccessException e) {
@@ -115,13 +116,17 @@ public class DomainDAO {
 		if(StringUtils.hasText(login)) {
 			paramLogin = "%" + login + "%";
 		}
-		int paramStatus = 3;
+		String sqlStatus = " AND (d.status='CREATED' OR d.status='MODIFIED')";
 		if(isTombstoned) {
-			paramStatus = 10;
+			sqlStatus = "";
 		}
-		List<Domain> domainList = jdbcTemplate.query("SELECT d.* FROM user u, domain d, domainuser du WHERE du.user_id = du.domain_id AND (path LIKE ?) AND (d.status < ?) AND (name LIKE ?) AND (login LIKE ?) GROUP BY d.id ORDER BY d.path LIMIT 50;", new DomainRowMapper(), paramPath, paramStatus, paramName,paramLogin );
+		List<Domain> domainList = jdbcTemplate.query("SELECT d.* FROM domain d, user u, domainuser du "
+		    + " WHERE d.id = du.domain_id AND u.id = du.user_id AND (path LIKE ?) "
+		    + sqlStatus
+		    + " AND (name LIKE ?) AND (login LIKE ?) GROUP BY d.id ORDER BY d.path LIMIT 50;", new DomainRowMapper(), paramPath, paramName,paramLogin );
 		for(Domain d: domainList){
-		List<DomainUser> list = jdbcTemplate.query("SELECT u.*, du.* FROM user u JOIN domainuser du ON u.id = du.user_id WHERE du.domain_id = ?;", new Object[] {d.getId()}, new DomainUserRowMapper());
+		List<DomainUser> list = jdbcTemplate.query("SELECT u.*, du.* FROM user u JOIN domainuser du ON u.id = du.user_id WHERE du.domain_id = ?;", 
+		    new DomainUserRowMapper(), d.getId());
 		d.getDomainUserList().addAll(list);
 		}
 		return domainList;

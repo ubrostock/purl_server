@@ -18,14 +18,12 @@
  */
 package de.uni.rostock.ub.purl_server.admin.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -42,15 +40,12 @@ import de.uni.rostock.ub.purl_server.validate.UserValidateService;
 public class AdminUserController {
 	@Autowired
 	PurlAccess purlAccess;
-	
+
 	@Autowired
 	UserValidateService userValidateService;
-	
+
 	@Autowired
 	UserDAO userDAO;
-	
-	@Autowired
-	private MessageSource messages;
 
 	/**
 	 * Show the user create page
@@ -58,10 +53,11 @@ public class AdminUserController {
 	 * @param model
 	 * @return the user create page
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(path = "/admin/manager/user/create", method = RequestMethod.GET)
 	public String showUserCreate(Model model) {
 		model.addAttribute("form", "create");
-	    model.addAttribute("user", new User());
+		model.addAttribute("user", new User());
 		return "usercreate";
 	}
 
@@ -72,23 +68,19 @@ public class AdminUserController {
 	 * @param model
 	 * @return the user create page
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(path = "/admin/manager/user/create", method = RequestMethod.POST)
 	public String createUser(@ModelAttribute User user, HttpServletRequest request, Model model) {
-	    model.addAttribute("form", "create");
-	    User loginUser = purlAccess.retrieveCurrentUser();
-		if (loginUser.isAdmin()) {
-		    List<String> errorList = userValidateService.validateUser(user);
-		    if (errorList.isEmpty()) {
-                userDAO.createUser(user, loginUser);
-                model.addAttribute("submitted", true);
+		model.addAttribute("form", "create");
+		User loginUser = purlAccess.retrieveCurrentUser();
+		List<String> errorList = userValidateService.validateUser(user);
+		if (errorList.isEmpty()) {
+			userDAO.createUser(user, loginUser);
+			model.addAttribute("submitted", true);
 
-            } else {
-                model.addAttribute("errors", errorList);
-                model.addAttribute("submitted", false);
-            }
 		} else {
-		    model.addAttribute("errors", List.of(messages.getMessage("purl_server.error.user.create.user.unauthorized", null, Locale.getDefault())));
-		    model.addAttribute("submitted", false);
+			model.addAttribute("errors", errorList);
+			model.addAttribute("submitted", false);
 		}
 		model.addAttribute("user", user);
 		return "usercreate";
@@ -101,10 +93,11 @@ public class AdminUserController {
 	 * @param model
 	 * @return the user modify page
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(path = "/admin/manager/user/modify", method = RequestMethod.GET)
 	public String showUserModify(@RequestParam("id") int id, Model model) {
-	    model.addAttribute("form", "modify");
-	    model.addAttribute("user", userDAO.retrieveUser(id).get());
+		model.addAttribute("form", "modify");
+		model.addAttribute("user", userDAO.retrieveUser(id).get());
 		return "usermodify";
 	}
 
@@ -115,21 +108,17 @@ public class AdminUserController {
 	 * @param model
 	 * @return the user modify page
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(path = "/admin/manager/user/modify", method = RequestMethod.POST)
 	public String modifyUser(@ModelAttribute User user, HttpServletRequest request, Model model) {
-	    model.addAttribute("form", "modify");
-	    User loginUser = purlAccess.retrieveCurrentUser();
+		model.addAttribute("form", "modify");
+		User loginUser = purlAccess.retrieveCurrentUser();
 		List<String> errorList = userValidateService.validateUser(user);
-		if (loginUser.isAdmin() || loginUser.getLogin().equals(user.getLogin())) {
-			if (errorList.isEmpty()) {
-				userDAO.modifyUser(user, loginUser);
-				model.addAttribute("submitted", true);
-			} else {
-			    model.addAttribute("errors", errorList);
-	            model.addAttribute("submitted", false);
-			}
+		if (errorList.isEmpty()) {
+			userDAO.modifyUser(user, loginUser);
+			model.addAttribute("submitted", true);
 		} else {
-			errorList.add(messages.getMessage("purl_server.error.user.modify.user.unauthorized", null, Locale.getDefault()));
+			model.addAttribute("errors", errorList);
 			model.addAttribute("submitted", false);
 		}
 		model.addAttribute("user", user);
@@ -141,6 +130,7 @@ public class AdminUserController {
 	 * 
 	 * @return the user search page
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(path = "/admin/manager/user/search", method = RequestMethod.GET)
 	public String showUserSearch(Model model) {
 		model.addAttribute("searchFullName", "");
@@ -162,6 +152,7 @@ public class AdminUserController {
 	 * @param model
 	 * @return the user search page with the model addtribute "users"
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(path = "/admin/manager/user/search", method = RequestMethod.POST)
 	protected String userSearch(
 			@RequestParam(value = "searchFullName", required = false, defaultValue = "") String fullName,
@@ -186,6 +177,7 @@ public class AdminUserController {
 	 * @param model
 	 * @return the user delete page
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(path = "/admin/manager/user/delete", method = RequestMethod.GET)
 	public String showUserDelete(@RequestParam("id") int id, Model model) {
 		model.addAttribute("user", userDAO.retrieveUser(id).get());
@@ -199,21 +191,14 @@ public class AdminUserController {
 	 * @param model
 	 * @return the user delete page
 	 */
-
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(path = "/admin/manager/user/delete", method = RequestMethod.POST)
 	public String deleteUser(@ModelAttribute User user, HttpServletRequest request, Model model) {
 		User loginUser = purlAccess.retrieveCurrentUser();
-		if (loginUser.isAdmin()) {
-			userDAO.deleteUser(user, loginUser);
-			model.addAttribute("deleted", true);
-			model.addAttribute("user", user);
-		} else {
-			List<String> errorList = new ArrayList<>();
-			errorList.add(messages.getMessage("purl_server.error.user.delete.user.unauthorized", null, Locale.getDefault()));
-			model.addAttribute("errors", errorList);
-		}
+		userDAO.deleteUser(user, loginUser);
+		model.addAttribute("deleted", true);
+		model.addAttribute("user", user);
 		return "userdelete";
 	}
 
-	
 }

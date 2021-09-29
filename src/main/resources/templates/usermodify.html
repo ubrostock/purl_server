@@ -46,19 +46,21 @@
     function encryptPassword() {
       var password =  $("#password").val();
       var repassword = $("#repassword").val();
-      if(password.localeCompare(repassword) == 0) {
-        $("#errorPassword").addClass("d-none");
-        if(password != "") {
-          var shaObj = new jsSHA("SHA-1", "TEXT");
-          shaObj.update(document.getElementById("password").value);
-          var hash = shaObj.getHash("HEX");
-          document.getElementById("password_sha").value = hash;
+      if(password != null) {
+        if(password.localeCompare(repassword) == 0) {
+          $("#errorPassword").addClass("d-none");
+          if(password != "") {
+            var shaObj = new jsSHA("SHA-1", "TEXT");
+            shaObj.update(document.getElementById("password").value);
+            var hash = shaObj.getHash("HEX");
+            document.getElementById("password_sha").value = hash;
+          }
+        } else {
+          $("#errorPassword").removeClass("d-none");
+          return false;
         }
-      return true;
-      } else {
-        $("#errorPassword").removeClass("d-none");
-        return false;
       }
+      return true;
     }
   </script>
   <script th:replace="fragments/page :: html_footer"></script>

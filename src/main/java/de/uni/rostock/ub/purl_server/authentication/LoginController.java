@@ -83,7 +83,7 @@ public class LoginController {
                 .getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
             if (ex != null) {
                 StringBuffer sbErrorMessage = new StringBuffer(ex.getMessage());
-                LOGGER.error(messages.getMessage("purl_server.error.login", null, Locale.getDefault()), ex);
+                LOGGER.error(ex.getMessage());
                 Throwable t = ex;
                 while (t.getCause() != null) {
                     t = t.getCause();

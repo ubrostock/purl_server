@@ -40,7 +40,7 @@ public class PurlValidateService {
      */
     public List<String> validateCreatePurl(Purl purl, User u) {
         List<String> errorList = new ArrayList<>();
-        if (StringUtils.isEmpty(purl.getPath())) {
+        if (!StringUtils.hasText(purl.getPath())) {
             errorList.add(messages.getMessage("purl_server.error.validate.purl.create.path.empty", null, Locale.getDefault()));
             return errorList;
         }
@@ -121,7 +121,7 @@ public class PurlValidateService {
             if (!purl.getPath().startsWith("/")) {
                 errorList.add(messages.getMessage("purl_server.error.validate.purl.path.start", null, Locale.getDefault()));
             }
-            if (!purl.getPath().matches("\\/[a-zA-Z0-9]+(\\/[a-zA-Z0-9]*)*")) {
+            if (!purl.getPath().matches("\\/[a-zA-Z0-9_\\-]+(\\/[a-zA-Z0-9_\\-]*)*")) {
                 errorList.add(messages.getMessage("purl_server.error.validate.purl.path.match", null, Locale.getDefault()));
             }
         }

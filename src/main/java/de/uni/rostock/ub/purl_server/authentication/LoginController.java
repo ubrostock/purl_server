@@ -57,7 +57,7 @@ public class LoginController {
 
     private static final String SQL_SELECT_FOR_EMAIL = "SELECT login, email, fullname, password_reset_token FROM user WHERE login = ?;";
 
-    private static final String SQL_UPATE_PASSWORD = "UPDATE user SET password = ?, password_reset_token=null WHERE password_reset_token = ?;";
+    private static final String SQL_UPATE_PASSWORD = "UPDATE user SET password_sha = ?, password_reset_token=null WHERE password_reset_token = ?;";
     
     @Autowired
     private JdbcTemplate jdbcTemplate;

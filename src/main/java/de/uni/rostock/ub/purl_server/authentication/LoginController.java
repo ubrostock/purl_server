@@ -71,7 +71,7 @@ public class LoginController {
     @Autowired
     private MessageSource messages;
     
-    @Value("$(purl_server.mail.from)")
+    @Value("${purl_server.mail.from}")
     private String mailFrom;
 
     @RequestMapping(value = "/admin/login")

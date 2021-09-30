@@ -107,11 +107,11 @@ public class PurlDAO {
 	 */
 	public List<Purl> searchPurls(String path, String target, boolean isTombstoned) {
 		String paramPath = "%";
-		if (!StringUtils.isEmpty(path)) {
+		if (StringUtils.hasText(path)) {
 			paramPath = "%" + path + "%";
 		}
 		String paramTarget = "%";
-		if (!StringUtils.isEmpty(target)) {
+		if (StringUtils.hasText(target)) {
 			paramTarget = "%" + target + "%";
 		}
 		int paramStatus = 3;

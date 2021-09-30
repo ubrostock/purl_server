@@ -30,7 +30,7 @@ public class UserValidateService {
         if (SHA_EMPTY_STRING.equals(user.getPasswordSHA())) {
             errorList.add(messages.getMessage("purl_server.error.validate.user.password.empty", null, Locale.getDefault()));
         }
-        if (StringUtils.isEmpty(user.getLogin())) {
+        if (!StringUtils.hasText(user.getLogin())) {
             errorList.add(messages.getMessage("purl_server.error.validate.user.username.empty", null, Locale.getDefault()));
         }
         return errorList;

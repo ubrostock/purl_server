@@ -55,7 +55,7 @@ public class DomainValidateService {
      */
     private List<String> validateDomain(Domain domain) {
         List<String> errorList = new ArrayList<>();
-        if (StringUtils.isEmpty(domain.getPath())) {
+        if (!StringUtils.hasText(domain.getPath())) {
             errorList.add(messages.getMessage("purl_server.error.validate.domain.path.empty", null, Locale.getDefault()));
         } else {
             if (domain.getPath().startsWith("/admin")) {
@@ -68,7 +68,7 @@ public class DomainValidateService {
                 errorList.add(messages.getMessage("purl_server.error.validate.domain.path.match", null, Locale.getDefault()));
             }
         }
-        if (StringUtils.isEmpty(domain.getName())) {
+        if (!StringUtils.hasText(domain.getName())) {
             errorList.add(messages.getMessage("purl_server.error.validate.domain.name.empty", null, Locale.getDefault()));
         }
         List<String> logins = userDAO.retrieveLogins();

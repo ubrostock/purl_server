@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import de.uni.rostock.ub.purl_server.common.PurlAccess;
@@ -115,7 +116,7 @@ public class PurlValidateService {
      */
     private List<String> validatePurl(Purl purl) {
         List<String> errorList = new ArrayList<>();
-        if (StringUtils.isEmpty(purl.getPath())) {
+        if (!StringUtils.hasText(purl.getPath())) {
             errorList.add(messages.getMessage("purl_server.error.validate.purl.path.empty", null, Locale.getDefault()));
         } else {
             if (!purl.getPath().startsWith("/")) {
@@ -125,14 +126,14 @@ public class PurlValidateService {
                 errorList.add(messages.getMessage("purl_server.error.validate.purl.path.match", null, Locale.getDefault()));
             }
         }
-        if (StringUtils.isEmpty(purl.getTarget())) {
+        if (!StringUtils.hasText(purl.getTarget())) {
             errorList.add(messages.getMessage("purl_server.error.validate.purl.target.empty", null, Locale.getDefault()));
         } else {
             if (!purl.getTarget().startsWith("https://") && !purl.getTarget().startsWith("http://")) {
                 errorList.add(messages.getMessage("purl_server.error.validate.purl.target.start", null, Locale.getDefault()));
             }
         }
-        if (StringUtils.isEmpty(purl.getType())) {
+        if (ObjectUtils.isEmpty(purl.getType())) {
             errorList.add(messages.getMessage("purl_server.error.validate.purl.type.target.empty", null, Locale.getDefault()));
         }
         return errorList;

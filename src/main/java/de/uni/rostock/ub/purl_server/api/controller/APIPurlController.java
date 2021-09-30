@@ -31,6 +31,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -163,7 +164,7 @@ public class APIPurlController {
                 List.of(messages.getMessage("purl_server.error.purl.path", new Object[] {purlPath}, Locale.getDefault())));
             return new ResponseEntity<PurlServerError>(e, HttpStatus.NOT_FOUND);
         }
-        if (StringUtils.isEmpty(inputPurl.getType())) {
+        if (ObjectUtils.isEmpty(inputPurl.getType())) {
             PurlServerError e = new PurlServerError(HttpStatus.NOT_FOUND.value(), messages.getMessage("purl_server.error.purl.update", null, Locale.getDefault()),
                 List.of(messages.getMessage("purl_server.error.purl.type", null, Locale.getDefault())));
             return new ResponseEntity<PurlServerError>(e, HttpStatus.NOT_FOUND);
@@ -175,7 +176,7 @@ public class APIPurlController {
                 List.of(messages.getMessage("purl_server.error.purl.deleted", null, Locale.getDefault())));
             return new ResponseEntity<PurlServerError>(e, HttpStatus.NOT_FOUND);
         }
-        if (StringUtils.isEmpty(inputPurl.getTarget())) {
+        if (!StringUtils.hasText(inputPurl.getTarget())) {
             PurlServerError e = new PurlServerError(HttpStatus.NOT_FOUND.value(), messages.getMessage("purl_server.error.purl.update", null, Locale.getDefault()),
                 List.of(messages.getMessage("purl_server.error.purl.target.empty", null, Locale.getDefault())));
             return new ResponseEntity<PurlServerError>(e, HttpStatus.NOT_FOUND);

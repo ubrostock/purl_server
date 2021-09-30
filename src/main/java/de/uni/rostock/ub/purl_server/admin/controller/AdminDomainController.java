@@ -253,7 +253,7 @@ public class AdminDomainController {
         Iterator<DomainUser> it = domain.getDomainUserList().iterator();
         while (it.hasNext()) {
             DomainUser du = it.next();
-            if (StringUtils.isEmpty(du.getUser().getLogin())) {
+            if (!StringUtils.hasText(du.getUser().getLogin())) {
                 it.remove();
             }
         }

@@ -18,11 +18,14 @@
  */
 package de.uni.rostock.ub.purl_server.admin.controller;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -46,6 +49,9 @@ public class AdminUserController {
 
 	@Autowired
 	UserDAO userDAO;
+
+	@Autowired
+	MessageSource messages;
 
 	/**
 	 * Show the user create page
@@ -72,15 +78,20 @@ public class AdminUserController {
 	@RequestMapping(path = "/admin/manager/user/create", method = RequestMethod.POST)
 	public String createUser(@ModelAttribute User user, HttpServletRequest request, Model model) {
 		model.addAttribute("form", "create");
-		User loginUser = purlAccess.retrieveCurrentUser();
-		List<String> errorList = userValidateService.validateUser(user);
-		if (errorList.isEmpty()) {
-			userDAO.createUser(user, loginUser);
-			model.addAttribute("submitted", true);
-
+		if (userDAO.retrieveUser(user.getLogin()).isPresent()) {
+			model.addAttribute("errors", Arrays.asList(messages.getMessage("purl_server.error.validate.user.exists",
+					new Object[] { user.getLogin() }, Locale.getDefault())));
 		} else {
-			model.addAttribute("errors", errorList);
-			model.addAttribute("submitted", false);
+			List<String> errorList = userValidateService.validateUser(user);
+			if (errorList.isEmpty()) {
+				User loginUser = purlAccess.retrieveCurrentUser();
+				userDAO.createUser(user, loginUser);
+				model.addAttribute("submitted", true);
+
+			} else {
+				model.addAttribute("errors", errorList);
+				model.addAttribute("submitted", false);
+			}
 		}
 		model.addAttribute("user", user);
 		return "usercreate";

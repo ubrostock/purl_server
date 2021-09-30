@@ -82,6 +82,7 @@ public class AdminPurlController {
     public String createPurl(@ModelAttribute Purl purl, HttpServletRequest request, Model model) {
         model.addAttribute("form", "create");
         User u = purlAccess.retrieveCurrentUser();
+        purl.setPath(purl.getPath().trim());
         List<String> errorList = purlValidateService.validateCreatePurl(purl, u);
         if (errorList.isEmpty()) {
             Optional<Purl> newPurl = purlDAO.createPurl(purl, u);

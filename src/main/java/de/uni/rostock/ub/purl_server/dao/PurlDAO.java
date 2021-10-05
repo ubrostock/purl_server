@@ -135,7 +135,7 @@ public class PurlDAO {
 	public Optional<Purl> retrievePurlWithHistory(String path) {
 		Optional<Purl> p = retrievePurl(path);
 		p.ifPresent(x -> {
-			List<PurlHistory> purlHistoryList = jdbcTemplate.query("SELECT * FROM purlhistory WHERE purl_id = ?;", new PurlHistoryRowMapper(), x.getId());
+			List<PurlHistory> purlHistoryList = jdbcTemplate.query("SELECT * FROM purlhistory WHERE purl_id = ? ORDER BY modified DESC;", new PurlHistoryRowMapper(), x.getId());
 			x.setPurlHistory(purlHistoryList);
 		});
 		return p;

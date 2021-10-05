@@ -56,7 +56,7 @@ public class PurlController {
      * @param domain  the PathVariable
      * @return redirect to the target URL
      */
-    @RequestMapping(path = "/{domain:(?!admin)(?!api)(?!webjars).*}/**", method = RequestMethod.GET)
+    @RequestMapping(path = "/{domain:(?!admin)(?!api)(?!info)(?!webjars).*}/**", method = RequestMethod.GET)
     public String resolvePurl(HttpServletRequest request, HttpServletResponse resp, @PathVariable String domain) {
         String path = request.getServletPath();
         Optional<Purl> op = purlDAO.retrievePurl(path);

@@ -98,6 +98,7 @@ public class AdminDomainController {
             } else {
                 model.addAttribute("domain", domain);
             }
+            model.addAttribute("submitted", true);
             model.addAttribute("created", true);
         } else {
             model.addAttribute("domain", domain);
@@ -164,7 +165,8 @@ public class AdminDomainController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/domain/modify", method = RequestMethod.POST, params = "addUser")
     public String modifyDomainAddUser(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
-        model.addAttribute("domain", domain);
+    	model.addAttribute("form", "modify");
+    	model.addAttribute("domain", domain);
         List<User> list = userDAO.retrieveActiveUsers();
         list.add(new User());
         model.addAttribute("usersLogin", list);

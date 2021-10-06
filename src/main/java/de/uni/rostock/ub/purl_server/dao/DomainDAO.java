@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -120,10 +121,19 @@ public class DomainDAO {
 		if(isTombstoned) {
 			sqlStatus = "";
 		}
-		List<Domain> domainList = jdbcTemplate.query("SELECT d.* FROM domain d, user u, domainuser du "
-		    + " WHERE d.id = du.domain_id AND u.id = du.user_id AND (path LIKE ?) "
-		    + sqlStatus
-		    + " AND (name LIKE ?) AND (login LIKE ?) GROUP BY d.id ORDER BY d.path LIMIT 50;", new DomainRowMapper(), paramPath, paramName,paramLogin );
+		List<Domain> domainList = Collections.emptyList();
+		if(StringUtils.hasText(login)) {
+			domainList = jdbcTemplate.query("SELECT d.* FROM domain d, user u, domainuser du "
+				    + " WHERE d.id = du.domain_id AND u.id = du.user_id AND (d.path LIKE ?) "
+				    + sqlStatus
+				    + " AND (d.name LIKE ?) AND (u.login LIKE ?) GROUP BY d.id ORDER BY d.path LIMIT 50;", new DomainRowMapper(), paramPath, paramName,paramLogin );
+		} else {
+			domainList = jdbcTemplate.query("SELECT * FROM domain d "
+				    + " WHERE (d.path LIKE ?) "
+				    + sqlStatus
+				    + " AND (d.name LIKE ?) ORDER BY d.path LIMIT 50;", new DomainRowMapper(), paramPath, paramName );
+		}
+
 		for(Domain d: domainList){
 		List<DomainUser> list = jdbcTemplate.query("SELECT u.*, du.* FROM user u JOIN domainuser du ON u.id = du.user_id WHERE du.domain_id = ?;", 
 		    new DomainUserRowMapper(), d.getId());

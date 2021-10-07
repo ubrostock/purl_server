@@ -17,7 +17,13 @@
         </div>
       </div>
       <div class="row">
-        <label class="col-sm-3 offset-sm-9 col-form-label text-right" th:text="#{purl_server.domain.form.create_modify}">Create / Modify</label>
+        <div class="col-sm-1 offset-sm-10" style="min-height: 5em;">
+          <label class="col-form-label text-left" th:style="#{purl_server.domain.form.create.css}" th:text="#{purl_server.domain.form.create}">Create</label>
+        </div>
+        <div class="col-sm-1">
+          <label class="col-form-label text-left" th:style="#{purl_server.domain.form.modify.css}" th:text="#{purl_server.domain.form.modify}">Modify</label>
+        </div>
+        
       </div>
       <div th:each="i : ${#numbers.sequence(0, __*{#lists.size(domainUserList)}__)}">
         <div class="form-group row">

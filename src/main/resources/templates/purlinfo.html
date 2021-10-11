@@ -21,19 +21,21 @@
               <colgroup>
                 <col style="width: 12em" />
               </colgroup>
-              <tr>
-                <th class="h3 border-top-0" th:text="#{purl_server.info.purl}"></th>
-                <td class="h3 border-top-0">
+              <tr class="h3">
+                <th class="border-top-0" th:text="#{purl_server.info.purl}"></th>
+                <td class="border-top-0">
                   <span th:text="${purl.path}"></span>
                 </td>
               </tr>
-              <tr id="accordionDomain">
+              <tr id="accordionDomain" class="h5">
                 <th th:text="#{purl_server.info.purl.domain}"></th>
                 <td class="pr-0">
                   <span th:text="${purl.domain.path}"></span>
-                  <a class="btn btn-sm btn-outline-secondary px-1 py-0 ml-3" data-toggle="collapse" data-target="#collapseDomain" aria-expanded="true" aria-controlls="collapseDomain">▼</a>
+                  <a class="btn btn-sm btn-outline-secondary px-1 py-0 ml-3" data-toggle="collapse" data-target="#collapseDomain"
+                     th:title="#{purl_server.info.more}" 
+                     aria-expanded="true" aria-controlls="collapseDomain">▼</a>
                   <div id="collapseDomain" class="collapse" data-parent="#accordionDomain">
-                    <table class="table table-sm">
+                    <table class="table table-sm mt-3">
                       <colgroup>
                         <col style="width: 12em" />
                       </colgroup>
@@ -41,7 +43,7 @@
                         <th th:text="#{purl_server.info.purl.domain.name}"></th>
                         <td th:text="${purl.domain.name}"></td>
                       </tr>
-                      <tr>
+                      <tr th:if="${purl.domain.comment}">
                         <th th:text="#{purl_server.info.purl.domain.comment}"></th>
                         <td th:text="${purl.domain.comment}"></td>
                       </tr>

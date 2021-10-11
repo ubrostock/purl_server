@@ -22,6 +22,8 @@ import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 public class Purl implements PurlServerResponse {
 	private int id = -1;
 	private String path;
@@ -40,6 +42,11 @@ public class Purl implements PurlServerResponse {
 	public void setId(int id) {
 		this.id = id;
 	}
+    
+	public String getUri() {
+        return ServletUriComponentsBuilder.fromCurrentContextPath().path(getPath()).build().toString();
+    }
+    
 	public String getPath() {
 		return path;
 	}
@@ -94,6 +101,7 @@ public class Purl implements PurlServerResponse {
 	public int getDomainId() {
 		return domainId;
 	}
+	
 	public void setDomainId(int domainId) {
 		this.domainId = domainId;
 	}
@@ -103,5 +111,5 @@ public class Purl implements PurlServerResponse {
 		int end = getPath().indexOf("/", 1);
 		return end == -1 ? getPath() : getPath().substring(0, end);
 	}
-	
+
 }

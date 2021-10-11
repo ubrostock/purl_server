@@ -24,6 +24,12 @@
               <tr class="h3">
                 <th class="border-top-0" th:text="#{purl_server.info.purl}"></th>
                 <td class="border-top-0">
+                  <span th:text="@{__${purl_url}__}"></span>
+                </td>
+              </tr>
+              <tr class="h5">
+                <th th:text="#{purl_server.info.purl.path}"></th>
+                <td>
                   <span th:text="${purl.path}"></span>
                 </td>
               </tr>

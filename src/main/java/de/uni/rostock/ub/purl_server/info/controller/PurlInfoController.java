@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import de.uni.rostock.ub.purl_server.dao.PurlDAO;
 import de.uni.rostock.ub.purl_server.model.Purl;
@@ -32,10 +33,11 @@ public class PurlInfoController {
 		} else {
 			ModelAndView mav = new ModelAndView("purlinfo");
 			String purlPath = "/"
-					+ new AntPathMatcher().extractPathWithinPattern("/info/purl/**", request.getRequestURI());
+					+ new AntPathMatcher().extractPathWithinPattern("info/purl/**", request.getRequestURI());
 			Optional<Purl> op = purlDAO.retrievePurlWithHistory(purlPath);
 			if (op.isPresent()) {
 				mav.addObject("purl", op.get());
+				mav.addObject("purl_url", ServletUriComponentsBuilder.fromCurrentContextPath().path(purlPath).build().toString());
 			} else {
 				mav.addObject("errorList", "");
 			}

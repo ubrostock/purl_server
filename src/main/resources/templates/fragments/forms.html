@@ -150,6 +150,7 @@
       </div>
       <div class="form-group row" th:unless="${submitted}">
         <div class="col-sm-9 offset-sm-3">
+          <a th:href="@{/info/purl__*{path}__}" class="btn btn-sm btn-outline-secondary float-right mt-2 py-1">&#128712; <span class="small" th:text="#{purl_server.purl.form.info}">Info</span></a>
           <button type="submit" class="btn btn-primary" th:text="#{purl_server.purl.__${form}__.submit}">Submit</button>
         </div>
       </div>

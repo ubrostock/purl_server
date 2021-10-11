@@ -49,22 +49,6 @@
                         <th th:text="#{purl_server.info.purl.domain.name}"></th>
                         <td th:text="${purl.domain.name}"></td>
                       </tr>
-                      <tr th:if="${purl.domain.comment}">
-                        <th th:text="#{purl_server.info.purl.domain.comment}"></th>
-                        <td th:text="${purl.domain.comment}"></td>
-                      </tr>
-                      <tr>
-                        <th th:text="#{purl_server.info.purl.domain.created}"></th>
-                        <td th:text="${purl.domain.created}"></td>
-                      </tr>
-                      <tr>
-                        <th th:text="#{purl_server.info.purl.domain.lastmodified}"></th>
-                        <td th:text="${purl.domain.lastmodified}"></td>
-                      </tr>
-                      <tr>
-                        <th th:text="#{purl_server.info.purl.domain.status}"></th>
-                        <td th:text="${purl.domain.status}"></td>
-                      </tr>
                       <tr>
                         <th th:text="#{purl_server.info.purl.domain.domainuserlist}"></th>
                         <td class="pr-0">
@@ -84,6 +68,22 @@
                             </tr>
                           </table>
                         </td>
+                      </tr>
+                      <tr th:if="${!#strings.isEmpty(purl.domain.comment)}">
+                        <th th:text="#{purl_server.info.purl.domain.comment}"></th>
+                        <td th:text="${purl.domain.comment}"></td>
+                      </tr>
+                       <tr>
+                        <th th:text="#{purl_server.info.purl.domain.created}"></th>
+                        <td th:text="${purl.domain.created}"></td>
+                      </tr>
+                      <tr>
+                        <th th:text="#{purl_server.info.purl.domain.lastmodified}"></th>
+                        <td th:text="${purl.domain.lastmodified}"></td>
+                      </tr>
+                      <tr>
+                        <th th:text="#{purl_server.info.purl.domain.status}"></th>
+                        <td th:text="${purl.domain.status}"></td>
                       </tr>
                     </table>
                   </div>

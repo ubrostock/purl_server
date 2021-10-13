@@ -35,7 +35,7 @@ public class PurlInfoController {
 			String purlPath = "/"
 					+ new AntPathMatcher().extractPathWithinPattern("info/purl/**", request.getRequestURI());
 			Optional<Purl> op = purlDAO.retrievePurlWithHistory(purlPath);
-			if (op.isPresent()) {
+			if (op.isPresent() && op != null) {
 				mav.addObject("purl", op.get());
 				mav.addObject("purl_url", ServletUriComponentsBuilder.fromCurrentContextPath().path(purlPath).build().toString());
 			} else {

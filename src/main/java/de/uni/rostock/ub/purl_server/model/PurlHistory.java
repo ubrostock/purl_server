@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 public class PurlHistory {
 	private int id;
 	private int purlId;
+	private int userId;
 	private Status status;
 	private Type type;
 	private String target;
@@ -57,6 +58,12 @@ public class PurlHistory {
 	}
 	public void setPurlId(int purlId) {
 		this.purlId = purlId;
+	}
+	public int getUserId() {
+		return userId;
+	}
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 	public LocalDateTime getLastmodified() {
 		return lastmodified;

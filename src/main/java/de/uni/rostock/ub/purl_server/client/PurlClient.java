@@ -50,14 +50,22 @@ public class PurlClient {
     private String baiscURL = "";
 
     private HttpClient httpClient = null;
+    
+    private String message = "";
 
     public static void main(String[] args) {
         PurlClient app = new PurlClient("http://localhost:8080");
-        app.createPURL("/nureintest/testneu12345", "http://google.de/", TYPE_PARTIAL_302);
-        app.login("test", "test");
+  //      app.createPURL("/nureintest/testneu12345", "http://google.de/", TYPE_PARTIAL_302);
+        app.login("admin", "admin");
   //      app.createPURL("/test/bcd", "http://google.de/", TYPE_PARTIAL_302);
-        app.createPURL("/nureintest/testneu12345", "http://google.de/", TYPE_PARTIAL_302);
-        app.updatePURL("/nureintest/testneu12345", "http://test1", TYPE_PARTIAL_302);
+  //      app.createPURL("/nureintest/testneu12345", "http://google.de/", TYPE_PARTIAL_302);
+  //      app.updatePURL("/nureintest/testneu12345", "http://test1", TYPE_PARTIAL_302);
+        app.createPURL("/web/ub/test", "http://google.de/", TYPE_302);
+        app.createPURL("/keinedomain/123", "http://google.de/", TYPE_302);
+        boolean result = app.createPURL("/keinedomain/123", "http://google.de/", TYPE_302);
+        if(!result) {
+        	System.out.println("Fehler " + app.getMessage());
+        }
         app.logout();
     }
 
@@ -80,7 +88,8 @@ public class PurlClient {
     }
 
     public boolean createPURL(String purl, String target, String type) {
-        String purlJson = "{\"type\":\"" + type + "\",\"target\":\"" + target + "\"}";
+        message = "";
+    	String purlJson = "{\"type\":\"" + type + "\",\"target\":\"" + target + "\"}";
         HttpRequest request = HttpRequest.newBuilder().POST(BodyPublishers.ofString(purlJson))
             .header("Content-Type", "application/json").uri(URI.create(baiscURL + purl)).build();
         try {
@@ -88,15 +97,18 @@ public class PurlClient {
             if(response.statusCode() == HttpServletResponse.SC_CREATED) {
                 return true;
             }
-            LOGGER.info(response.statusCode() + " - " + response.body());
+            message = response.body();
+            LOGGER.info(message);
         } catch (IOException | InterruptedException e) {
-            LOGGER.error("Error creating a PURL!", e);
+            message = "Error creating a PURL!";
+        	LOGGER.error(message, e);
         }
         return false;
     }
 
     public boolean updatePURL(String purl, String target, String type) {
-        String purlJson = "{\"type\":\"" + type + "\",\"target\":\"" + target + "\"}";
+        message = "";
+    	String purlJson = "{\"type\":\"" + type + "\",\"target\":\"" + target + "\"}";
         HttpRequest request = HttpRequest.newBuilder().PUT(BodyPublishers.ofString(purlJson))
             .header("Content-Type", "application/json").uri(URI.create(baiscURL + purl))
             .build();
@@ -105,14 +117,17 @@ public class PurlClient {
             if(response.statusCode() == HttpServletResponse.SC_OK) {
                 return true;
             }
-            LOGGER.info(response.statusCode() + " - " + response.body());
+            message = response.body();
+            LOGGER.info(message);
         } catch (IOException | InterruptedException e) {
-            LOGGER.error("Error updating a PURL!", e);
+        	message = "Error updating a PURL!";
+            LOGGER.error(message, e);
         }
         return false;
     }
 
     public String showPURL(String purl) {
+       message = "";
        HttpRequest request = HttpRequest.newBuilder().GET()
             .uri(URI.create(baiscURL + purl)).build();
        try {
@@ -121,12 +136,18 @@ public class PurlClient {
             return response.body();
         }
         if(response.statusCode() == HttpServletResponse.SC_NOT_FOUND) {
-            LOGGER.info("PURL " + purl + " not found!");
+        	message = "PURL " + purl + " not found!";
+			LOGGER.info(message);
         }
        } catch (IOException | InterruptedException e) {
-           LOGGER.error("Error displaying a PURL!", e);
+    	   message = "Error displaying a PURL!";
+           LOGGER.error(message, e);
        }
        return null;
+    }
+    
+    public String getMessage() {
+    	return message;
     }
     
     private static String sha1(String plain) {

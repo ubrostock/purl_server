@@ -165,7 +165,7 @@ public class PurlDAO {
 	                return ps;
 				}
 			}, purlId);
-			jdbcTemplate.update("INSERT INTO purlhistory (purl_id, type, target, modified, status) VALUES(?,?,?,NOW(),? );", purlId.getKey().intValue(), p.getType().name(),
+			jdbcTemplate.update("INSERT INTO purlhistory (purl_id, user_id, type, target, modified, status) VALUES(?,?,?,?,NOW(),? );", purlId.getKey().intValue(), u.getId(), p.getType().name(),
 					p.getTarget(), Status.CREATED.name());
 		
 		return retrievePurl(p.getPath());
@@ -180,7 +180,7 @@ public class PurlDAO {
 
 			jdbcTemplate.update("UPDATE purl SET path = ?, target = ?, lastmodified = NOW(), status = ?, type = ? WHERE id = ?;", p.getPath(), p.getTarget(),
 					Status.MODIFIED.name(), p.getType().name(), p.getId());
-			jdbcTemplate.update("INSERT INTO purlhistory (purl_id, type, target, modified, status) VALUES(?,?,?,NOW(),? );", p.getId(), p.getType().name(),
+			jdbcTemplate.update("INSERT INTO purlhistory (purl_id, user_id, type, target, modified, status) VALUES(?,?,?,?,NOW(),? );", p.getId(), u.getId(), p.getType().name(),
 					p.getTarget(), Status.MODIFIED.name());
 		return retrievePurl(p.getPath());
 	}
@@ -193,7 +193,7 @@ public class PurlDAO {
 	public void deletePurl(Purl p, User u) {
 			jdbcTemplate.update("UPDATE purl SET lastmodified = NOW(), status = ?, type = ? WHERE path = ?", Status.DELETED.name(), Type.GONE_410.name(), p.getPath());
 			p.setType(Type.GONE_410);
-			jdbcTemplate.update("INSERT INTO purlhistory (purl_id, type, target, modified, status) VALUES(?,?,?,NOW(),? );", p.getId(), p.getType().name(), p.getTarget(),
+			jdbcTemplate.update("INSERT INTO purlhistory (purl_id, user_id, type, target, modified, status) VALUES(?,?,?,?NOW(),? );", p.getId(), u.getId(), p.getType().name(), p.getTarget(),
 					Status.DELETED.name());
 	}
 }

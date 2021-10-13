@@ -20,10 +20,18 @@ package de.uni.rostock.ub.purl_server.model;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class PurlHistory {
 	private int id;
+	
+	@JsonIgnore
 	private int purlId;
+	
+	@JsonIgnore
 	private int userId;
+	
+	private String user;
 	private Status status;
 	private Type type;
 	private String target;
@@ -64,6 +72,12 @@ public class PurlHistory {
 	}
 	public void setUserId(int userId) {
 		this.userId = userId;
+	}
+	public String getUser() {
+		return user;
+	}
+	public void setUser(String user) {
+		this.user = user;
 	}
 	public LocalDateTime getLastmodified() {
 		return lastmodified;

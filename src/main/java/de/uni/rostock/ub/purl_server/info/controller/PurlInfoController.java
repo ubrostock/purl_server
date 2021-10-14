@@ -1,10 +1,17 @@
 package de.uni.rostock.ub.purl_server.info.controller;
 
+import java.io.IOException;
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import de.uni.rostock.ub.purl_server.PurlController;
 import de.uni.rostock.ub.purl_server.dao.PurlDAO;
 import de.uni.rostock.ub.purl_server.model.Purl;
 
@@ -24,10 +32,15 @@ public class PurlInfoController {
 
 	@Autowired
 	PurlDAO purlDAO;
+	
+	@Autowired
+    private MessageSource messages;
+	
+	private static Logger LOGGER = LoggerFactory.getLogger(PurlController.class);
 
 	@RequestMapping(path = "/info/purl/**", method = RequestMethod.GET, produces = "!"
 			+ MediaType.APPLICATION_JSON_VALUE)
-	public Object retrieveInfoPurl(HttpServletRequest request, @RequestParam(defaultValue = "") String format) {
+	public Object retrieveInfoPurl(HttpServletRequest request, HttpServletResponse resp, @RequestParam(defaultValue = "") String format) {
 		if ("json".equals(format)) {
 			return retrieveJSONPurl(request);
 		} else {
@@ -39,7 +52,11 @@ public class PurlInfoController {
 				mav.addObject("purl", op.get());
 				mav.addObject("purl_url", ServletUriComponentsBuilder.fromCurrentContextPath().path(purlPath).build().toString());
 			} else {
-				mav.addObject("errorList", "");
+				try {
+					resp.sendError(HttpServletResponse.SC_NOT_FOUND, messages.getMessage("purl_server.error.purl.found", null, Locale.getDefault()));
+				} catch (NoSuchMessageException | IOException e) {
+					LOGGER.error(messages.getMessage("purl_server.error.sending.error", null, Locale.getDefault()), e);
+				}
 			}
 			return mav;
 		}

@@ -146,7 +146,7 @@ public class AdminPurlController {
     public String showPurlSearch(Model model) {
         model.addAttribute("path", "");
         model.addAttribute("targetURL", "");
-        model.addAttribute("tombstoned", "");
+        model.addAttribute("tombstoned", false);
         return "purlsearch";
     }
 

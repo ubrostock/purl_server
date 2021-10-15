@@ -36,11 +36,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import de.uni.rostock.ub.purl_server.common.PurlAccess;
 import de.uni.rostock.ub.purl_server.dao.UserDAO;
+import de.uni.rostock.ub.purl_server.model.Domain;
 import de.uni.rostock.ub.purl_server.model.User;
 import de.uni.rostock.ub.purl_server.validate.UserValidateService;
 
 @Controller
 public class AdminUserController {
+	private static int LIMIT = 50;
+	
 	@Autowired
 	PurlAccess purlAccess;
 
@@ -172,7 +175,13 @@ public class AdminUserController {
 			@RequestParam(value = "searchLogin", required = false, defaultValue = "") String login,
 			@RequestParam(value = "searchTombstonedUser", required = false, defaultValue = "false") boolean isTombstoned,
 			Model model) {
-		model.addAttribute("users", userDAO.searchUsers(login, fullName, affiliation, email, isTombstoned));
+		List<User> userList = userDAO.searchUsers(login, fullName, affiliation, email, isTombstoned, LIMIT + 1);
+    	model.addAttribute("moreResults", false);
+    	if(userList.size() == LIMIT + 1) {
+    		userList.remove(LIMIT);
+    		model.addAttribute("moreResults", true);
+    	}
+		model.addAttribute("users", userList);
 		model.addAttribute("searchFullName", fullName);
 		model.addAttribute("searchAffiliation", affiliation);
 		model.addAttribute("searchEMailAddress", email);

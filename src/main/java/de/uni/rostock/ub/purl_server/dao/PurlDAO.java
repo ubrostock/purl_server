@@ -105,7 +105,7 @@ public class PurlDAO {
 	 * @param isTombstoned
 	 * @return a list of founded purls
 	 */
-	public List<Purl> searchPurls(String path, String target, boolean isTombstoned) {
+	public List<Purl> searchPurls(String path, String target, boolean isTombstoned, int limit) {
 		String paramPath = "%";
 		if (StringUtils.hasText(path)) {
 			paramPath = "%" + path + "%";
@@ -118,8 +118,8 @@ public class PurlDAO {
 		if (isTombstoned) {
 			paramStatus = 10;
 		}
-		List<Purl> purlList = jdbcTemplate.query("SELECT * FROM purl WHERE (path LIKE ?) AND (status < ?) AND (target LIKE ?) LIMIT 50;", new PurlRowMapper(),
-				paramPath, paramStatus, paramTarget);
+		List<Purl> purlList = jdbcTemplate.query("SELECT * FROM purl WHERE (path LIKE ?) AND (status < ?) AND (target LIKE ?) LIMIT ?;", new PurlRowMapper(),
+				paramPath, paramStatus, paramTarget, limit);
 		for (Purl p : purlList) {
 		    domainDAO.retrieveDomain(p.getDomainId()).ifPresent(d -> p.setDomain(d));
 		}

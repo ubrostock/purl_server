@@ -104,7 +104,7 @@ public class DomainDAO {
 	 * @param isTombstoned
 	 * @return a list of founded domains
 	 */
-	public List<Domain> searchDomains(String path, String name, String login, boolean isTombstoned) {
+	public List<Domain> searchDomains(String path, String name, String login, boolean isTombstoned, int limit) {
 		String paramPath = "%";
 		if(StringUtils.hasText(path)) {
 			paramPath = "%" + path + "%";
@@ -126,12 +126,12 @@ public class DomainDAO {
 			domainList = jdbcTemplate.query("SELECT d.* FROM domain d, user u, domainuser du "
 				    + " WHERE d.id = du.domain_id AND u.id = du.user_id AND (d.path LIKE ?) "
 				    + sqlStatus
-				    + " AND (d.name LIKE ?) AND (u.login LIKE ?) GROUP BY d.id ORDER BY d.path LIMIT 50;", new DomainRowMapper(), paramPath, paramName,paramLogin );
+				    + " AND (d.name LIKE ?) AND (u.login LIKE ?) GROUP BY d.id ORDER BY d.path LIMIT ?;", new DomainRowMapper(), paramPath, paramName, paramLogin, limit);
 		} else {
 			domainList = jdbcTemplate.query("SELECT * FROM domain d "
 				    + " WHERE (d.path LIKE ?) "
 				    + sqlStatus
-				    + " AND (d.name LIKE ?) ORDER BY d.path LIMIT 50;", new DomainRowMapper(), paramPath, paramName );
+				    + " AND (d.name LIKE ?) ORDER BY d.path LIMIT ?;", new DomainRowMapper(), paramPath, paramName, limit);
 		}
 
 		for(Domain d: domainList){

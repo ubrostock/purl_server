@@ -81,7 +81,7 @@ public class UserDAO {
 	 * @param isTombstoned
 	 * @return a list of founded users
 	 */
-	public List<User> searchUsers(String login, String fullName, String affiliation, String email, boolean isTombstoned) {
+	public List<User> searchUsers(String login, String fullName, String affiliation, String email, boolean isTombstoned, int limit) {
 		String paramFullName = "%";
 		if(StringUtils.hasText(fullName)) {
 			paramFullName = "%" + fullName + "%";
@@ -104,7 +104,7 @@ public class UserDAO {
 	    }
 		return jdbcTemplate.query("SELECT * FROM user WHERE (login LIKE ?) AND (fullname LIKE ?) AND (affiliation LIKE ?) AND (email LIKE ?)"
 		    + sqlStatus
-		    + " ORDER BY login LIMIT 50;", new UserRowMapper(), paramLogin, paramFullName, paramAffiliation, paramEmail);
+		    + " ORDER BY login LIMIT ?;", new UserRowMapper(), paramLogin, paramFullName, paramAffiliation, paramEmail, limit);
 	}
 	
 	/**

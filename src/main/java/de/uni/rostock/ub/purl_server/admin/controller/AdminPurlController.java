@@ -43,7 +43,9 @@ import de.uni.rostock.ub.purl_server.validate.PurlValidateService;
 
 @Controller
 public class AdminPurlController {
-    @Autowired
+    private static int LIMIT = 50;
+	
+	@Autowired
     PurlAccess purlAccess;
     
     @Autowired
@@ -164,7 +166,13 @@ public class AdminPurlController {
         @RequestParam(value = "targetURL", required = false, defaultValue = "") String url,
         @RequestParam(value = "tombstoned", required = false, defaultValue = "false") Boolean isTombstoned,
         Model model) {
-        model.addAttribute("purls", purlDAO.searchPurls(path, url, isTombstoned));
+    	List<Purl> purlList = purlDAO.searchPurls(path, url, isTombstoned, LIMIT + 1);
+    	model.addAttribute("moreResults", false);
+    	if(purlList.size() == LIMIT + 1) {
+    		purlList.remove(LIMIT);
+    		model.addAttribute("moreResults", true);
+    	}
+        model.addAttribute("purls", purlList);
         model.addAttribute("path", path);
         model.addAttribute("targetURL", url);
         model.addAttribute("tombstoned", isTombstoned);

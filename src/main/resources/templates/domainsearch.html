@@ -7,7 +7,7 @@
   <div class="container">
     <div th:replace="fragments/page :: title"></div>
     <div th:replace="fragments/page :: navigation"></div>
-    <div class="card border">
+    <div class="card border mb-3">
       <div class="card-body">
         <h3 class="card-title" th:text="#{purl_server.domain.search.title}">Search for a domain</h3>
         <div class="row">
@@ -55,29 +55,35 @@
         </div>
       </div>
     </div>
-    <table class="table table-striped table-sm mt-3">
-      <tr>
-        <th th:text="#{purl_server.domain.search.table.path}">Path</th>
-        <th th:text="#{purl_server.domain.search.table.name}">Name</th>
-        <th th:text="#{purl_server.domain.search.table.user}">User</th>
-        <th></th>
-        <th></th>
-      </tr>
-      <tr th:each="d : ${domains}">
-        <td th:text="${d.path}"></td>
-        <td th:text="${d.name}"></td>
-        <td>
-          <span th:each="du : ${d.domainUserList}">
-            <span th:text="${du.user.login}"></span>
-            <span th:if="${du.canCreate}">(c)</span>
-            <span th:if="${du.canModify}">(m)</span>
-            <br />
-          </span>
-        </td>
-        <td><a th:href="@{/admin/manager/domain/modify?id=__${d.id}__}" th:text="#{purl_server.domain.search.table.modify}" sec:authorize="hasRole('ROLE_ADMIN')">modify</a></td>
-        <td><a th:href="@{/admin/manager/domain/delete?id=__${d.id}__}" th:text="#{purl_server.domain.search.table.delete}" sec:authorize="hasRole('ROLE_ADMIN')">delete</a></td>
-      </tr>
-    </table>
+    <div class="row">
+      <div class="col">
+        <p class="alert alert-info" th:if="${domains != null && #lists.size(domains) == 0}" th:text="#{purl_server.common.search.result.empty}" ></p>
+        <p class="alert alert-info" th:if="${moreResults}" th:text="#{purl_server.common.search.result.more}" ></p>
+        <table class="table table-striped table-sm mt-3">
+          <tr>
+            <th th:text="#{purl_server.domain.search.table.path}">Path</th>
+            <th th:text="#{purl_server.domain.search.table.name}">Name</th>
+            <th th:text="#{purl_server.domain.search.table.user}">User</th>
+            <th></th>
+            <th></th>
+          </tr>
+          <tr th:each="d : ${domains}">
+            <td th:text="${d.path}"></td>
+            <td th:text="${d.name}"></td>
+            <td>
+              <span th:each="du : ${d.domainUserList}">
+                <span th:text="${du.user.login}"></span>
+                <span th:if="${du.canCreate}">(c)</span>
+                <span th:if="${du.canModify}">(m)</span>
+                <br />
+              </span>
+            </td>
+            <td><a th:href="@{/admin/manager/domain/modify?id=__${d.id}__}" th:text="#{purl_server.domain.search.table.modify}" sec:authorize="hasRole('ROLE_ADMIN')">modify</a></td>
+            <td><a th:href="@{/admin/manager/domain/delete?id=__${d.id}__}" th:text="#{purl_server.domain.search.table.delete}" sec:authorize="hasRole('ROLE_ADMIN')">delete</a></td>
+          </tr>
+        </table>
+      </div>
+    </div>
   </div>
   <script th:replace="fragments/page :: html_footer"></script>
 </body>

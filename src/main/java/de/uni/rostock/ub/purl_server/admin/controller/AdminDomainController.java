@@ -47,6 +47,8 @@ import de.uni.rostock.ub.purl_server.validate.DomainValidateService;
 
 @Controller
 public class AdminDomainController {
+	private static int LIMIT = 50;
+	
     @Autowired
     PurlAccess purlAccess;
     
@@ -203,7 +205,13 @@ public class AdminDomainController {
         @RequestParam(value = "searchUser", required = false, defaultValue = "") String login,
         @RequestParam(value = "searchTombstonedDomain", required = false, defaultValue = "false") boolean isTombstoned,
         Model model) {
-        model.addAttribute("domains", domainDAO.searchDomains(path, name, login, isTombstoned));
+    	List<Domain> domainList = domainDAO.searchDomains(path, name, login, isTombstoned, LIMIT + 1);
+    	model.addAttribute("moreResults", false);
+    	if(domainList.size() == LIMIT + 1) {
+    		domainList.remove(LIMIT);
+    		model.addAttribute("moreResults", true);
+    	}
+        model.addAttribute("domains", domainList);
         model.addAttribute("searchPath", path);
         model.addAttribute("searchName", name);
         model.addAttribute("searchUser", login);

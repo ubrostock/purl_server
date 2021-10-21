@@ -62,7 +62,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().antMatcher("/admin/**")
                 .authorizeRequests(auth -> auth.antMatchers("/admin/manager/**").authenticated()
                     .antMatchers("/admin/login").permitAll().antMatchers("/admin/login/**").permitAll());
-                
+
         }
     }
 

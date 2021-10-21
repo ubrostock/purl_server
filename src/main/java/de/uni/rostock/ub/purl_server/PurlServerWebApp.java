@@ -32,26 +32,26 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 @SpringBootApplication
 public class PurlServerWebApp implements WebMvcConfigurer {
 
-	@Bean(name = "localeResolver")
-	public LocaleResolver localeResolver() {
-		SessionLocaleResolver slr = new SessionLocaleResolver();
-		slr.setDefaultLocale(Locale.GERMAN);
-		return slr;
-	}
+    @Bean(name = "localeResolver")
+    public LocaleResolver localeResolver() {
+        SessionLocaleResolver slr = new SessionLocaleResolver();
+        slr.setDefaultLocale(Locale.GERMAN);
+        return slr;
+    }
 
-	@Bean
-	public LocaleChangeInterceptor localeChangeInterceptor() {
-		LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
-		localeChangeInterceptor.setParamName("lang");
-		return localeChangeInterceptor;
-	}
+    @Bean
+    public LocaleChangeInterceptor localeChangeInterceptor() {
+        LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
+        localeChangeInterceptor.setParamName("lang");
+        return localeChangeInterceptor;
+    }
 
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(localeChangeInterceptor());
-	}
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(localeChangeInterceptor());
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(PurlServerWebApp.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(PurlServerWebApp.class, args);
+    }
 }

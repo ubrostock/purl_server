@@ -33,116 +33,122 @@ import de.uni.rostock.ub.purl_server.model.User;
 
 @Service
 public class UserDAO {
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
-	/**
-	 * Retrieve user by their login
-	 * @param login
-	 * @return the retrieved user
-	 */
-	public Optional<User> retrieveUser(String login) {
-		try {
-		    User u = jdbcTemplate.queryForObject("SELECT * FROM user WHERE login = ?;", new UserRowMapper(), login);
-			return Optional.of(u);
-		}catch(DataAccessException e) {
-		    return Optional.empty();
-		}
-	}
+    /**
+     * Retrieve user by their login
+     * @param login
+     * @return the retrieved user
+     */
+    public Optional<User> retrieveUser(String login) {
+        try {
+            User u = jdbcTemplate.queryForObject("SELECT * FROM user WHERE login = ?;", new UserRowMapper(), login);
+            return Optional.of(u);
+        } catch (DataAccessException e) {
+            return Optional.empty();
+        }
+    }
 
-	/**
-	 * Retrieve user by their id
-	 * @param id
-	 * @return the retrieved user
-	 */
-	public Optional<User> retrieveUser(int id) {
-		try {
-		    User u = jdbcTemplate.queryForObject("SELECT * FROM user WHERE id = ?;", new UserRowMapper(), id);
-			return Optional.of(u);
-		} catch(DataAccessException e) {
-		    return Optional.empty();
-		}
-	}
+    /**
+     * Retrieve user by their id
+     * @param id
+     * @return the retrieved user
+     */
+    public Optional<User> retrieveUser(int id) {
+        try {
+            User u = jdbcTemplate.queryForObject("SELECT * FROM user WHERE id = ?;", new UserRowMapper(), id);
+            return Optional.of(u);
+        } catch (DataAccessException e) {
+            return Optional.empty();
+        }
+    }
 
-	/**
-	 * Retrieve logins
-	 * @return a list of all logins
-	 */
-	public List<String> retrieveLogins() {
-		return jdbcTemplate.queryForList("SELECT login FROM user ORDER BY login;", String.class);
-	}
+    /**
+     * Retrieve logins
+     * @return a list of all logins
+     */
+    public List<String> retrieveLogins() {
+        return jdbcTemplate.queryForList("SELECT login FROM user ORDER BY login;", String.class);
+    }
 
-	/**
-	 * Search users
-	 * @param fullName
-	 * @param affiliation
-	 * @param email
-	 * @param login
-	 * @param isTombstoned
-	 * @return a list of founded users
-	 */
-	public List<User> searchUsers(String login, String fullName, String affiliation, String email, boolean isTombstoned, int limit) {
-		String paramFullName = "%";
-		if(StringUtils.hasText(fullName)) {
-			paramFullName = "%" + fullName + "%";
-		}
-		String paramAffiliation = "%";
-		if(StringUtils.hasText(affiliation)) {
-			paramAffiliation = "%" + affiliation + "%";
-		}
-		String paramEmail = "%";
-		if(StringUtils.hasText(email)) {
-			paramEmail = "%" + email + "%";
-		}
-		String paramLogin = "%";
-		if(StringUtils.hasText(login)) {
-			paramLogin = "%" + login + "%";
-		}
-	    String sqlStatus = " AND (status='CREATED' OR status='MODIFIED')";
-	    if(isTombstoned) {
-	            sqlStatus = "";
-	    }
-		return jdbcTemplate.query("SELECT * FROM user WHERE (login LIKE ?) AND (fullname LIKE ?) AND (affiliation LIKE ?) AND (email LIKE ?)"
-		    + sqlStatus
-		    + " ORDER BY login LIMIT ?;", new UserRowMapper(), paramLogin, paramFullName, paramAffiliation, paramEmail, limit);
-	}
-	
-	/**
-	 * List all currently active Users.
-	 * @return list of users
-	 */
-	public List<User> retrieveActiveUsers() {
-	    return jdbcTemplate.query("SELECT * FROM user WHERE (status='CREATED' OR status='MODIFIED') ORDER BY login;",
+    /**
+     * Search users
+     * @param fullName
+     * @param affiliation
+     * @param email
+     * @param login
+     * @param isTombstoned
+     * @return a list of founded users
+     */
+    public List<User> searchUsers(String login, String fullName, String affiliation, String email, boolean isTombstoned,
+        int limit) {
+        String paramFullName = "%";
+        if (StringUtils.hasText(fullName)) {
+            paramFullName = "%" + fullName + "%";
+        }
+        String paramAffiliation = "%";
+        if (StringUtils.hasText(affiliation)) {
+            paramAffiliation = "%" + affiliation + "%";
+        }
+        String paramEmail = "%";
+        if (StringUtils.hasText(email)) {
+            paramEmail = "%" + email + "%";
+        }
+        String paramLogin = "%";
+        if (StringUtils.hasText(login)) {
+            paramLogin = "%" + login + "%";
+        }
+        String sqlStatus = " AND (status='CREATED' OR status='MODIFIED')";
+        if (isTombstoned) {
+            sqlStatus = "";
+        }
+        return jdbcTemplate.query(
+            "SELECT * FROM user WHERE (login LIKE ?) AND (fullname LIKE ?) AND (affiliation LIKE ?) AND (email LIKE ?)"
+                + sqlStatus
+                + " ORDER BY login LIMIT ?;",
+            new UserRowMapper(), paramLogin, paramFullName, paramAffiliation, paramEmail, limit);
+    }
+
+    /**
+     * List all currently active Users.
+     * @return list of users
+     */
+    public List<User> retrieveActiveUsers() {
+        return jdbcTemplate.query("SELECT * FROM user WHERE (status='CREATED' OR status='MODIFIED') ORDER BY login;",
             new UserRowMapper());
-	}
+    }
 
-	/**
-	 * Create a user
-	 * @param userObject
-	 */
-	public void createUser(User userObject, User u) {
-			jdbcTemplate.update(
-					"INSERT INTO user (login, password_sha, admin, fullname, affiliation, email, comment, created, lastmodified, status) VALUES (?,?,?,?,   ?,?,?,NOW(),NOW(),   ?)",
-					userObject.getLogin(), userObject.getPasswordSHA(), userObject.isAdmin(), userObject.getFullname(), userObject.getAffiliation(), userObject.getEmail(),
-					userObject.getComment(), Status.CREATED.name());
-	}
+    /**
+     * Create a user
+     * @param userObject
+     */
+    public void createUser(User userObject, User u) {
+        jdbcTemplate.update(
+            "INSERT INTO user (login, password_sha, admin, fullname, affiliation, email, comment, created, lastmodified, status) VALUES (?,?,?,?,   ?,?,?,NOW(),NOW(),   ?)",
+            userObject.getLogin(), userObject.getPasswordSHA(), userObject.isAdmin(), userObject.getFullname(),
+            userObject.getAffiliation(), userObject.getEmail(),
+            userObject.getComment(), Status.CREATED.name());
+    }
 
-	/**
-	 * Modify a user
-	 * @param userObject
-	 */
-	public void modifyUser(User userObject, User u) {
-			jdbcTemplate.update(
-					"UPDATE user SET login = ?, fullname = ?, affiliation = ?, email = ?, comment = ?, lastmodified = NOW(), status = ? WHERE id = ?;",
-					userObject.getLogin(), userObject.getFullname(), userObject.getAffiliation(), userObject.getEmail(), userObject.getComment(), Status.MODIFIED.name() ,userObject.getId());
-	}
+    /**
+     * Modify a user
+     * @param userObject
+     */
+    public void modifyUser(User userObject, User u) {
+        jdbcTemplate.update(
+            "UPDATE user SET login = ?, fullname = ?, affiliation = ?, email = ?, comment = ?, lastmodified = NOW(), status = ? WHERE id = ?;",
+            userObject.getLogin(), userObject.getFullname(), userObject.getAffiliation(), userObject.getEmail(),
+            userObject.getComment(), Status.MODIFIED.name(), userObject.getId());
+    }
 
-	/**
-	 * Delete a user
-	 * 
-	 * @param id
-	 */
-	public void deleteUser(User userObject, User u) {
-		jdbcTemplate.update("UPDATE user SET lastmodified = NOW(), status = ? WHERE id = ?;", Status.DELETED.name(), userObject.getId());
-	}
+    /**
+     * Delete a user
+     * 
+     * @param id
+     */
+    public void deleteUser(User userObject, User u) {
+        jdbcTemplate.update("UPDATE user SET lastmodified = NOW(), status = ? WHERE id = ?;", Status.DELETED.name(),
+            userObject.getId());
+    }
 }

@@ -28,20 +28,20 @@ import de.uni.rostock.ub.purl_server.model.User;
 
 public class UserRowMapper implements RowMapper<User> {
 
-	@Override
-	public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-		User u = new User();
-		u.setId(rs.getInt("id"));
-		u.setAdmin(rs.getBoolean("admin"));
-		u.setFullname(rs.getString("fullname"));
-		u.setAffiliation(rs.getString("affiliation"));
-		u.setEmail(rs.getString("email"));
-		u.setLogin(rs.getString("login"));
-		u.setPasswordSHA(rs.getString("password_sha"));
-		u.setComment(rs.getString("comment"));
-		u.setCreated(rs.getTimestamp("created").toLocalDateTime());
-		u.setLastmodified(rs.getTimestamp("lastmodified").toLocalDateTime());
-		u.setStatus(Status.valueOf(rs.getString("status")));
-		return u;
-	}
+    @Override
+    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+        User u = new User();
+        u.setId(rs.getInt("id"));
+        u.setAdmin(rs.getBoolean("admin"));
+        u.setFullname(rs.getString("fullname"));
+        u.setAffiliation(rs.getString("affiliation"));
+        u.setEmail(rs.getString("email"));
+        u.setLogin(rs.getString("login"));
+        u.setPasswordSHA(rs.getString("password_sha"));
+        u.setComment(rs.getString("comment"));
+        u.setCreated(rs.getTimestamp("created").toLocalDateTime());
+        u.setLastmodified(rs.getTimestamp("lastmodified").toLocalDateTime());
+        u.setStatus(Status.valueOf(rs.getString("status")));
+        return u;
+    }
 }

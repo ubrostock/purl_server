@@ -47,11 +47,11 @@ import de.uni.rostock.ub.purl_server.validate.DomainValidateService;
 
 @Controller
 public class AdminDomainController {
-	private static int LIMIT = 50;
-	
+    private static int LIMIT = 50;
+
     @Autowired
     PurlAccess purlAccess;
-    
+
     @Autowired
     DomainValidateService domainValidateService;
 
@@ -60,7 +60,7 @@ public class AdminDomainController {
 
     @Autowired
     DomainDAO domainDAO;
-    
+
     @Autowired
     private MessageSource messages;
 
@@ -95,7 +95,7 @@ public class AdminDomainController {
         List<String> errorList = domainValidateService.validateCreateDomain(domain, u);
         if (errorList.isEmpty()) {
             Optional<Domain> newDomain = domainDAO.createDomain(domain, u);
-            if(newDomain.isPresent()) {
+            if (newDomain.isPresent()) {
                 model.addAttribute("domain", newDomain.get());
             } else {
                 model.addAttribute("domain", domain);
@@ -167,8 +167,8 @@ public class AdminDomainController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/domain/modify", method = RequestMethod.POST, params = "addUser")
     public String modifyDomainAddUser(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
-    	model.addAttribute("form", "modify");
-    	model.addAttribute("domain", domain);
+        model.addAttribute("form", "modify");
+        model.addAttribute("domain", domain);
         List<User> list = userDAO.retrieveActiveUsers();
         list.add(new User());
         model.addAttribute("usersLogin", list);
@@ -205,12 +205,12 @@ public class AdminDomainController {
         @RequestParam(value = "searchUser", required = false, defaultValue = "") String login,
         @RequestParam(value = "searchTombstonedDomain", required = false, defaultValue = "false") boolean isTombstoned,
         Model model) {
-    	List<Domain> domainList = domainDAO.searchDomains(path, name, login, isTombstoned, LIMIT + 1);
-    	model.addAttribute("moreResults", false);
-    	if(domainList.size() == LIMIT + 1) {
-    		domainList.remove(LIMIT);
-    		model.addAttribute("moreResults", true);
-    	}
+        List<Domain> domainList = domainDAO.searchDomains(path, name, login, isTombstoned, LIMIT + 1);
+        model.addAttribute("moreResults", false);
+        if (domainList.size() == LIMIT + 1) {
+            domainList.remove(LIMIT);
+            model.addAttribute("moreResults", true);
+        }
         model.addAttribute("domains", domainList);
         model.addAttribute("searchPath", path);
         model.addAttribute("searchName", name);

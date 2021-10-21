@@ -48,48 +48,54 @@ import de.uni.rostock.ub.purl_server.model.Purl;
 @Controller
 public class PurlInfoController {
 
-	@Autowired
-	PurlDAO purlDAO;
-	
-	@Autowired
+    @Autowired
+    PurlDAO purlDAO;
+
+    @Autowired
     private MessageSource messages;
-	
-	private static Logger LOGGER = LoggerFactory.getLogger(PurlController.class);
 
-	@RequestMapping(path = "/info/purl/**", method = RequestMethod.GET, produces = "!"
-			+ MediaType.APPLICATION_JSON_VALUE)
-	public Object retrieveInfoPurl(HttpServletRequest request, HttpServletResponse resp, @RequestParam(defaultValue = "") String format) {
-		if ("json".equals(format)) {
-			return retrieveJSONPurl(request);
-		} else {
-			ModelAndView mav = new ModelAndView("purlinfo");
-			String servletContextPath = request.getServletContext().getContextPath();
-			String purlPath = "/"
-					+ new AntPathMatcher().extractPathWithinPattern(servletContextPath + "/info/purl/**", request.getRequestURI());
-			Optional<Purl> op = purlDAO.retrievePurlWithHistory(purlPath);
-			if (op.isPresent() && op != null) {
-				mav.addObject("purl", op.get());
-				mav.addObject("purl_url", ServletUriComponentsBuilder.fromCurrentContextPath().path(purlPath).build().toString());
-			} else {
-				try {
-					resp.sendError(HttpServletResponse.SC_NOT_FOUND, messages.getMessage("purl_server.error.purl.found", null, Locale.getDefault()));
-				} catch (NoSuchMessageException | IOException e) {
-					LOGGER.error(messages.getMessage("purl_server.error.sending.error", null, Locale.getDefault()), e);
-				}
-			}
-			return mav;
-		}
-	}
+    private static Logger LOGGER = LoggerFactory.getLogger(PurlController.class);
 
-	@RequestMapping(path = "/info/purl/**", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Purl> retrieveJSONPurl(HttpServletRequest request) {
-		String purlPath = "/" + new AntPathMatcher().extractPathWithinPattern("/info/purl/**", request.getRequestURI());
-		Optional<Purl> op = purlDAO.retrievePurlWithHistory(purlPath);
-		if (op.isEmpty()) {
-			return new ResponseEntity<Purl>(HttpStatus.NOT_FOUND);
-		}
-		ResponseEntity<Purl> r = new ResponseEntity<Purl>(op.get(), HttpStatus.OK);
-		return r;
-	}
+    @RequestMapping(path = "/info/purl/**",
+        method = RequestMethod.GET,
+        produces = "!"
+            + MediaType.APPLICATION_JSON_VALUE)
+    public Object retrieveInfoPurl(HttpServletRequest request, HttpServletResponse resp,
+        @RequestParam(defaultValue = "") String format) {
+        if ("json".equals(format)) {
+            return retrieveJSONPurl(request);
+        } else {
+            ModelAndView mav = new ModelAndView("purlinfo");
+            String servletContextPath = request.getServletContext().getContextPath();
+            String purlPath = "/"
+                + new AntPathMatcher().extractPathWithinPattern(servletContextPath + "/info/purl/**",
+                    request.getRequestURI());
+            Optional<Purl> op = purlDAO.retrievePurlWithHistory(purlPath);
+            if (op.isPresent() && op != null) {
+                mav.addObject("purl", op.get());
+                mav.addObject("purl_url",
+                    ServletUriComponentsBuilder.fromCurrentContextPath().path(purlPath).build().toString());
+            } else {
+                try {
+                    resp.sendError(HttpServletResponse.SC_NOT_FOUND,
+                        messages.getMessage("purl_server.error.purl.found", null, Locale.getDefault()));
+                } catch (NoSuchMessageException | IOException e) {
+                    LOGGER.error(messages.getMessage("purl_server.error.sending.error", null, Locale.getDefault()), e);
+                }
+            }
+            return mav;
+        }
+    }
+
+    @RequestMapping(path = "/info/purl/**", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Purl> retrieveJSONPurl(HttpServletRequest request) {
+        String purlPath = "/" + new AntPathMatcher().extractPathWithinPattern("/info/purl/**", request.getRequestURI());
+        Optional<Purl> op = purlDAO.retrievePurlWithHistory(purlPath);
+        if (op.isEmpty()) {
+            return new ResponseEntity<Purl>(HttpStatus.NOT_FOUND);
+        }
+        ResponseEntity<Purl> r = new ResponseEntity<Purl>(op.get(), HttpStatus.OK);
+        return r;
+    }
 
 }

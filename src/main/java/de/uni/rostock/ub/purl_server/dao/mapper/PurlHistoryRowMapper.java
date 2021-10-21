@@ -28,17 +28,17 @@ import de.uni.rostock.ub.purl_server.model.Status;
 import de.uni.rostock.ub.purl_server.model.Type;
 
 public class PurlHistoryRowMapper implements RowMapper<PurlHistory> {
-		@Override
-		public PurlHistory mapRow(ResultSet rs, int rowNum) throws SQLException {
-			PurlHistory pH = new PurlHistory();
-			pH.setId(rs.getInt("id"));
-			pH.setPurlId(rs.getInt("purl_id"));
-			pH.setUserId(rs.getInt("user_id"));
-			pH.setUser(rs.getString("login"));
-			pH.setType(Type.valueOf(rs.getString("type")));
-			pH.setTarget(rs.getString("target"));
-			pH.setLastmodified(rs.getTimestamp("modified").toLocalDateTime());
-			pH.setStatus(Status.valueOf(rs.getString("status")));
-			return pH;
-		}
+    @Override
+    public PurlHistory mapRow(ResultSet rs, int rowNum) throws SQLException {
+        PurlHistory pH = new PurlHistory();
+        pH.setId(rs.getInt("id"));
+        pH.setPurlId(rs.getInt("purl_id"));
+        pH.setUserId(rs.getInt("user_id"));
+        pH.setUser(rs.getString("login"));
+        pH.setType(Type.valueOf(rs.getString("type")));
+        pH.setTarget(rs.getString("target"));
+        pH.setLastmodified(rs.getTimestamp("modified").toLocalDateTime());
+        pH.setStatus(Status.valueOf(rs.getString("status")));
+        return pH;
+    }
 }

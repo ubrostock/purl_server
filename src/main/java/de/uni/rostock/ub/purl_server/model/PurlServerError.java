@@ -21,31 +21,37 @@ package de.uni.rostock.ub.purl_server.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PurlServerError implements PurlServerResponse{
-	private int status;
-	private String message;
-	private List<String> details = new ArrayList<String>();
-	
-	public PurlServerError(int status, String message, List<String> details) {
-		super();
-		this.status = status;
-		this.message = message;
-		this.details = details;
-	}
-	
-	public int getStatus() {
-		return status;
-	}
-	public void setStatus(int status) {
-		this.status = status;
-	}
-	public String getMessage() {
-		return message;
-	}
-	public void setMessage(String message) {
-		this.message = message;
-	}
-	public List<String> getDetails() {
-		return details;
-	}
+public class PurlServerError implements PurlServerResponse {
+    private int status;
+
+    private String message;
+
+    private List<String> details = new ArrayList<String>();
+
+    public PurlServerError(int status, String message, List<String> details) {
+        super();
+        this.status = status;
+        this.message = message;
+        this.details = details;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public List<String> getDetails() {
+        return details;
+    }
 }

@@ -27,17 +27,17 @@ import de.uni.rostock.ub.purl_server.model.Domain;
 import de.uni.rostock.ub.purl_server.model.Status;
 
 public class DomainRowMapper implements RowMapper<Domain> {
-	@Override
-	public Domain mapRow(ResultSet rs, int rowNum) throws SQLException {
-		Domain d = new Domain();
-		d.setId(rs.getInt("id"));
-		d.setPath(rs.getString("path"));
-		d.setName(rs.getString("name"));
-		d.setComment(rs.getString("comment"));
-		d.setCreated(rs.getTimestamp("created").toLocalDateTime());
-		d.setLastmodified(rs.getTimestamp("lastmodified").toLocalDateTime());
-		d.setStatus(Status.valueOf(rs.getString("status")));
+    @Override
+    public Domain mapRow(ResultSet rs, int rowNum) throws SQLException {
+        Domain d = new Domain();
+        d.setId(rs.getInt("id"));
+        d.setPath(rs.getString("path"));
+        d.setName(rs.getString("name"));
+        d.setComment(rs.getString("comment"));
+        d.setCreated(rs.getTimestamp("created").toLocalDateTime());
+        d.setLastmodified(rs.getTimestamp("lastmodified").toLocalDateTime());
+        d.setStatus(Status.valueOf(rs.getString("status")));
 
-		return d;
-	}
+        return d;
+    }
 }

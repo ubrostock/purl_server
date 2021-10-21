@@ -48,12 +48,6 @@ public class PurlAccess {
 
     @Autowired
     PurlDAO purlDAO;
-    
-
-
-    public PurlAccess() {
-
-    }
 
     /**
      * Check a user if he is allowed to create
@@ -144,6 +138,5 @@ public class PurlAccess {
         }
         return null;
     }
-
 
 }

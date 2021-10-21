@@ -44,10 +44,10 @@ import de.uni.rostock.ub.purl_server.validate.PurlValidateService;
 @Controller
 public class AdminPurlController {
     private static int LIMIT = 50;
-	
-	@Autowired
+
+    @Autowired
     PurlAccess purlAccess;
-    
+
     @Autowired
     PurlValidateService purlValidateService;
 
@@ -59,7 +59,7 @@ public class AdminPurlController {
 
     @Autowired
     private MessageSource messages;
-    
+
     /**
      * Show the purl create page
      * 
@@ -88,14 +88,14 @@ public class AdminPurlController {
         List<String> errorList = purlValidateService.validateCreatePurl(purl, u);
         if (errorList.isEmpty()) {
             Optional<Purl> newPurl = purlDAO.createPurl(purl, u);
-            if(newPurl.isPresent()) {
+            if (newPurl.isPresent()) {
                 model.addAttribute("purl", newPurl.get());
             } else {
-                model.addAttribute("purl", purl); 
+                model.addAttribute("purl", purl);
             }
             model.addAttribute("submitted", true);
         } else {
-            model.addAttribute("purl", purl); 
+            model.addAttribute("purl", purl);
             model.addAttribute("errors", errorList);
             model.addAttribute("submitted", false);
         }
@@ -166,12 +166,12 @@ public class AdminPurlController {
         @RequestParam(value = "targetURL", required = false, defaultValue = "") String url,
         @RequestParam(value = "tombstoned", required = false, defaultValue = "false") Boolean isTombstoned,
         Model model) {
-    	List<Purl> purlList = purlDAO.searchPurls(path, url, isTombstoned, LIMIT + 1);
-    	model.addAttribute("moreResults", false);
-    	if(purlList.size() == LIMIT + 1) {
-    		purlList.remove(LIMIT);
-    		model.addAttribute("moreResults", true);
-    	}
+        List<Purl> purlList = purlDAO.searchPurls(path, url, isTombstoned, LIMIT + 1);
+        model.addAttribute("moreResults", false);
+        if (purlList.size() == LIMIT + 1) {
+            purlList.remove(LIMIT);
+            model.addAttribute("moreResults", true);
+        }
         model.addAttribute("purls", purlList);
         model.addAttribute("path", path);
         model.addAttribute("targetURL", url);
@@ -210,7 +210,8 @@ public class AdminPurlController {
                 model.addAttribute("purl", deletePurl);
             } else {
                 List<String> errorList = new ArrayList<>();
-                errorList.add(messages.getMessage("purl_server.error.user.delete.purl.unauthorized", null, Locale.getDefault()));
+                errorList.add(
+                    messages.getMessage("purl_server.error.user.delete.purl.unauthorized", null, Locale.getDefault()));
                 model.addAttribute("errors", errorList);
             }
         });

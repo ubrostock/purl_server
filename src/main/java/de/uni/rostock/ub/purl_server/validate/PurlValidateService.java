@@ -42,16 +42,16 @@ import de.uni.rostock.ub.purl_server.model.User;
 public class PurlValidateService {
     @Autowired
     DomainDAO domainDAO;
-    
+
     @Autowired
     PurlDAO purlDAO;
-    
+
     @Autowired
     MessageSource messages;
-    
+
     @Autowired
     PurlAccess purlAccess;
-    
+
     /**
      * Validate a purl which want to be created
      * @param purl
@@ -60,27 +60,31 @@ public class PurlValidateService {
     public List<String> validateCreatePurl(Purl purl, User u) {
         List<String> errorList = new ArrayList<>();
         if (!StringUtils.hasText(purl.getPath())) {
-            errorList.add(messages.getMessage("purl_server.error.validate.purl.create.path.empty", null, Locale.getDefault()));
+            errorList.add(
+                messages.getMessage("purl_server.error.validate.purl.create.path.empty", null, Locale.getDefault()));
             return errorList;
         }
-        
+
         errorList.addAll(validatePurl(purl));
         if (errorList.isEmpty()) {
             Optional<Domain> d = domainDAO.retrieveDomain(purl);
-            if(d.isPresent()) {
-               if (d.get().getStatus() == Status.DELETED) {
-                   errorList.add(messages.getMessage("purl_server.error.validate.domain.deleted", new Object[] {d.get().getPath()}, Locale.getDefault()));
-               } else if (!purlAccess.canCreatePurl(d.get(), u)) {
-                   errorList.add(messages.getMessage("purl_server.error.validate.domain.unauthorized", new Object[] {d.get().getPath()}, Locale.getDefault()));
-               }
-            }else {
-                errorList.add(messages.getMessage("purl_server.error.validate.domain.exist", new Object[] {purl.getDomainPath()}, Locale.getDefault()));
+            if (d.isPresent()) {
+                if (d.get().getStatus() == Status.DELETED) {
+                    errorList.add(messages.getMessage("purl_server.error.validate.domain.deleted",
+                        new Object[] { d.get().getPath() }, Locale.getDefault()));
+                } else if (!purlAccess.canCreatePurl(d.get(), u)) {
+                    errorList.add(messages.getMessage("purl_server.error.validate.domain.unauthorized",
+                        new Object[] { d.get().getPath() }, Locale.getDefault()));
+                }
+            } else {
+                errorList.add(messages.getMessage("purl_server.error.validate.domain.exist",
+                    new Object[] { purl.getDomainPath() }, Locale.getDefault()));
             }
-        } 
-        if(!errorList.isEmpty()) {
+        }
+        if (!errorList.isEmpty()) {
             return errorList;
         }
-        
+
         Optional<Purl> currentPurl = purlDAO.retrievePurl(purl.getPath());
         if (currentPurl.isEmpty()) {
 
@@ -90,10 +94,12 @@ public class PurlValidateService {
             } else {
                 if (currentPurl.get().getType() == Type.PARTIAL_302) {
                     if (purl.getPath().length() == currentPurl.get().getPath().length()) {
-                        errorList.add(messages.getMessage("purl_server.error.validate.purl.create.exist", null, Locale.getDefault()));
+                        errorList.add(messages.getMessage("purl_server.error.validate.purl.create.exist", null,
+                            Locale.getDefault()));
                     }
                 } else {
-                    errorList.add(messages.getMessage("purl_server.error.validate.purl.create.exist", null, Locale.getDefault()));
+                    errorList.add(
+                        messages.getMessage("purl_server.error.validate.purl.create.exist", null, Locale.getDefault()));
                 }
             }
         }
@@ -114,14 +120,17 @@ public class PurlValidateService {
             domainDAO.retrieveDomain(purl).ifPresentOrElse(
                 d -> {
                     if (!purlAccess.canModifyPurl(d, u)) {
-                        errorList.add(messages.getMessage("purl_server.error.validate.user.modify.purl.unauthorized", null, Locale.getDefault()));
+                        errorList.add(messages.getMessage("purl_server.error.validate.user.modify.purl.unauthorized",
+                            null, Locale.getDefault()));
                     }
                 }, () -> {
-                    errorList.add(messages.getMessage("purl_server.error.validate.domain.exist", new Object[] {purl.getDomainPath()}, Locale.getDefault()));
+                    errorList.add(messages.getMessage("purl_server.error.validate.domain.exist",
+                        new Object[] { purl.getDomainPath() }, Locale.getDefault()));
                 });
 
             if (purl.getStatus() == Status.DELETED) {
-                errorList.add(messages.getMessage("purl_server.error.validate.user.modify.deleted.purl.unauthorized", null, Locale.getDefault()));
+                errorList.add(messages.getMessage("purl_server.error.validate.user.modify.deleted.purl.unauthorized",
+                    null, Locale.getDefault()));
             }
         }
         return errorList;
@@ -138,21 +147,26 @@ public class PurlValidateService {
             errorList.add(messages.getMessage("purl_server.error.validate.purl.path.empty", null, Locale.getDefault()));
         } else {
             if (!purl.getPath().startsWith("/")) {
-                errorList.add(messages.getMessage("purl_server.error.validate.purl.path.start", null, Locale.getDefault()));
+                errorList
+                    .add(messages.getMessage("purl_server.error.validate.purl.path.start", null, Locale.getDefault()));
             }
             if (!purl.getPath().matches("\\/[a-zA-Z0-9_\\-]+(\\/[a-zA-Z0-9_\\-]*)*")) {
-                errorList.add(messages.getMessage("purl_server.error.validate.purl.path.match", null, Locale.getDefault()));
+                errorList
+                    .add(messages.getMessage("purl_server.error.validate.purl.path.match", null, Locale.getDefault()));
             }
         }
         if (!StringUtils.hasText(purl.getTarget())) {
-            errorList.add(messages.getMessage("purl_server.error.validate.purl.target.empty", null, Locale.getDefault()));
+            errorList
+                .add(messages.getMessage("purl_server.error.validate.purl.target.empty", null, Locale.getDefault()));
         } else {
             if (!purl.getTarget().startsWith("https://") && !purl.getTarget().startsWith("http://")) {
-                errorList.add(messages.getMessage("purl_server.error.validate.purl.target.start", null, Locale.getDefault()));
+                errorList.add(
+                    messages.getMessage("purl_server.error.validate.purl.target.start", null, Locale.getDefault()));
             }
         }
         if (ObjectUtils.isEmpty(purl.getType())) {
-            errorList.add(messages.getMessage("purl_server.error.validate.purl.type.target.empty", null, Locale.getDefault()));
+            errorList.add(
+                messages.getMessage("purl_server.error.validate.purl.type.target.empty", null, Locale.getDefault()));
         }
         return errorList;
     }

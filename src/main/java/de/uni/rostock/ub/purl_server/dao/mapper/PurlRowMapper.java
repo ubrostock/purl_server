@@ -28,19 +28,19 @@ import de.uni.rostock.ub.purl_server.model.Status;
 import de.uni.rostock.ub.purl_server.model.Type;
 
 public class PurlRowMapper implements RowMapper<Purl> {
-	
-	@Override
-	public Purl mapRow(ResultSet rs, int rowNum) throws SQLException {
-		Purl p = new Purl();
-		p.setId(rs.getInt("id"));
-		p.setPath(rs.getString("path"));
-		p.setDomainId(rs.getInt("domain_id"));
-		p.setType(Type.valueOf(rs.getString("type")));
-		p.setTarget(rs.getString("target"));
-		p.setCreated(rs.getTimestamp("created").toLocalDateTime());
-		p.setLastmodified(rs.getTimestamp("lastmodified").toLocalDateTime());
-		p.setStatus(Status.valueOf(rs.getString("status")));
 
-		return p;
-	}
+    @Override
+    public Purl mapRow(ResultSet rs, int rowNum) throws SQLException {
+        Purl p = new Purl();
+        p.setId(rs.getInt("id"));
+        p.setPath(rs.getString("path"));
+        p.setDomainId(rs.getInt("domain_id"));
+        p.setType(Type.valueOf(rs.getString("type")));
+        p.setTarget(rs.getString("target"));
+        p.setCreated(rs.getTimestamp("created").toLocalDateTime());
+        p.setLastmodified(rs.getTimestamp("lastmodified").toLocalDateTime());
+        p.setStatus(Status.valueOf(rs.getString("status")));
+
+        return p;
+    }
 }

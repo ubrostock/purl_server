@@ -34,7 +34,7 @@ public class AdminIndexController {
     public String showIndex() {
         return "index";
     }
-    
+
     @RequestMapping(path = "/", method = RequestMethod.GET)
     public String showStart() {
         return "index";

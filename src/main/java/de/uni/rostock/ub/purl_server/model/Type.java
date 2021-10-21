@@ -19,5 +19,5 @@
 package de.uni.rostock.ub.purl_server.model;
 
 public enum Type {
-	FOUND_302, PARTIAL_302, GONE_410;
+    FOUND_302, PARTIAL_302, GONE_410;
 }

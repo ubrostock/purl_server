@@ -23,60 +23,80 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Domain {
-	private int id = -1;
-	private String path;
-	private String name;
-	private String comment;
-	private LocalDateTime created;
-	private LocalDateTime lastmodified;
-	private Status status;
-	private List<DomainUser> domainUserList = new ArrayList<DomainUser>();
-	
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public String getPath() {
-		return path;
-	}
-	public void setPath(String path) {
-		this.path = path;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getComment() {
-		return comment;
-	}
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-	public Status getStatus() {
-		return status;
-	}
-	public void setStatus(Status status) {
-		this.status = status;
-	}
-	public LocalDateTime getCreated() {
-		return created;
-	}
-	public void setCreated(LocalDateTime created) {
-		this.created = created;
-	}
-	public LocalDateTime getLastmodified() {
-		return lastmodified;
-	}
-	public void setLastmodified(LocalDateTime lastmodified) {
-		this.lastmodified = lastmodified;
-	}
-	public List<DomainUser> getDomainUserList() {
-		return domainUserList;
-	}
+    private int id = -1;
 
-	
+    private String path;
+
+    private String name;
+
+    private String comment;
+
+    private LocalDateTime created;
+
+    private LocalDateTime lastmodified;
+
+    private Status status;
+
+    private List<DomainUser> domainUserList = new ArrayList<DomainUser>();
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
+    }
+
+    public LocalDateTime getLastmodified() {
+        return lastmodified;
+    }
+
+    public void setLastmodified(LocalDateTime lastmodified) {
+        this.lastmodified = lastmodified;
+    }
+
+    public List<DomainUser> getDomainUserList() {
+        return domainUserList;
+    }
+
 }

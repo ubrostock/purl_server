@@ -23,67 +23,86 @@ import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class PurlHistory {
-	private int id;
-	
-	@JsonIgnore
-	private int purlId;
-	
-	@JsonIgnore
-	private int userId;
-	
-	private String user;
-	private Status status;
-	private Type type;
-	private String target;
-	private LocalDateTime lastmodified;
-	
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public Status getStatus() {
-		return status;
-	}
-	public void setStatus(Status status) {
-		this.status = status;
-	}
-	public Type getType() {
-		return type;
-	}
-	public void setType(Type type) {
-		this.type = type;
-	}
-	public String getTarget() {
-		return target;
-	}
-	public void setTarget(String target) {
-		this.target = target;
-	}
-	public int getPurlId() {
-		return purlId;
-	}
-	public void setPurlId(int purlId) {
-		this.purlId = purlId;
-	}
-	public int getUserId() {
-		return userId;
-	}
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
-	public String getUser() {
-		return user;
-	}
-	public void setUser(String user) {
-		this.user = user;
-	}
-	public LocalDateTime getLastmodified() {
-		return lastmodified;
-	}
-	public void setLastmodified(LocalDateTime lastmodified) {
-		this.lastmodified = lastmodified;
-	}
-	
+    private int id;
+
+    @JsonIgnore
+    private int purlId;
+
+    @JsonIgnore
+    private int userId;
+
+    private String user;
+
+    private Status status;
+
+    private Type type;
+
+    private String target;
+
+    private LocalDateTime lastmodified;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public String getTarget() {
+        return target;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
+    }
+
+    public int getPurlId() {
+        return purlId;
+    }
+
+    public void setPurlId(int purlId) {
+        this.purlId = purlId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public LocalDateTime getLastmodified() {
+        return lastmodified;
+    }
+
+    public void setLastmodified(LocalDateTime lastmodified) {
+        this.lastmodified = lastmodified;
+    }
+
 }

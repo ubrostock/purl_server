@@ -24,34 +24,44 @@ import de.uni.rostock.ub.purl_server.common.DomainUserSerializer;
 
 @JsonSerialize(using = DomainUserSerializer.class)
 public class DomainUser {
-	private int id;
-	private User user;
-	private boolean canCreate = false;
-	private boolean canModify = false;
-	
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public User getUser() {
-		return user;
-	}
-	public void setUser(User user) {
-		this.user = user;
-	}
-	public boolean isCanCreate() {
-		return canCreate;
-	}
-	public void setCanCreate(boolean canCreate) {
-		this.canCreate = canCreate;
-	}
-	public boolean isCanModify() {
-		return canModify;
-	}
-	public void setCanModify(boolean canModify) {
-		this.canModify = canModify;
-	}
-	
+    private int id;
+
+    private User user;
+
+    private boolean canCreate = false;
+
+    private boolean canModify = false;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public boolean isCanCreate() {
+        return canCreate;
+    }
+
+    public void setCanCreate(boolean canCreate) {
+        this.canCreate = canCreate;
+    }
+
+    public boolean isCanModify() {
+        return canModify;
+    }
+
+    public void setCanModify(boolean canModify) {
+        this.canModify = canModify;
+    }
+
 }

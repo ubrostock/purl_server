@@ -25,91 +25,115 @@ import java.util.List;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 public class Purl implements PurlServerResponse {
-	private int id = -1;
-	private String path;
-	private Domain domain;
-	private int domainId;
-	private Type type;
-	private String target;
-	private LocalDateTime created;
-	private LocalDateTime lastmodified;
-	private Status status;
-	private List<PurlHistory> purlHistory;
-	
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-    
-	public String getUri() {
+    private int id = -1;
+
+    private String path;
+
+    private Domain domain;
+
+    private int domainId;
+
+    private Type type;
+
+    private String target;
+
+    private LocalDateTime created;
+
+    private LocalDateTime lastmodified;
+
+    private Status status;
+
+    private List<PurlHistory> purlHistory;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getUri() {
         return ServletUriComponentsBuilder.fromCurrentContextPath().path(getPath()).build().toString();
     }
-    
-	public String getPath() {
-		return path;
-	}
-	public void setPath(String path) {
-		this.path = path;
-	}
-	public Domain getDomain() {
-		return domain;
-	}
-	public void setDomain(Domain domain) {
-		this.domain = domain;
-	}
-	public Type getType() {
-		return type;
-	}
-	public void setType(Type type) {
-		this.type = type;
-	}
-	public String getTarget() {
-		return target;
-	}
-	public void setTarget(String target) {
-		this.target = target;
-	}
 
-	public Status getStatus() {
-		return status;
-	}
-	public void setStatus(Status status) {
-		this.status = status;
-	}
-	public LocalDateTime getCreated() {
-		return created;
-	}
-	public void setCreated(LocalDateTime created) {
-		this.created = created;
-	}
-	public LocalDateTime getLastmodified() {
-		return lastmodified;
-	}
-	public void setLastmodified(LocalDateTime lastmodified) {
-		this.lastmodified = lastmodified;
-	}
-	public List<PurlHistory> getPurlHistory() {
-		return purlHistory;
-	}
-	public void setPurlHistory(List<PurlHistory> purlHistory) {
-		this.purlHistory = purlHistory;
-	}
-	
-	@Transient
-	public int getDomainId() {
-		return domainId;
-	}
-	
-	public void setDomainId(int domainId) {
-		this.domainId = domainId;
-	}
-	
-	@Transient
-	public String getDomainPath() {
-		int end = getPath().indexOf("/", 1);
-		return end == -1 ? getPath() : getPath().substring(0, end);
-	}
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public Domain getDomain() {
+        return domain;
+    }
+
+    public void setDomain(Domain domain) {
+        this.domain = domain;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public String getTarget() {
+        return target;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
+    }
+
+    public LocalDateTime getLastmodified() {
+        return lastmodified;
+    }
+
+    public void setLastmodified(LocalDateTime lastmodified) {
+        this.lastmodified = lastmodified;
+    }
+
+    public List<PurlHistory> getPurlHistory() {
+        return purlHistory;
+    }
+
+    public void setPurlHistory(List<PurlHistory> purlHistory) {
+        this.purlHistory = purlHistory;
+    }
+
+    @Transient
+    public int getDomainId() {
+        return domainId;
+    }
+
+    public void setDomainId(int domainId) {
+        this.domainId = domainId;
+    }
+
+    @Transient
+    public String getDomainPath() {
+        int end = getPath().indexOf("/", 1);
+        return end == -1 ? getPath() : getPath().substring(0, end);
+    }
 
 }

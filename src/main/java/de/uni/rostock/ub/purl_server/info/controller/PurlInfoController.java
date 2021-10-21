@@ -1,3 +1,21 @@
+/*
+ * Copyright 2021 University Library, 18051 Rostock, Germany
+ *
+ * This file is part of the application "PURL Server".
+ * https://github.com/ubrostock/purl_server
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uni.rostock.ub.purl_server.info.controller;
 
 import java.io.IOException;
@@ -45,8 +63,9 @@ public class PurlInfoController {
 			return retrieveJSONPurl(request);
 		} else {
 			ModelAndView mav = new ModelAndView("purlinfo");
+			String servletContextPath = request.getServletContext().getContextPath();
 			String purlPath = "/"
-					+ new AntPathMatcher().extractPathWithinPattern("info/purl/**", request.getRequestURI());
+					+ new AntPathMatcher().extractPathWithinPattern(servletContextPath + "/info/purl/**", request.getRequestURI());
 			Optional<Purl> op = purlDAO.retrievePurlWithHistory(purlPath);
 			if (op.isPresent() && op != null) {
 				mav.addObject("purl", op.get());

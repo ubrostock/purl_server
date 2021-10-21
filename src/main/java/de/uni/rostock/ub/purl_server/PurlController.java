@@ -1,7 +1,8 @@
 /*
- * Copyright 2020 University Library, 18051 Rostock, Germany
+ * Copyright 2021 University Library, 18051 Rostock, Germany
  *
  * This file is part of the application "PURL Server".
+ * https://github.com/ubrostock/purl_server
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

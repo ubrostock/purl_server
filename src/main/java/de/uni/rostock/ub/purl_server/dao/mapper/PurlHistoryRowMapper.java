@@ -1,6 +1,9 @@
 /*
- * Copyright 2020 University Library, 18051 Rostock, Germany
+ * Copyright 2021 University Library, 18051 Rostock, Germany
  *
+ * This file is part of the application "PURL Server".
+ * https://github.com/ubrostock/purl_server
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +16,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package de.uni.rostock.ub.purl_server.dao.mapper;
 
 import java.sql.ResultSet;

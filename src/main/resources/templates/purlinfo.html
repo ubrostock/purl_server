@@ -7,7 +7,8 @@
   <div class="container">
     <div class="row mt-3">
       <div class="col-8">
-        <h2 class="card-title mb-3" th:utext="${@environment.getProperty('purl_server.application.title')}">PURL Server</h2>
+        <h2 class="card-title mb-3" th:utext="${@environment.getProperty('purl_server.application.title')}">PURL
+          Server</h2>
       </div>
       <div class="col-4">
         <div th:replace="fragments/page :: switchLang"></div>
@@ -37,9 +38,9 @@
                 <th th:text="#{purl_server.info.purl.domain}"></th>
                 <td class="pr-0">
                   <span th:text="${purl.domain.path}"></span>
-                  <a class="btn btn-sm btn-outline-secondary px-1 py-0 ml-3" data-toggle="collapse" data-target="#collapseDomain"
-                     th:title="#{purl_server.info.more}" 
-                     aria-expanded="true" aria-controlls="collapseDomain">▼</a>
+                  <a class="btn btn-sm btn-outline-secondary px-1 py-0 ml-3" data-toggle="collapse"
+                    data-target="#collapseDomain" th:title="#{purl_server.info.more}" aria-expanded="true"
+                    aria-controlls="collapseDomain">▼</a>
                   <div id="collapseDomain" class="collapse" data-parent="#accordionDomain">
                     <table class="table table-sm mt-3">
                       <colgroup>
@@ -56,15 +57,21 @@
                             <colgroup>
                               <col style="min-width: 12em; width: 12em" />
                             </colgroup>
-                              <tr>
-                                <th class="border-top-0" th:text="#{purl_server.info.purl.domain.domainuserlist.user}"></th>
-                                <th class="border-top-0" th:text="#{purl_server.info.purl.domain.domainuserlist.cancreate}"></th>
-                                <th class="border-top-0" th:text="#{purl_server.info.purl.domain.domainuserlist.canmodify}"></th>
-                              </tr>
+                            <tr>
+                              <th class="border-top-0" th:text="#{purl_server.info.purl.domain.domainuserlist.user}"></th>
+                              <th class="border-top-0"
+                                th:text="#{purl_server.info.purl.domain.domainuserlist.cancreate}"></th>
+                              <th class="border-top-0"
+                                th:text="#{purl_server.info.purl.domain.domainuserlist.canmodify}"></th>
+                            </tr>
                             <tr th:each="user : ${purl.domain.domainUserList}">
                               <td th:text="${user.user.fullname}"></td>
-                              <td><input type="checkbox" th:checked="${user.canCreate}" disabled="disabled" /></td>
-                              <td><input type="checkbox" th:checked="${user.canModify}" disabled="disabled" /></td>
+                              <td>
+                                <input type="checkbox" th:checked="${user.canCreate}" disabled="disabled" />
+                              </td>
+                              <td>
+                                <input type="checkbox" th:checked="${user.canModify}" disabled="disabled" />
+                              </td>
                             </tr>
                           </table>
                         </td>
@@ -73,7 +80,7 @@
                         <th th:text="#{purl_server.info.purl.domain.comment}"></th>
                         <td th:text="${purl.domain.comment}"></td>
                       </tr>
-                       <tr>
+                      <tr>
                         <th th:text="#{purl_server.info.purl.domain.created}"></th>
                         <td th:text="${purl.domain.created}"></td>
                       </tr>
@@ -114,7 +121,8 @@
                 <td class="pr-0">
                   <span th:text="${purl.purlHistory.size-1}"></span>
                   <span th:text="#{purl_server.info.purl.purlhistory.entry}"></span>
-                  <a class="btn btn-sm btn-outline-secondary px-1 py-0 ml-3" data-toggle="collapse" data-target="#collapsePurlHistory" aria-expanded="true" aria-controlls="collapsePurlHistory">▼</a>
+                  <a class="btn btn-sm btn-outline-secondary px-1 py-0 ml-3" data-toggle="collapse"
+                    data-target="#collapsePurlHistory" aria-expanded="true" aria-controlls="collapsePurlHistory">▼</a>
                   <div id="collapsePurlHistory" class="collapse" data-parent="#accordionPurlHistory">
                     <table class="table table-sm mb-0" th:each="entry, iterStat : ${purl.purlHistory}">
                       <colgroup>
@@ -125,31 +133,31 @@
                           <div class="font-weight-bold pt-1" th:text="${iterStat.index}"></div>
                         </th>
                         <td class="pr-0" th:classappend="${iterStat.index == 1} ? 'border-top-0'">
-                            <table class="table table-sm mb-0">
-                              <colgroup>
-                                <col style="width: 9em" />
-                              </colgroup>
-                              <tr>
-                                <th class="border-top-0" th:text="#{purl_server.info.purl.purlhistory.status}"></th>
-                                <td class="border-top-0" th:text="${entry.status}"></td>
-                              </tr>
-                              <tr>
-                                <th th:text="#{purl_server.info.purl.purlhistory.type}"></th>
-                                <td th:text="${entry.type}"></td>
-                              </tr>
-                              <tr>
-                                <th th:text="#{purl_server.info.purl.purlhistory.target}"></th>
-                                <td th:text="${entry.target}"></td>
-                              </tr>
-                              <tr>
-                                <th th:text="#{purl_server.info.purl.purlhistory.user}"></th>
-                                <td th:text="${entry.user}"></td>
-                              </tr>
-                              <tr>
-                                <th th:text="#{purl_server.info.purl.purlhistory.lastmodified}"></th>
-                                <td th:text="${entry.lastmodified}"></td>
-                              </tr>
-                            </table>
+                          <table class="table table-sm mb-0">
+                            <colgroup>
+                              <col style="width: 9em" />
+                            </colgroup>
+                            <tr>
+                              <th class="border-top-0" th:text="#{purl_server.info.purl.purlhistory.status}"></th>
+                              <td class="border-top-0" th:text="${entry.status}"></td>
+                            </tr>
+                            <tr>
+                              <th th:text="#{purl_server.info.purl.purlhistory.type}"></th>
+                              <td th:text="${entry.type}"></td>
+                            </tr>
+                            <tr>
+                              <th th:text="#{purl_server.info.purl.purlhistory.target}"></th>
+                              <td th:text="${entry.target}"></td>
+                            </tr>
+                            <tr>
+                              <th th:text="#{purl_server.info.purl.purlhistory.user}"></th>
+                              <td th:text="${entry.user}"></td>
+                            </tr>
+                            <tr>
+                              <th th:text="#{purl_server.info.purl.purlhistory.lastmodified}"></th>
+                              <td th:text="${entry.lastmodified}"></td>
+                            </tr>
+                          </table>
                         </td>
                       </tr>
                     </table>
@@ -157,7 +165,7 @@
                 </td>
               </tr>
             </table>
-            <a class="btn btn-sm btn-outline-secondary float-right" th:href="@{?format=json}">🗎 <span>JSON</span></a>
+            <a class="btn btn-sm btn-outline-secondary float-right" th:href="@{?format=json}">🗎 JSON</a>
           </div>
         </div>
       </div>

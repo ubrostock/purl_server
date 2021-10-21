@@ -1,82 +1,106 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-  <meta th:fragment="html_header" http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <link th:fragment="html_header" rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+<meta th:fragment="html_header" http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link th:fragment="html_header" rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
 </head>
 <body>
   <div th:fragment="title">
     <div class="row mt-3">
       <div class="col-8">
-        <h2 class="card-title mb-3" th:utext="${@environment.getProperty('purl_server.application.title')}">PURL Server</h2>
-        
+        <h2 class="card-title mb-3" th:utext="${@environment.getProperty('purl_server.application.title')}"></h2>
       </div>
       <div class="col-4">
         <div th:replace="fragments/page :: switchLang"></div>
-        <form th:action="@{/admin/logout}" method="POST" class="form-inline border border-secondary rounded p-1 mt-1" sec:authorize="isAuthenticated()">
+        <form th:action="@{/admin/logout}" method="POST" class="form-inline border border-secondary rounded p-1 mt-1"
+          sec:authorize="isAuthenticated()">
           <div class="col-8 px-1">
-          <span class="" th:text="#{purl_server.fragments.page.nav.dropdown.user}">User:</span> 
-          <em class="col-form-label" th:text="${#authentication.name}"></em>
+            <span class="" th:text="#{purl_server.fragments.page.nav.dropdown.user}">User:</span>
+            <em class="col-form-label" th:text="${#authentication.name}"></em>
           </div>
           <div class="col-4 px-1">
-            <button type=submit class="btn btn-sm btn-secondary float-right" th:text="#{purl_server.fragments.page.nav.dropdown.logout}">Logout</button>
+            <button type=submit class="btn btn-sm btn-secondary float-right"
+              th:text="#{purl_server.fragments.page.nav.dropdown.logout}">Logout</button>
           </div>
         </form>
-        <a class="btn btn-sm btn-secondary float-right mt-2" th:href="@{/admin/login}" th:text="#{purl_server.login.button.login}" sec:authorize="!isAuthenticated()">Login</a>
+        <a class="btn btn-sm btn-secondary float-right mt-2" th:href="@{/admin/login}"
+          th:text="#{purl_server.login.button.login}" sec:authorize="!isAuthenticated()">Login</a>
       </div>
     </div>
   </div>
-  
+
   <div class="dropdown" th:fragment="switchLang">
-          <button class="btn btn-sm btn-outline-dark dropdown-toggle px-1 py-0 ml-3 mt-2 float-right" type="button" id="switchLang" data-toggle="dropdown"
-              aria-haspopup="true" aria-expanded="true"> <img style="height:2.2em;" th:src="@{/info/images/flags/__${#locale}__.png}" /> <span class="caret"></span>
-              </button>
-            <div class="dropdown-menu" aria-labelledby="switchLang">
-              <a class="dropdown-item text-body" th:href="@{'?&lang=de'}"> <img th:src="@{/info/images/flags/de.png}" /> <span
-                 th:text="#{purl_server.common.lang.de}"></span></a> <a class="dropdown-item text-body" th:href="@{'?&lang=en'}"> <img
-                 th:src="@{/info/images/flags/en.png}" /> <span th:text="#{purl_server.common.lang.en}"></span></a>
-            </div>
-        </div>
-  
+    <button class="btn btn-sm btn-outline-dark dropdown-toggle px-1 py-0 ml-3 mt-2 float-right" type="button"
+      id="switchLang" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+      <img style="height: 2.2em;" th:src="@{/info/images/flags/__${#locale}__.png}" />
+      <span class="caret"></span>
+    </button>
+    <div class="dropdown-menu" aria-labelledby="switchLang">
+      <a class="dropdown-item text-body" th:href="@{'?&lang=de'}">
+        <img th:src="@{/info/images/flags/de.png}" />
+        <span th:text="#{purl_server.common.lang.de}"></span>
+      </a>
+      <a class="dropdown-item text-body" th:href="@{'?&lang=en'}">
+        <img th:src="@{/info/images/flags/en.png}" />
+        <span th:text="#{purl_server.common.lang.en}"></span>
+      </a>
+    </div>
+  </div>
+
   <div class="row" th:fragment="navigation">
     <div class="col bg-light mx-3 px-0 mb-3">
       <nav class="navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand pt-0" th:href="@{/admin/manager}" th:text="#{purl_server.fragments.page.nav.title}">PURL Administration</a>
+        <a class="navbar-brand pt-0" th:href="@{/admin/manager}" th:text="#{purl_server.fragments.page.nav.title}"></a>
         <div class="collapse navbar-collapse">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" id="purlDropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" th:text="#{purl_server.fragments.page.nav.dropdown.purl.title}">
-                PURLs<span class="caret"></span>
+              <a class="nav-link dropdown-toggle" id="purlDropdown" data-toggle="dropdown" role="button"
+                aria-haspopup="true" aria-expanded="false"
+                th:text="#{purl_server.fragments.page.nav.dropdown.purl.title}">
+                PURLs
+                <span class="caret"></span>
               </a>
               <div class="dropdown-menu" aria-labelledby="purlDropdown">
-                <a class="dropdown-item" id="dropdownCreatePurl" th:href="@{/admin/manager/purl/create}" th:text="#{purl_server.fragments.page.nav.dropdown.purl.create}">Create a new PURL</a> 
-                <a class="dropdown-item" id="dropdownSearchPurl" th:href="@{/admin/manager/purl/search}" th:text="#{purl_server.fragments.page.nav.dropdown.purl.search}">Search for a PURL</a>
+                <a class="dropdown-item" id="dropdownCreatePurl" th:href="@{/admin/manager/purl/create}"
+                  th:text="#{purl_server.fragments.page.nav.dropdown.purl.create}">Create a new PURL</a>
+                <a class="dropdown-item" id="dropdownSearchPurl" th:href="@{/admin/manager/purl/search}"
+                  th:text="#{purl_server.fragments.page.nav.dropdown.purl.search}">Search for a PURL</a>
               </div>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" id="domainDropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" th:text="#{purl_server.fragments.page.nav.dropdown.domain.title}">
-                Domains <span class="caret"></span>
+              <a class="nav-link dropdown-toggle" id="domainDropdown" data-toggle="dropdown" role="button"
+                aria-haspopup="true" aria-expanded="false"
+                th:text="#{purl_server.fragments.page.nav.dropdown.domain.title}">
+                Domains
+                <span class="caret"></span>
               </a>
               <div class="dropdown-menu" aria-labelledby="domainDropdown">
-                <a class="dropdown-item" id="dropdownCreateDomain" th:href="@{/admin/manager/domain/create}" th:text="#{purl_server.fragments.page.nav.dropdown.domain.create}" sec:authorize="hasRole('ROLE_ADMIN')">Create a new domain</a>
-                <a class="dropdown-item" id="dropdownSearchDomain" th:href="@{/admin/manager/domain/search}" th:text="#{purl_server.fragments.page.nav.dropdown.domain.search}">Search for a domain</a>
+                <a class="dropdown-item" id="dropdownCreateDomain" th:href="@{/admin/manager/domain/create}"
+                  th:text="#{purl_server.fragments.page.nav.dropdown.domain.create}"
+                  sec:authorize="hasRole('ROLE_ADMIN')">Create a new domain</a>
+                <a class="dropdown-item" id="dropdownSearchDomain" th:href="@{/admin/manager/domain/search}"
+                  th:text="#{purl_server.fragments.page.nav.dropdown.domain.search}">Search for a domain</a>
               </div>
             </li>
             <li class="nav-item dropdown" sec:authorize="hasRole('ROLE_ADMIN')">
-              <a class="nav-link dropdown-toggle" id="userDropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" th:text="#{purl_server.fragments.page.nav.dropdown.user.title}">
-                Users <span class="caret"></span>
+              <a class="nav-link dropdown-toggle" id="userDropdown" data-toggle="dropdown" role="button"
+                aria-haspopup="true" aria-expanded="false"
+                th:text="#{purl_server.fragments.page.nav.dropdown.user.title}">
+                Users
+                <span class="caret"></span>
               </a>
               <div class="dropdown-menu" aria-labelledby="userDropdown">
-                <a class="dropdown-item" id="dropdownRegisterUser" th:href="@{/admin/manager/user/create}" th:text="#{purl_server.fragments.page.nav.dropdown.user.create}">Register a new user</a> 
-                <a class="dropdown-item" id="dropdownSearchUser" th:href="@{/admin/manager/user/search}" th:text="#{purl_server.fragments.page.nav.dropdown.user.search}">Search for a user</a>
+                <a class="dropdown-item" id="dropdownRegisterUser" th:href="@{/admin/manager/user/create}"
+                  th:text="#{purl_server.fragments.page.nav.dropdown.user.create}">Register a new user</a>
+                <a class="dropdown-item" id="dropdownSearchUser" th:href="@{/admin/manager/user/search}"
+                  th:text="#{purl_server.fragments.page.nav.dropdown.user.search}">Search for a user</a>
               </div>
             </li>
             <li class="nav-item">
-              <a class="nav-link" th:href="@{/admin/manager/help}" th:text="#{purl_server.fragments.page.nav.dropdown.help}">Help</a>
+              <a class="nav-link" th:href="@{/admin/manager/help}"
+                th:text="#{purl_server.fragments.page.nav.dropdown.help}">Help</a>
             </li>
           </ul>
-          
-          
         </div>
       </nav>
     </div>

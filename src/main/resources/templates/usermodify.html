@@ -1,8 +1,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title th:text="#{purl_server.title}">Purls: Purl Manager</title>
-  <meta th:replace="fragments/page :: html_header" />
-  <script type="text/javascript" th:src="@{/admin/login/sha1.js}"></script>
+<title th:text="#{purl_server.title}">Purls: Purl Manager</title>
+<meta th:replace="fragments/page :: html_header" />
+<script type="text/javascript" th:src="@{/admin/login/sha1.js}"></script>
 </head>
 <body>
   <div class="container">
@@ -17,52 +17,56 @@
               <span th:text="${error}"></span>
             </div>
             <div th:if="${submitted}" class="alert alert-success" th:text="#{purl_server.user.modify.modified}">
-              User modified!
-            </div>
+              User modified!</div>
             <div id="errorPassword" class="alert alert-danger d-none">
-              <span th:text="#{purl_server.user.modify.error_password}">Password and Re-Password are not the same!</span>
+              <span th:text="#{purl_server.user.modify.error_password}">Password and Re-Password are not the
+                same!</span>
             </div>
             <form th:action="@{/admin/manager/user/modify}" method="post" th:object="${user}">
               <div th:replace="fragments/forms :: userForm"></div>
             </form>
           </div>
           <div class="col">
-            <div class="border p-3 overflow-auto position-absolute" style="top: 0; left:0; bottom: 0; right: 0;">
+            <div class="border p-3 overflow-auto position-absolute" style="top: 0; left: 0; bottom: 0; right: 0;">
               <span th:text="#{purl_server.user.modify.help}">Help...</span>
             </div>
           </div>
         </div>
         <div class="row mt-3" th:if="${submitted}">
           <div class="col">
-            <a class="btn btn-secondary" th:href="@{/admin/manager/user/modify?id=__${user.id}__}" th:text="#{purl_server.user.goto.modify}">modify</a>
-            <a class="btn btn-secondary" th:href="@{/admin/manager/user/create}" th:text="#{purl_server.user.goto.create}">Register a new user</a> 
-            <a class="btn btn-secondary" th:href="@{/admin/manager/user/search}" th:text="#{purl_server.user.goto.search}">Search for a user</a>
+            <a class="btn btn-secondary" th:href="@{/admin/manager/user/modify?id=__${user.id}__}"
+              th:text="#{purl_server.user.goto.modify}">modify</a>
+            <a class="btn btn-secondary" th:href="@{/admin/manager/user/create}"
+              th:text="#{purl_server.user.goto.create}">Register a new user</a>
+            <a class="btn btn-secondary" th:href="@{/admin/manager/user/search}"
+              th:text="#{purl_server.user.goto.search}">Search for a user</a>
           </div>
         </div>
       </div>
     </div>
   </div>
   <script type="text/javascript">
-    function encryptPassword() {
-      var password =  $("#password").val();
-      var repassword = $("#repassword").val();
-      if(password != null) {
-        if(password.localeCompare(repassword) == 0) {
-          $("#errorPassword").addClass("d-none");
-          if(password != "") {
-            var shaObj = new jsSHA("SHA-1", "TEXT");
-            shaObj.update(document.getElementById("password").value);
-            var hash = shaObj.getHash("HEX");
-            document.getElementById("password_sha").value = hash;
-          }
-        } else {
-          $("#errorPassword").removeClass("d-none");
-          return false;
-        }
-      }
-      return true;
-    }
-  </script>
+			function encryptPassword() {
+				var password = $("#password").val();
+				var repassword = $("#repassword").val();
+				if (password != null) {
+					if (password.localeCompare(repassword) == 0) {
+						$("#errorPassword").addClass("d-none");
+						if (password != "") {
+							var shaObj = new jsSHA("SHA-1", "TEXT");
+							shaObj
+									.update(document.getElementById("password").value);
+							var hash = shaObj.getHash("HEX");
+							document.getElementById("password_sha").value = hash;
+						}
+					} else {
+						$("#errorPassword").removeClass("d-none");
+						return false;
+					}
+				}
+				return true;
+			}
+		</script>
   <script th:replace="fragments/page :: html_footer"></script>
 </body>
 </html>

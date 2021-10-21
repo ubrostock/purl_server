@@ -93,7 +93,7 @@ public class AdminUserController {
 
 			} else {
 				model.addAttribute("errors", errorList);
-				model.addAttribute("submitted", false);
+				model.addAttribute("submitted", null);
 			}
 		}
 		model.addAttribute("user", user);

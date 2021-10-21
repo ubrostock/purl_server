@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import de.uni.rostock.ub.purl_server.common.PurlAccess;
 import de.uni.rostock.ub.purl_server.dao.UserDAO;
-import de.uni.rostock.ub.purl_server.model.Domain;
 import de.uni.rostock.ub.purl_server.model.User;
 import de.uni.rostock.ub.purl_server.validate.UserValidateService;
 

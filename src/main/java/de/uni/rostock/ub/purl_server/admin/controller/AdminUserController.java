@@ -78,13 +78,13 @@ public class AdminUserController {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/user/create", method = RequestMethod.POST)
-    public String createUser(@ModelAttribute User user, HttpServletRequest request, Model model) {
+    public String createUser(@ModelAttribute User user, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute("form", "create");
         if (userDAO.retrieveUser(user.getLogin()).isPresent()) {
             model.addAttribute("errors", Arrays.asList(messages.getMessage("purl_server.error.validate.user.exists",
                 new Object[] { user.getLogin() }, Locale.getDefault())));
         } else {
-            List<String> errorList = userValidateService.validateUser(user);
+            List<String> errorList = userValidateService.validateUser(user, locale);
             if (errorList.isEmpty()) {
                 User loginUser = purlAccess.retrieveCurrentUser();
                 userDAO.createUser(user, loginUser);
@@ -123,10 +123,10 @@ public class AdminUserController {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/user/modify", method = RequestMethod.POST)
-    public String modifyUser(@ModelAttribute User user, HttpServletRequest request, Model model) {
+    public String modifyUser(@ModelAttribute User user, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute("form", "modify");
         User loginUser = purlAccess.retrieveCurrentUser();
-        List<String> errorList = userValidateService.validateUser(user);
+        List<String> errorList = userValidateService.validateUser(user, locale);
         if (errorList.isEmpty()) {
             userDAO.modifyUser(user, loginUser);
             model.addAttribute("submitted", true);

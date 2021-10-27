@@ -88,11 +88,11 @@ public class AdminDomainController {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/domain/create", method = RequestMethod.POST, params = "submit")
-    public String createDomain(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
+    public String createDomain(@ModelAttribute Domain domain, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute("form", "create");
         cleanUpDomain(domain);
         User u = purlAccess.retrieveCurrentUser();
-        List<String> errorList = domainValidateService.validateCreateDomain(domain, u);
+        List<String> errorList = domainValidateService.validateCreateDomain(domain, u, locale);
         if (errorList.isEmpty()) {
             Optional<Domain> newDomain = domainDAO.createDomain(domain, u);
             if (newDomain.isPresent()) {
@@ -147,11 +147,11 @@ public class AdminDomainController {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/domain/modify", method = RequestMethod.POST, params = "submit")
-    public String modifyDomain(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
+    public String modifyDomain(@ModelAttribute Domain domain, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute("form", "modify");
         cleanUpDomain(domain);
         User u = purlAccess.retrieveCurrentUser();
-        List<String> errorList = domainValidateService.validateModifyDomain(domain, u);
+        List<String> errorList = domainValidateService.validateModifyDomain(domain, u, locale);
         if (errorList.isEmpty()) {
             domainDAO.modifyDomain(domain, u);
             model.addAttribute("submitted", true);

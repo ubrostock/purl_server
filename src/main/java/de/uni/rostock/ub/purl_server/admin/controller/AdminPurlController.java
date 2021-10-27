@@ -81,11 +81,11 @@ public class AdminPurlController {
      * @return the purl create page
      */
     @RequestMapping(path = "/admin/manager/purl/create", method = RequestMethod.POST)
-    public String createPurl(@ModelAttribute Purl purl, HttpServletRequest request, Model model) {
+    public String createPurl(@ModelAttribute Purl purl, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute("form", "create");
         User u = purlAccess.retrieveCurrentUser();
         purl.setPath(purl.getPath().trim());
-        List<String> errorList = purlValidateService.validateCreatePurl(purl, u);
+        List<String> errorList = purlValidateService.validateCreatePurl(purl, u, locale);
         if (errorList.isEmpty()) {
             Optional<Purl> newPurl = purlDAO.createPurl(purl, u);
             if (newPurl.isPresent()) {
@@ -124,10 +124,10 @@ public class AdminPurlController {
      * @return the purl modify page
      */
     @RequestMapping(path = "/admin/manager/purl/modify", method = RequestMethod.POST)
-    public String modifyPurl(@ModelAttribute Purl purl, HttpServletRequest request, Model model) {
+    public String modifyPurl(@ModelAttribute Purl purl, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute("form", "modify");
         User u = purlAccess.retrieveCurrentUser();
-        List<String> errorList = purlValidateService.validateModifyPurl(purl, u);
+        List<String> errorList = purlValidateService.validateModifyPurl(purl, u, locale);
         if (errorList.isEmpty()) {
             purlDAO.modifyPurl(purl, u);
             model.addAttribute("submitted", true);

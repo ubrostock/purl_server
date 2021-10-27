@@ -43,15 +43,15 @@ public class UserValidateService {
      * @param user
      * @return the error list
      */
-    public List<String> validateUser(User user) {
+    public List<String> validateUser(User user, Locale locale) {
         List<String> errorList = new ArrayList<>();
         if (SHA_EMPTY_STRING.equals(user.getPasswordSHA())) {
             errorList
-                .add(messages.getMessage("purl_server.error.validate.user.password.empty", null, Locale.getDefault()));
+                .add(messages.getMessage("purl_server.error.validate.user.password.empty", null, locale));
         }
         if (!StringUtils.hasText(user.getLogin())) {
             errorList
-                .add(messages.getMessage("purl_server.error.validate.user.username.empty", null, Locale.getDefault()));
+                .add(messages.getMessage("purl_server.error.validate.user.username.empty", null, locale));
         }
         return errorList;
     }

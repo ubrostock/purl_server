@@ -54,7 +54,7 @@ public class PurlClient {
     private String message = "";
 
     public static void main(String[] args) {
-        PurlClient app = new PurlClient("http://localhost:8080");
+        PurlClient app = new PurlClient("http://localhost:8080/purltool");
         //      app.createPURL("/nureintest/testneu12345", "http://google.de/", TYPE_PARTIAL_302);
         app.login("admin", "admin");
         //      app.createPURL("/test/bcd", "http://google.de/", TYPE_PARTIAL_302);
@@ -91,7 +91,8 @@ public class PurlClient {
         message = "";
         String purlJson = "{\"type\":\"" + type + "\",\"target\":\"" + target + "\"}";
         HttpRequest request = HttpRequest.newBuilder().POST(BodyPublishers.ofString(purlJson))
-            .header("Content-Type", "application/json").uri(URI.create(baiscURL + purl)).build();
+            .header("Content-Type", "application/json")
+            .uri(URI.create(baiscURL + purl)).build();
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == HttpServletResponse.SC_CREATED) {

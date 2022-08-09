@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 University Library, 18051 Rostock, Germany
+ * Copyright 2020 University Library, 18051 Rostock, Germany
  *
  * This file is part of the application "PURL Server".
  * https://github.com/ubrostock/purl_server
@@ -21,6 +21,7 @@ package de.uni.rostock.ub.purl_server.authentication;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
@@ -41,19 +42,29 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Configuration
     @Order(1)
     public static class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
-
+        @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.antMatcher("/api/**").csrf().disable()
                 .authorizeRequests(auth -> auth.antMatchers(HttpMethod.POST).authenticated()
                     .antMatchers(HttpMethod.PUT).authenticated().antMatchers(HttpMethod.DELETE).authenticated()
                     .antMatchers(HttpMethod.GET).permitAll())
                 .httpBasic();
-
         }
     }
 
     @Configuration
     @Order(2)
+    public static class ActuatorSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            http.requestMatcher(EndpointRequest.toAnyEndpoint())
+                .authorizeRequests((requests) -> requests.anyRequest().hasAuthority("ADMIN"))
+                .httpBasic();
+        }
+    }
+
+    @Configuration
+    @Order(3)
     public static class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
@@ -62,12 +73,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().antMatcher("/admin/**")
                 .authorizeRequests(auth -> auth.antMatchers("/admin/manager/**").authenticated()
                     .antMatchers("/admin/login").permitAll().antMatchers("/admin/login/**").permitAll());
-
         }
     }
 
     @Configuration
-    @Order(3)
+    @Order(4)
     public static class DefaultWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
         @Override

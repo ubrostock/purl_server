@@ -28,7 +28,6 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -37,7 +36,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import de.uni.rostock.ub.purl_server.common.PurlAccess;
 import de.uni.rostock.ub.purl_server.dao.mapper.PurlHistoryRowMapper;
 import de.uni.rostock.ub.purl_server.dao.mapper.PurlRowMapper;
 import de.uni.rostock.ub.purl_server.model.Purl;
@@ -54,12 +52,7 @@ public class PurlDAO {
     @Autowired
     DomainDAO domainDAO;
 
-    @Autowired
-    PurlAccess purlAccess;
-
-    @Autowired
-    private MessageSource messages;
-
+    @SuppressWarnings("unused")
     private static Logger LOGGER = LoggerFactory.getLogger(PurlDAO.class);
 
     /**
@@ -70,15 +63,15 @@ public class PurlDAO {
      */
     public Optional<Purl> retrievePurl(String path) {
         try {
-            Purl p = jdbcTemplate.queryForObject("SELECT * FROM purl WHERE path=?;", new Object[] { path },
-                new PurlRowMapper());
+            Purl p = jdbcTemplate.queryForObject("SELECT * FROM purl WHERE path=?;",
+                new PurlRowMapper(), path);
             domainDAO.retrieveDomainWithUser(p.getDomainId()).ifPresent(d -> p.setDomain(d));
             return Optional.of(p);
         } catch (DataAccessException e) {
             try {
                 Purl p2 = jdbcTemplate.queryForObject(
                     "SELECT * FROM purl p WHERE LOCATE(path, ?) = 1 AND type = 'partial_302' ORDER BY LENGTH(path) DESC LIMIT 1;",
-                    new Object[] { path }, new PurlRowMapper());
+                    new PurlRowMapper(), path);
                 return Optional.of(p2);
             } catch (DataAccessException e2) {
                 return Optional.empty();
@@ -94,8 +87,7 @@ public class PurlDAO {
      */
     public Optional<Purl> retrievePurl(int id) {
         try {
-            Purl p = jdbcTemplate.queryForObject("SELECT * FROM purl WHERE id=?;", new Object[] { id },
-                new PurlRowMapper());
+            Purl p = jdbcTemplate.queryForObject("SELECT * FROM purl WHERE id=?;", new PurlRowMapper(), id);
             domainDAO.retrieveDomain(p.getDomainId()).ifPresent(d -> p.setDomain(d));
             return Optional.of(p);
         } catch (DataAccessException e) {

@@ -6,9 +6,9 @@
 </head>
 <body>
   <div th:fragment="title">
-    <div class="row mt-3">
-      <div class="col-8">
-        <h2 class="card-title mb-3" th:utext="${@environment.getProperty('purl_server.application.title')}"></h2>
+    <div class="row my-3">
+      <div class="col-8" th:utext="${@environment.getProperty('purl_server.web.html_fragment.title')}">
+          PURL Server
       </div>
       <div class="col-4">
         <div th:replace="fragments/page :: switchLang"></div>
@@ -105,6 +105,15 @@
       </nav>
     </div>
   </div>
+  
+  <div th:fragment="footer">
+    <div class="row my-3">
+      <div class="col" th:utext="${@environment.getProperty('purl_server.web.html_fragment.footer')}">
+          (c) Your Company, 2022
+      </div>
+    </div>
+  </div>
+  
   <script th:fragment="html_footer" th:src="@{/webjars/jquery/jquery.min.js}"></script>
   <script th:fragment="html_footer" th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
 </body>

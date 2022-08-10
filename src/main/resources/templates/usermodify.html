@@ -44,29 +44,29 @@
         </div>
       </div>
     </div>
+    <div th:replace="fragments/page :: footer"></div>
   </div>
   <script type="text/javascript">
-			function encryptPassword() {
-				var password = $("#password").val();
-				var repassword = $("#repassword").val();
-				if (password != null) {
-					if (password.localeCompare(repassword) == 0) {
-						$("#errorPassword").addClass("d-none");
-						if (password != "") {
-							var shaObj = new jsSHA("SHA-1", "TEXT");
-							shaObj
-									.update(document.getElementById("password").value);
-							var hash = shaObj.getHash("HEX");
-							document.getElementById("password_sha").value = hash;
-						}
-					} else {
-						$("#errorPassword").removeClass("d-none");
-						return false;
-					}
+	function encryptPassword() {
+ 		var password = $("#password").val();
+		var repassword = $("#repassword").val();
+		if (password != null) {
+			if (password.localeCompare(repassword) == 0) {
+			   $("#errorPassword").addClass("d-none");
+			   if (password != "") {
+				   var shaObj = new jsSHA("SHA-1", "TEXT");
+				   shaObj.update(document.getElementById("password").value);
+				   var hash = shaObj.getHash("HEX");
+				   document.getElementById("password_sha").value = hash;
 				}
-				return true;
+			} else {
+				$("#errorPassword").removeClass("d-none");
+				return false;
 			}
-		</script>
+		}
+		return true;
+	}
+  </script>
   <script th:replace="fragments/page :: html_footer"></script>
 </body>
 </html>

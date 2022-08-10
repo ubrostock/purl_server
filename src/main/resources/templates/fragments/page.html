@@ -12,15 +12,17 @@
       </div>
       <div class="col-4">
         <div th:replace="fragments/page :: switchLang"></div>
-        <form th:action="@{/admin/logout}" method="POST" class="form-inline border border-secondary rounded p-1 mt-1"
+        <form th:action="@{/admin/logout}" method="POST" class="form-inline mt-2"
           sec:authorize="isAuthenticated()">
-          <div class="col-8 px-1">
-            <span class="" th:text="#{purl_server.fragments.page.nav.dropdown.user}">User:</span>
-            <em class="col-form-label" th:text="${#authentication.name}"></em>
-          </div>
-          <div class="col-4 px-1">
-            <button type=submit class="btn btn-sm btn-secondary float-right"
-              th:text="#{purl_server.fragments.page.nav.dropdown.logout}">Logout</button>
+          <div class="input-group input-group-sm">
+            <div class="input-group-prepend">
+              <span class="input-group-text" th:text="#{purl_server.fragments.page.nav.dropdown.user}">User:</span>
+             </div>
+		     <input type="text" class="form-control bg-white" th:value="${#authentication.name}" readonly style="min-width:4em" >
+  			<div class="input-group-append">
+             <button type=submit class="btn btn-sm btn-secondary float-right" 
+                     th:text="#{purl_server.fragments.page.nav.dropdown.logout}">Logout</button>
+            </div>
           </div>
         </form>
         <a class="btn btn-sm btn-secondary float-right mt-2" th:href="@{/admin/login}"
@@ -31,8 +33,8 @@
 
   <div class="dropdown" th:fragment="switchLang">
     <button class="btn btn-sm btn-outline-dark dropdown-toggle px-1 py-0 ml-3 mt-2 float-right" type="button"
-      id="switchLang" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-      <img style="height: 2.2em;" th:src="@{/info/images/flags/__${#locale}__.png}" />
+      id="switchLang" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="height:2.25em">
+      <img th:src="@{/info/images/flags/__${#locale}__.png}" />
       <span class="caret"></span>
     </button>
     <div class="dropdown-menu" aria-labelledby="switchLang">

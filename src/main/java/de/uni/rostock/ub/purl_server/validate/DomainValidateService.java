@@ -82,12 +82,15 @@ public class DomainValidateService {
             if (domain.getPath().startsWith("/admin")) {
                 errorList.add(messages.getMessage("purl_server.error.validate.domain.path.start.admin", null,
                     locale));
+            } else if (!domain.getPath().matches("/" + Domain.REGEX_RESERVED_DOMAINS)) {
+                errorList.add(
+                    messages.getMessage("purl_server.error.validate.domain.path.reserved", null, locale));
             }
             if (!domain.getPath().startsWith("/")) {
                 errorList.add(
                     messages.getMessage("purl_server.error.validate.domain.path.start", null, locale));
             }
-            if (!domain.getPath().matches("/[-a-zA-Z0-9_]+")) {
+            if (!domain.getPath().matches("/[-_a-zA-Z0-9]+")) {
                 errorList.add(
                     messages.getMessage("purl_server.error.validate.domain.path.match", null, locale));
             }

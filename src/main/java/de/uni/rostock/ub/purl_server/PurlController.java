@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import de.uni.rostock.ub.purl_server.dao.PurlDAO;
+import de.uni.rostock.ub.purl_server.model.Domain;
 import de.uni.rostock.ub.purl_server.model.Purl;
 
 @Controller
@@ -59,7 +60,7 @@ public class PurlController {
      * @param domain  the PathVariable
      * @return redirect to the target URL
      */
-    @RequestMapping(path = "/{domain:(?!admin)(?!api)(?!info)(?!webjars).*}/**", method = RequestMethod.GET)
+    @RequestMapping(path = "/{domain:" + Domain.REGEX_VALID_DOMAINS + "}/**", method = RequestMethod.GET)
     public String resolvePurl(HttpServletRequest request, HttpServletResponse resp, @PathVariable String domain) {
         String path = request.getServletPath();
         Optional<Purl> op = purlDAO.retrievePurl(path);

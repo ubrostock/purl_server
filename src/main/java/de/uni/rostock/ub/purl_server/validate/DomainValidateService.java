@@ -82,7 +82,7 @@ public class DomainValidateService {
             if (domain.getPath().startsWith("/admin")) {
                 errorList.add(messages.getMessage("purl_server.error.validate.domain.path.start.admin", null,
                     locale));
-            } else if (!domain.getPath().matches("/" + Domain.REGEX_RESERVED_DOMAINS)) {
+            } else if (!domain.getPath().matches("/" + Domain.REGEX_VALID_DOMAINS)) {
                 errorList.add(
                     messages.getMessage("purl_server.error.validate.domain.path.reserved", null, locale));
             }

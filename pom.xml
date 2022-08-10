@@ -96,9 +96,13 @@
           <execution>
             <goals>
               <goal>build-info</goal>
+              <goal>repackage</goal> <!-- default value -->
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <executable>true</executable>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>pl.project13.maven</groupId>
@@ -115,13 +119,6 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <configuration>
-          <executable>true</executable>
-        </configuration>
       </plugin>
     </plugins>
   </build>

@@ -65,6 +65,16 @@
             <th></th>
             <th></th>
           </tr>
+          <colgroup>
+            <col style="width: auto;"/>
+            <col style="width: auto;"/>
+            <col style="width: auto;"/>
+            <col style="width: auto;"/>
+            <col style="width: auto;"/>
+            <col style="width: auto;"/>
+            <col style="width: 3em;"/>
+            <col style="width: 3em;"/>
+          </colgroup>
           <tr th:each="purl : ${purls}">
             <td class="text-nowrap" th:text="${purl.path}"></td>
             <td th:text="${purl.type}"></td>
@@ -76,12 +86,12 @@
             </td>
             <td th:text="${purl.status}"></td>
             <td>
-              <a th:href="@{/admin/manager/purl/modify?id=__${purl.id}__}"
-                th:text="#{purl_server.purl.search.table.modify}">modify</a>
+              <a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/manager/purl/modify?id=__${purl.id}__}"
+                 th:title="#{purl_server.purl.search.table.modify}">✎</a>
             </td>
             <td>
-              <a th:href="@{/admin/manager/purl/delete?id=__${purl.id}__}"
-                th:text="#{purl_server.purl.search.table.delete}">delete</a>
+              <a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/manager/purl/delete?id=__${purl.id}__}"
+                 th:title="#{purl_server.purl.search.table.delete}">🗑</a>
             </td>
           </tr>
         </table>

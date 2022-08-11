@@ -63,6 +63,13 @@
           th:text="#{purl_server.common.search.result.empty}"></p>
         <p class="alert alert-info" th:if="${moreResults}" th:text="#{purl_server.common.search.result.more}"></p>
         <table class="table table-striped table-sm mt-3">
+          <colgroup>
+            <col style="width: auto;"/>
+            <col style="width: auto;"/>
+            <col style="width: auto;"/>
+            <col style="width: 3em;"/>
+            <col style="width: 3em;"/>
+          </colgroup>
           <tr>
             <th th:text="#{purl_server.domain.search.table.path}">Path</th>
             <th th:text="#{purl_server.domain.search.table.name}">Name</th>
@@ -82,12 +89,12 @@
               </span>
             </td>
             <td>
-              <a th:href="@{/admin/manager/domain/modify?id=__${d.id}__}"
-                th:text="#{purl_server.domain.search.table.modify}" sec:authorize="hasRole('ROLE_ADMIN')">modify</a>
+              <a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/manager/domain/modify?id=__${d.id}__}"
+                 th:title="#{purl_server.domain.search.table.modify}" sec:authorize="hasRole('ROLE_ADMIN')">✎</a>
             </td>
             <td>
-              <a th:href="@{/admin/manager/domain/delete?id=__${d.id}__}"
-                th:text="#{purl_server.domain.search.table.delete}" sec:authorize="hasRole('ROLE_ADMIN')">delete</a>
+              <a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/manager/domain/delete?id=__${d.id}__}"
+                 th:title="#{purl_server.domain.search.table.delete}" sec:authorize="hasRole('ROLE_ADMIN')">🗑</a>
             </td>
           </tr>
         </table>

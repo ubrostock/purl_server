@@ -68,6 +68,14 @@
           th:text="#{purl_server.common.search.result.empty}"></p>
         <p class="alert alert-info" th:if="${moreResults}" th:text="#{purl_server.common.search.result.more}"></p>
         <table class="table table-striped table-sm mt-3">
+          <colgroup>
+            <col style="width: auto;"/>
+            <col style="width: auto;"/>
+            <col style="width: auto;"/>
+            <col style="width: auto;"/>
+            <col style="width: 3em;"/>
+            <col style="width: 3em;"/>
+          </colgroup>
           <tr>
             <th th:text="#{purl_server.user.search.table.username}">Username</th>
             <th th:text="#{purl_server.user.search.table.fullname}">Full name</th>
@@ -82,12 +90,12 @@
             <td th:text="${u.affiliation}"></td>
             <td th:text="${u.email}"></td>
             <td>
-              <a th:href="@{/admin/manager/user/modify?id=__${u.id}__}"
-                th:text="#{purl_server.user.search.table.modify}">modify</a>
+              <a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/manager/user/modify?id=__${u.id}__}"
+                 th:title="#{purl_server.user.search.table.modify}">✎</a>
             </td>
             <td>
-              <a th:href="@{/admin/manager/user/delete?id=__${u.id}__}"
-                th:text="#{purl_server.user.search.table.delete}">delete</a>
+              <a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/manager/user/delete?id=__${u.id}__}"
+                 th:title="#{purl_server.user.search.table.delete}">🗑</a>
             </td>
           </tr>
         </table>

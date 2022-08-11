@@ -34,16 +34,16 @@
   <div class="dropdown" th:fragment="switchLang">
     <button class="btn btn-sm btn-outline-dark dropdown-toggle px-1 py-0 ml-3 mt-2 float-right" type="button"
       id="switchLang" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="height:2.25em">
-      <img th:src="@{/info/images/flags/__${#locale}__.png}" />
+      <img th:src="@{/static/images/flags/__${#locale}__.png}" />
       <span class="caret"></span>
     </button>
     <div class="dropdown-menu" aria-labelledby="switchLang">
       <a class="dropdown-item text-body" th:href="@{'?&lang=de'}">
-        <img th:src="@{/info/images/flags/de.png}" />
+        <img th:src="@{/static/images/flags/de.png}" />
         <span th:text="#{purl_server.common.lang.de}"></span>
       </a>
       <a class="dropdown-item text-body" th:href="@{'?&lang=en'}">
-        <img th:src="@{/info/images/flags/en.png}" />
+        <img th:src="@{/static/images/flags/en.png}" />
         <span th:text="#{purl_server.common.lang.en}"></span>
       </a>
     </div>

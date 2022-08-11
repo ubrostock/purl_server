@@ -38,7 +38,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 @SpringBootApplication
 public class PurlServerWebApp implements WebMvcConfigurer {
 
-    @Value("${purl_server.static_content_directory}")
+    @Value("${purl_server.static_webcontent_directory}")
     private String staticWebResourcesLocation;
 
     @PostConstruct

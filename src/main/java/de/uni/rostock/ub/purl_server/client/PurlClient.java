@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 
 public class PurlClient {
     private static Logger LOGGER = LoggerFactory.getLogger(PurlClient.class);
-    
+
     public enum PURLType {
         FOUND_302, PARTIAL_302, GONE_410;
     }
@@ -51,6 +51,8 @@ public class PurlClient {
     private Optional<HttpClient> httpClient = Optional.empty();
 
     private StringBuffer messageBuffer = new StringBuffer();
+
+    private Integer lastStatus = null;
 
     public PurlClient(String baseURL) {
         this.apiURL = baseURL + "/api/purl";
@@ -79,15 +81,19 @@ public class PurlClient {
                 .header("Content-Type", "application/json")
                 .uri(URI.create(apiURL + purl)).build();
             try {
+                lastStatus = null;
                 HttpResponse<String> response = httpClient.get().send(request, HttpResponse.BodyHandlers.ofString());
+                lastStatus = response.statusCode();
                 if (response.statusCode() == HttpServletResponse.SC_CREATED) {
                     return true;
                 }
                 message = response.body();
                 LOGGER.info(message);
+                messageBuffer.append(message);
             } catch (IOException | InterruptedException e) {
                 message = "Error creating a PURL!";
                 LOGGER.error(message, e);
+                messageBuffer.append(message);
             }
         } else {
             String errorMmessage = "Please login into PURL client!";
@@ -105,7 +111,9 @@ public class PurlClient {
                 .header("Content-Type", "application/json").uri(URI.create(apiURL + purl))
                 .build();
             try {
+                lastStatus = null;
                 HttpResponse<String> response = httpClient.get().send(request, HttpResponse.BodyHandlers.ofString());
+                lastStatus = response.statusCode();
                 message = response.body();
                 LOGGER.info(message);
                 messageBuffer.append(message);
@@ -132,7 +140,9 @@ public class PurlClient {
             HttpRequest request = HttpRequest.newBuilder().GET()
                 .uri(URI.create(apiURL + purl)).build();
             try {
+                lastStatus = null;
                 HttpResponse<String> response = httpClient.get().send(request, HttpResponse.BodyHandlers.ofString());
+                lastStatus = response.statusCode();
                 if (response.statusCode() == HttpServletResponse.SC_OK) {
                     return response.body();
                 }
@@ -165,6 +175,15 @@ public class PurlClient {
     }
 
     /**
+     * Retrieve the last statusCode, which was sent from the PURL server to the client.
+     */
+    public Integer callStatusCode() {
+        Integer result = lastStatus;
+        lastStatus = null;
+        return result;
+    }
+
+    /**
      * Calculate SHA1-Checksum of a String.
      * The method is used to send the password in an encrypted form.
      * @param plain
@@ -185,12 +204,21 @@ public class PurlClient {
         //      app.createPURL("/test/bcd", "http://google.de/", TYPE_PARTIAL_302);
         //      app.createPURL("/nureintest/testneu12345", "http://google.de/", TYPE_PARTIAL_302);
         //      app.updatePURL("/nureintest/testneu12345", "http://test1", TYPE_PARTIAL_302);
-              
+
         boolean result = app.createPURL("/test/google", "http://google.de/", PURLType.FOUND_302);
         if (!result) {
-            System.out.println("Fehler " + app.callMessages());
+            System.out.println("FEHLER!!!");
         }
-        
+        System.out.println("Message: " + app.callMessages());
+        System.out.println("HTTP Status: " + app.callStatusCode());
+
+        result = app.updatePURL("/test/google", "http://google.com/", PURLType.FOUND_302);
+        if (!result) {
+            System.out.println("FEHLER!!!");
+        }
+        System.out.println("Message: " + app.callMessages());
+        System.out.println("HTTP Status: " + app.callStatusCode());
+
         app.logout();
     }
 

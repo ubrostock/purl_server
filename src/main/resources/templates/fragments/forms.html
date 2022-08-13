@@ -135,9 +135,9 @@
       <label class="col-sm-3 col-form-label" th:text="#{purl_server.purl.form.type}">Type of PURL</label>
       <div class="col-sm-9">
         <select class="form-control" th:field="*{type}" th:disabled="${submitted}">
-          <option value="FOUND_302" th:text="#{purl_server.purl.form.type.found_302}">Simple redirection to a
+          <option value="REDIRECT_302" th:text="#{purl_server.purl.form.type.redirect_302}">Simple redirection to a
             target URL (302)</option>
-          <option value="PARTIAL_302" th:text="#{purl_server.purl.form.type.partial}">Partial-redirect PURL</option>
+          <option value="PARTIAL_302" th:text="#{purl_server.purl.form.type.partial_302}">Partial-redirect PURL</option>
         </select>
       </div>
     </div>

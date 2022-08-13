@@ -43,7 +43,7 @@ public class PurlClient {
     private static Logger LOGGER = LoggerFactory.getLogger(PurlClient.class);
 
     public enum PURLType {
-        FOUND_302, PARTIAL_302, GONE_410;
+        REDIRECT_302, PARTIAL_302, GONE_410;
     }
 
     private String apiURL = "";
@@ -205,14 +205,14 @@ public class PurlClient {
         //      app.createPURL("/nureintest/testneu12345", "http://google.de/", TYPE_PARTIAL_302);
         //      app.updatePURL("/nureintest/testneu12345", "http://test1", TYPE_PARTIAL_302);
 
-        boolean result = app.createPURL("/test/google", "http://google.de/", PURLType.FOUND_302);
+        boolean result = app.createPURL("/test/google", "http://google.de/", PURLType.REDIRECT_302);
         if (!result) {
             System.out.println("FEHLER!!!");
         }
         System.out.println("Message: " + app.callMessages());
         System.out.println("HTTP Status: " + app.callStatusCode());
 
-        result = app.updatePURL("/test/google", "http://google.com/", PURLType.FOUND_302);
+        result = app.updatePURL("/test/google", "http://google.com/", PURLType.REDIRECT_302);
         if (!result) {
             System.out.println("FEHLER!!!");
         }

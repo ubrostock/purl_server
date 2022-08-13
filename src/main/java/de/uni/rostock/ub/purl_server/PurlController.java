@@ -70,7 +70,7 @@ public class PurlController {
                 case PARTIAL_302:
                     String restPath = path.substring(p.getPath().length());
                     return "redirect:" + calcRedirectWithParams(request, p.getTarget(), restPath);
-                case FOUND_302:
+                case REDIRECT_302:
                     return "redirect:" + calcRedirectWithParams(request, p.getTarget(), "");
                 case GONE_410:
                     try {

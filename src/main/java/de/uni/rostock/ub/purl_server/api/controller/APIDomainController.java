@@ -18,7 +18,7 @@
  */
 package de.uni.rostock.ub.purl_server.api.controller;
 
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -65,15 +65,14 @@ public class APIDomainController {
     })
     public ResponseEntity<Domain> retrieveDomain(HttpServletRequest request,
         @PathVariable("path") String path) {
-        AtomicReference<ResponseEntity<Domain>> r = new AtomicReference<>();
-        domainDAO.retrieveDomain(StringUtils.prependIfMissing(path,  "/")).ifPresentOrElse(d -> {
+        Optional<Domain> optDomain = domainDAO.retrieveDomain(StringUtils.prependIfMissing(path,  "/"));
+        if(optDomain.isPresent()) {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Location", request.getRequestURL().toString());
-            r.set(new ResponseEntity<Domain>(d, headers, HttpStatus.OK));
-        }, () -> {
-            r.set(new ResponseEntity<Domain>(HttpStatus.NOT_FOUND));
-        });
-
-        return r.get();
+            return new ResponseEntity<Domain>(optDomain.get(), headers, HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<Domain>(HttpStatus.NOT_FOUND);
+        }
     }
 }

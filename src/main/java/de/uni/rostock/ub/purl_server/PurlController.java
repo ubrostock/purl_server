@@ -88,7 +88,7 @@ public class PurlController {
         } else {
             try {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND,
-                    messages.getMessage("purl_server.error.purl.found", null, Locale.getDefault()));
+                    messages.getMessage("purl_server.error.purl.notfound", null, Locale.getDefault()));
             } catch (IOException e) {
                 LOGGER.error(messages.getMessage("purl_server.error.sending.error", null, Locale.getDefault()), e);
             }

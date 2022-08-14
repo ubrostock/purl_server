@@ -22,7 +22,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Domain {
+public class Domain implements PurlServerResponse {
 
     public static final List<String> RESERVED_DOMAINS = List.of("admin", "api", "info", "static", "webjars");
 

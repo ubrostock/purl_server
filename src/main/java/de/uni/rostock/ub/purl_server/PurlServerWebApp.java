@@ -35,6 +35,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+
+@OpenAPIDefinition(
+    info = @Info(
+        title = "REST API for PURL Server",
+        version = "0.9"
+    )
+)
 @SpringBootApplication
 public class PurlServerWebApp implements WebMvcConfigurer {
 

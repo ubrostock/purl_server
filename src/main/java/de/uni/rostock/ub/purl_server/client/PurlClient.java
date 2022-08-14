@@ -36,6 +36,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
@@ -77,13 +78,14 @@ public class PurlClient {
         httpClient = Optional.empty();
     }
 
-    public boolean createPURL(String purl, String target, PURLType type) {
+    public boolean createPURL(PURL p) {
         if (httpClient.isPresent()) {
             String message = "";
-            String purlJson = "{\"type\":\"" + type.toString() + "\",\"target\":\"" + target + "\"}";
-            HttpRequest request = HttpRequest.newBuilder().POST(BodyPublishers.ofString(purlJson))
+            HttpRequest request = HttpRequest.newBuilder()
+                .POST(BodyPublishers.ofString(outputPURLPayloadAsJSON(p)))
                 .header("Content-Type", "application/json")
-                .uri(URI.create(apiURL + purl)).build();
+                .uri(URI.create(apiURL + p.getPath()))
+                .build();
             try {
                 lastStatus = null;
                 HttpResponse<String> response = httpClient.get().send(request, HttpResponse.BodyHandlers.ofString());
@@ -107,12 +109,12 @@ public class PurlClient {
         return false;
     }
 
-    public boolean updatePURL(String purl, String target, PURLType type) {
+    public boolean updatePURL(PURL p) {
         if (httpClient.isPresent()) {
             String message = "";
-            String purlJson = "{\"type\":\"" + type.toString() + "\",\"target\":\"" + target + "\"}";
-            HttpRequest request = HttpRequest.newBuilder().PUT(BodyPublishers.ofString(purlJson))
-                .header("Content-Type", "application/json").uri(URI.create(apiURL + purl))
+            HttpRequest request = HttpRequest.newBuilder()
+                .PUT(BodyPublishers.ofString(outputPURLPayloadAsJSON(p)))
+                .header("Content-Type", "application/json").uri(URI.create(apiURL + p.getPath()))
                 .build();
             try {
                 lastStatus = null;
@@ -138,11 +140,13 @@ public class PurlClient {
         return false;
     }
 
-    public String getPURLInfoAsJsonString(String purl) {
+    public String getPURLInfoAsJsonString(String path) {
         if (httpClient.isPresent()) {
             messageBuffer = new StringBuffer();
-            HttpRequest request = HttpRequest.newBuilder().GET()
-                .uri(URI.create(apiURL + purl)).build();
+            HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create(apiURL + path))
+                .build();
             try {
                 lastStatus = null;
                 HttpResponse<String> response = httpClient.get().send(request, HttpResponse.BodyHandlers.ofString());
@@ -151,7 +155,7 @@ public class PurlClient {
                     return response.body();
                 }
                 if (response.statusCode() == HttpServletResponse.SC_NOT_FOUND) {
-                    String message = "PURL " + purl + " not found!";
+                    String message = "PURL " + path + " not found!";
                     LOGGER.info(message);
                     messageBuffer.append(message);
                 }
@@ -179,12 +183,14 @@ public class PurlClient {
      * @param purl
      * @return
      */
-    public LinkedHashMap<String, Object> getPURLInfoAsMap(String purl) {
+    public LinkedHashMap<String, Object> getPURLInfoAsMap(String path) {
         if (httpClient.isPresent()) {
             messageBuffer = new StringBuffer();
-            HttpRequest request = HttpRequest.newBuilder().GET()
+            HttpRequest request = HttpRequest.newBuilder()
+                .GET()
                 .header("Accept", "application/x-java-serialized-object")
-                .uri(URI.create(apiURL + purl)).build();
+                .uri(URI.create(apiURL + path))
+                .build();
             try {
                 lastStatus = null;
                 HttpResponse<InputStream> response = httpClient.get().send(request,
@@ -193,16 +199,17 @@ public class PurlClient {
                 if (response.statusCode() == HttpServletResponse.SC_OK) {
                     try (ObjectInputStream objectInputStream = new ObjectInputStream(response.body())) {
                         @SuppressWarnings("unchecked")
-                        LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) objectInputStream.readObject();
+                        LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) objectInputStream
+                            .readObject();
                         return map;
                     } catch (ClassNotFoundException e) {
-                        String message = "PURL " + purl + " not found: " + e.getMessage();
+                        String message = "PURL " + path + " not found: " + e.getMessage();
                         LOGGER.info(message);
                         messageBuffer.append(message);
                     }
                 }
                 if (response.statusCode() == HttpServletResponse.SC_NOT_FOUND) {
-                    String message = "PURL " + purl + " not found!";
+                    String message = "PURL " + path + " not found!";
                     LOGGER.info(message);
                     messageBuffer.append(message);
                 }
@@ -219,15 +226,10 @@ public class PurlClient {
         }
         return null;
     }
-    
-    public boolean hasMatchingPURL(String purl, String targetURL, PurlClient.PURLType type) {
-        Map<String, Object> purlInfo = getPURLInfoAsMap(purl);
-        if (purlInfo != null) {
-            //check JSON output for "target":"/rosdok/ppn1795757256"
-            return targetURL.equals(purlInfo.get("target")) && type.toString().equals(purlInfo.get("type"));
-        } else {
-            return false;
-        }
+
+    public boolean existsPURL(PURL p) {
+        PURL retrievedPURL = buildPURL(getPURLInfoAsMap(Objects.requireNonNull(p).getPath()));
+        return p.equals(retrievedPURL);
     }
 
     /**
@@ -264,20 +266,41 @@ public class PurlClient {
         }
     }
 
+    public static PURL buildPURL(Map<String, Object> data) {
+        PURL p = new PURL();
+        p.setPath(String.valueOf(Objects.requireNonNull(data.get("path"), "path cannot be null")));
+        p.setTarget(String.valueOf(Objects.requireNonNull(data.get("target"), "target cannot be null")));
+        p.setType(
+            PURLType.valueOf(String.valueOf(Objects.requireNonNull(data.get("type"), "type cannot be null"))));
+        return p;
+    }
+
+    public static PURL buildPURL(String path, String target, PURLType type) {
+        PURL p = new PURL(
+            String.valueOf(Objects.requireNonNull(path, "path cannot be null")),
+            String.valueOf(Objects.requireNonNull(target, "target cannot be null")),
+            PURLType.valueOf(String.valueOf(Objects.requireNonNull(type, "type cannot be null"))));
+        return p;
+    }
+
+    public static String outputPURLPayloadAsJSON(PURL p) {
+        return "{\"type\":\"" + p.getType().toString() + "\",\"target\":\"" + p.getTarget() + "\"}";
+    }
+
     public static void main(String[] args) {
         PurlClient app = new PurlClient("http://localhost:8080").login("test", "test123");
         //      app.createPURL("/test/bcd", "http://google.de/", TYPE_PARTIAL_302);
         //      app.createPURL("/nureintest/testneu12345", "http://google.de/", TYPE_PARTIAL_302);
         //      app.updatePURL("/nureintest/testneu12345", "http://test1", TYPE_PARTIAL_302);
 
-        boolean result = app.createPURL("/test/google", "http://google.de/", PURLType.REDIRECT_302);
+        boolean result = app.createPURL(buildPURL("/test/google", "http://google.de/", PURLType.REDIRECT_302));
         if (!result) {
             System.out.println("FEHLER!!!");
         }
         System.out.println("Message: " + app.callMessages());
         System.out.println("HTTP Status: " + app.callStatusCode());
 
-        result = app.updatePURL("/test/google", "http://google.com/", PURLType.REDIRECT_302);
+        result = app.updatePURL(buildPURL("/test/google", "http://google.com/", PURLType.REDIRECT_302));
         if (!result) {
             System.out.println("FEHLER!!!");
         }
@@ -287,8 +310,102 @@ public class PurlClient {
         LinkedHashMap<String, Object> data = app.getPURLInfoAsMap("/test/google");
         System.out.println(data.keySet());
         System.out.println("REDIRECT_302".equals(data.get("type")));
-        
+
         app.logout();
+    }
+
+    /**
+     * PURL data as POJO
+     * 
+     * for Java17 this could be reimplemented as Record Class (https://openjdk.org/jeps/395)
+     * 
+     *  Q: static or not static nested class?
+     *  A: "In effect, a static nested class is behaviorally a top-level class that has been nested 
+     *      in another top-level class for packaging convenience."
+     *      (https://docs.oracle.com/javase/tutorial/java/javaOO/nested.html)
+     */
+    public static class PURL {
+        private String path;
+
+        private String target;
+
+        private PURLType type;
+
+        //empty no-arg constructor
+        public PURL() {
+
+        }
+
+        public PURL(String path, String target, PURLType type) {
+            super();
+            this.path = path;
+            this.target = target;
+            this.type = type;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+
+        public String getTarget() {
+            return target;
+        }
+
+        public void setTarget(String target) {
+            this.target = target;
+        }
+
+        public PURLType getType() {
+            return type;
+        }
+
+        public void setType(PURLType type) {
+            this.type = type;
+        }
+
+        /**
+         * generated via IDE
+         */
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((path == null) ? 0 : path.hashCode());
+            result = prime * result + ((target == null) ? 0 : target.hashCode());
+            result = prime * result + ((type == null) ? 0 : type.hashCode());
+            return result;
+        }
+
+        /**
+         * generated via IDE
+         */
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            PURL other = (PURL) obj;
+            if (path == null) {
+                if (other.path != null)
+                    return false;
+            } else if (!path.equals(other.path))
+                return false;
+            if (target == null) {
+                if (other.target != null)
+                    return false;
+            } else if (!target.equals(other.target))
+                return false;
+            if (type != other.type)
+                return false;
+            return true;
+        }
     }
 
 }

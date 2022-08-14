@@ -18,7 +18,7 @@
  */
 package de.uni.rostock.ub.purl_server.model;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,9 +41,9 @@ public class Domain {
 
     private String comment;
 
-    private LocalDateTime created;
+    private Instant created;
 
-    private LocalDateTime lastmodified;
+    private Instant lastmodified;
 
     private Status status;
 
@@ -89,19 +89,19 @@ public class Domain {
         this.status = status;
     }
 
-    public LocalDateTime getCreated() {
+    public Instant getCreated() {
         return created;
     }
 
-    public void setCreated(LocalDateTime created) {
+    public void setCreated(Instant created) {
         this.created = created;
     }
 
-    public LocalDateTime getLastmodified() {
+    public Instant getLastmodified() {
         return lastmodified;
     }
 
-    public void setLastmodified(LocalDateTime lastmodified) {
+    public void setLastmodified(Instant lastmodified) {
         this.lastmodified = lastmodified;
     }
 

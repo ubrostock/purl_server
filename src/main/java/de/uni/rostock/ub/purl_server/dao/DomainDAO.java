@@ -190,7 +190,7 @@ public class DomainDAO {
      */
     public Optional<Domain> modifyDomain(Domain domain, User u) {
         jdbcTemplate.update(
-            "UPDATE domain SET path = ?, name = ?, comment = ?, lastmodified = NOW(), status = 2 WHERE id = ?;",
+            "UPDATE domain SET path = ?, name = ?, comment = ?, lastmodified = NOW(3), status = 2 WHERE id = ?;",
             domain.getPath(),
             domain.getName(), domain.getComment(), domain.getId());
         jdbcTemplate.update("DELETE FROM domainuser WHERE domain_id = ?", domain.getId());
@@ -209,7 +209,7 @@ public class DomainDAO {
      * @param domain
      */
     public void deleteDomain(String path, User u) {
-        jdbcTemplate.update("UPDATE domain SET lastmodified = NOW(), status = ? WHERE path = ?", Status.DELETED.name(),
+        jdbcTemplate.update("UPDATE domain SET lastmodified = NOW(3), status = ? WHERE path = ?", Status.DELETED.name(),
             path);
     }
 }

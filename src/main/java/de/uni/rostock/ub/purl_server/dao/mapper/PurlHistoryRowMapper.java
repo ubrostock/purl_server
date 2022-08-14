@@ -37,7 +37,7 @@ public class PurlHistoryRowMapper implements RowMapper<PurlHistory> {
         pH.setUser(rs.getString("login"));
         pH.setType(Type.valueOf(rs.getString("type")));
         pH.setTarget(rs.getString("target"));
-        pH.setLastmodified(rs.getTimestamp("modified").toLocalDateTime());
+        pH.setLastmodified(rs.getTimestamp("modified").toInstant());
         pH.setStatus(Status.valueOf(rs.getString("status")));
         return pH;
     }

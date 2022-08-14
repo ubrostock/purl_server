@@ -18,7 +18,7 @@
  */
 package de.uni.rostock.ub.purl_server.model;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -39,7 +39,7 @@ public class PurlHistory {
 
     private String target;
 
-    private LocalDateTime lastmodified;
+    private Instant lastmodified;
 
     public int getId() {
         return id;
@@ -97,11 +97,11 @@ public class PurlHistory {
         this.user = user;
     }
 
-    public LocalDateTime getLastmodified() {
+    public Instant getLastmodified() {
         return lastmodified;
     }
 
-    public void setLastmodified(LocalDateTime lastmodified) {
+    public void setLastmodified(Instant lastmodified) {
         this.lastmodified = lastmodified;
     }
 

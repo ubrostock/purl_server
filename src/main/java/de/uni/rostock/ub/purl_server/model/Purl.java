@@ -19,7 +19,7 @@
 package de.uni.rostock.ub.purl_server.model;
 
 import java.beans.Transient;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -37,9 +37,9 @@ public class Purl implements PurlServerResponse {
 
     private String target;
 
-    private LocalDateTime created;
+    private Instant created;
 
-    private LocalDateTime lastmodified;
+    private Instant lastmodified;
 
     private Status status;
 
@@ -97,19 +97,19 @@ public class Purl implements PurlServerResponse {
         this.status = status;
     }
 
-    public LocalDateTime getCreated() {
+    public Instant getCreated() {
         return created;
     }
 
-    public void setCreated(LocalDateTime created) {
+    public void setCreated(Instant created) {
         this.created = created;
     }
 
-    public LocalDateTime getLastmodified() {
+    public Instant getLastmodified() {
         return lastmodified;
     }
 
-    public void setLastmodified(LocalDateTime lastmodified) {
+    public void setLastmodified(Instant lastmodified) {
         this.lastmodified = lastmodified;
     }
 

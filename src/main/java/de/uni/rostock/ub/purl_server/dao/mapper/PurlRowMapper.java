@@ -37,8 +37,8 @@ public class PurlRowMapper implements RowMapper<Purl> {
         p.setDomainId(rs.getInt("domain_id"));
         p.setType(Type.valueOf(rs.getString("type")));
         p.setTarget(rs.getString("target"));
-        p.setCreated(rs.getTimestamp("created").toLocalDateTime());
-        p.setLastmodified(rs.getTimestamp("lastmodified").toLocalDateTime());
+        p.setCreated(rs.getTimestamp("created").toInstant());
+        p.setLastmodified(rs.getTimestamp("lastmodified").toInstant());
         p.setStatus(Status.valueOf(rs.getString("status")));
 
         return p;

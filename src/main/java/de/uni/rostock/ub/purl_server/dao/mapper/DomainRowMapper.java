@@ -34,8 +34,8 @@ public class DomainRowMapper implements RowMapper<Domain> {
         d.setPath(rs.getString("path"));
         d.setName(rs.getString("name"));
         d.setComment(rs.getString("comment"));
-        d.setCreated(rs.getTimestamp("created").toLocalDateTime());
-        d.setLastmodified(rs.getTimestamp("lastmodified").toLocalDateTime());
+        d.setCreated(rs.getTimestamp("created").toInstant());
+        d.setLastmodified(rs.getTimestamp("lastmodified").toInstant());
         d.setStatus(Status.valueOf(rs.getString("status")));
 
         return d;

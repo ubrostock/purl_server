@@ -29,25 +29,26 @@ import de.uni.rostock.ub.purl_server.model.User;
 
 public class DomainUserRowMapper implements RowMapper<DomainUser> {
     @Override
-    public DomainUser mapRow(ResultSet rs3, int rowNum) throws SQLException {
+    public DomainUser mapRow(ResultSet rs, int rowNum) throws SQLException {
         DomainUser du = new DomainUser();
-
+        
         User u = new User();
-        u.setId(rs3.getInt("u.id"));
-        u.setAdmin(rs3.getBoolean("u.admin"));
-        u.setFullname(rs3.getString("u.fullname"));
-        u.setAffiliation(rs3.getString("u.affiliation"));
-        u.setEmail(rs3.getString("u.email"));
-        u.setLogin(rs3.getString("u.login"));
-        u.setPasswordSHA(rs3.getString("u.password_sha"));
-        u.setComment(rs3.getString("u.comment"));
-        u.setCreated(rs3.getTimestamp("u.created").toLocalDateTime());
-        u.setLastmodified(rs3.getTimestamp("u.lastmodified").toLocalDateTime());
-        u.setStatus(Status.valueOf(rs3.getString("u.status")));
+        u.setId(rs.getInt("u.id"));
+        u.setAdmin(rs.getBoolean("u.admin"));
+        u.setFullname(rs.getString("u.fullname"));
+        u.setAffiliation(rs.getString("u.affiliation"));
+        u.setEmail(rs.getString("u.email"));
+        u.setLogin(rs.getString("u.login"));
+        u.setPasswordSHA(rs.getString("u.password_sha"));
+        u.setComment(rs.getString("u.comment"));
+        u.setCreated(rs.getTimestamp("u.created").toInstant());
+        u.setLastmodified(rs.getTimestamp("u.lastmodified").toInstant());
+        u.setStatus(Status.valueOf(rs.getString("u.status")));
+        
         du.setUser(u);
-        du.setId(rs3.getInt("du.id"));
-        du.setCanCreate(rs3.getBoolean("du.can_create"));
-        du.setCanModify(rs3.getBoolean("du.can_modify"));
+        du.setId(rs.getInt("du.id"));
+        du.setCanCreate(rs.getBoolean("du.can_create"));
+        du.setCanModify(rs.getBoolean("du.can_modify"));
 
         return du;
     }

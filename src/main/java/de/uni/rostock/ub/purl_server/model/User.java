@@ -18,7 +18,7 @@
  */
 package de.uni.rostock.ub.purl_server.model;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 public class User {
     private int id;
@@ -37,9 +37,9 @@ public class User {
 
     private String comment;
 
-    private LocalDateTime created;
+    private Instant created;
 
-    private LocalDateTime lastmodified;
+    private Instant lastmodified;
 
     private Status status;
 
@@ -107,19 +107,19 @@ public class User {
         this.status = status;
     }
 
-    public LocalDateTime getCreated() {
+    public Instant getCreated() {
         return created;
     }
 
-    public void setCreated(LocalDateTime created) {
+    public void setCreated(Instant created) {
         this.created = created;
     }
 
-    public LocalDateTime getLastmodified() {
+    public Instant getLastmodified() {
         return lastmodified;
     }
 
-    public void setLastmodified(LocalDateTime lastmodified) {
+    public void setLastmodified(Instant lastmodified) {
         this.lastmodified = lastmodified;
     }
 

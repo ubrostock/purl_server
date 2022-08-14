@@ -125,7 +125,7 @@ public class UserDAO {
      */
     public void createUser(User userObject, User u) {
         jdbcTemplate.update(
-            "INSERT INTO user (login, password_sha, admin, fullname, affiliation, email, comment, created, lastmodified, status) VALUES (?,?,?,?,   ?,?,?,NOW(),NOW(),   ?)",
+            "INSERT INTO user (login, password_sha, admin, fullname, affiliation, email, comment, created, lastmodified, status) VALUES (?,?,?,?,   ?,?,?,NOW(3), NOW(3),   ?)",
             userObject.getLogin(), userObject.getPasswordSHA(), userObject.isAdmin(), userObject.getFullname(),
             userObject.getAffiliation(), userObject.getEmail(),
             userObject.getComment(), Status.CREATED.name());
@@ -137,7 +137,7 @@ public class UserDAO {
      */
     public void modifyUser(User userObject, User u) {
         jdbcTemplate.update(
-            "UPDATE user SET login = ?, fullname = ?, affiliation = ?, email = ?, comment = ?, lastmodified = NOW(), status = ? WHERE id = ?;",
+            "UPDATE user SET login = ?, fullname = ?, affiliation = ?, email = ?, comment = ?, lastmodified = NOW(3), status = ? WHERE id = ?;",
             userObject.getLogin(), userObject.getFullname(), userObject.getAffiliation(), userObject.getEmail(),
             userObject.getComment(), Status.MODIFIED.name(), userObject.getId());
     }
@@ -148,7 +148,7 @@ public class UserDAO {
      * @param id
      */
     public void deleteUser(User userObject, User u) {
-        jdbcTemplate.update("UPDATE user SET lastmodified = NOW(), status = ? WHERE id = ?;", Status.DELETED.name(),
+        jdbcTemplate.update("UPDATE user SET lastmodified = NOW(3), status = ? WHERE id = ?;", Status.DELETED.name(),
             userObject.getId());
     }
 }

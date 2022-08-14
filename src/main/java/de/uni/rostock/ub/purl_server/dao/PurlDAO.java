@@ -156,7 +156,8 @@ public class PurlDAO {
             @Override
             public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
-                    "INSERT INTO purl (path, domain_id, type, target, created, lastmodified, status) VALUES(?,?,?,?,NOW(), NOW(),?) ON DUPLICATE KEY UPDATE type = ?, target = ?, lastmodified = NOW(), status = ?;",
+                    "INSERT INTO purl (path, domain_id, type, target, created, lastmodified, status) VALUES(?,?,?,?,NOW(3), NOW(3),?)"
+                        + " ON DUPLICATE KEY UPDATE type = ?, target = ?, lastmodified = NOW(3), status = ?;",
                     Statement.RETURN_GENERATED_KEYS);
                 ps.setString(1, p.getPath());
                 ps.setInt(2, domainId);
@@ -170,7 +171,7 @@ public class PurlDAO {
             }
         }, purlId);
         jdbcTemplate.update(
-            "INSERT INTO purlhistory (purl_id, user_id, type, target, modified, status) VALUES(?,?,?,?,NOW(),? );",
+            "INSERT INTO purlhistory (purl_id, user_id, type, target, modified, status) VALUES(?,?,?,?,NOW(3),? );",
             purlId.getKey().intValue(), u.getId(), p.getType().name(),
             p.getTarget(), Status.CREATED.name());
 
@@ -185,11 +186,11 @@ public class PurlDAO {
     public Optional<Purl> modifyPurl(Purl p, User u) {
 
         jdbcTemplate.update(
-            "UPDATE purl SET path = ?, target = ?, lastmodified = NOW(), status = ?, type = ? WHERE id = ?;",
+            "UPDATE purl SET path = ?, target = ?, lastmodified = NOW(3), status = ?, type = ? WHERE id = ?;",
             p.getPath(), p.getTarget(),
             Status.MODIFIED.name(), p.getType().name(), p.getId());
         jdbcTemplate.update(
-            "INSERT INTO purlhistory (purl_id, user_id, type, target, modified, status) VALUES(?,?,?,?,NOW(),? );",
+            "INSERT INTO purlhistory (purl_id, user_id, type, target, modified, status) VALUES(?,?,?,?,NOW(3),? );",
             p.getId(), u.getId(), p.getType().name(),
             p.getTarget(), Status.MODIFIED.name());
         return retrievePurl(p.getPath());
@@ -201,11 +202,11 @@ public class PurlDAO {
      * @param path
      */
     public void deletePurl(Purl p, User u) {
-        jdbcTemplate.update("UPDATE purl SET lastmodified = NOW(), status = ?, type = ? WHERE path = ?",
+        jdbcTemplate.update("UPDATE purl SET lastmodified = NOW(3), status = ?, type = ? WHERE path = ?",
             Status.DELETED.name(), Type.GONE_410.name(), p.getPath());
         p.setType(Type.GONE_410);
         jdbcTemplate.update(
-            "INSERT INTO purlhistory (purl_id, user_id, type, target, modified, status) VALUES(?,?,?,?NOW(),? );",
+            "INSERT INTO purlhistory (purl_id, user_id, type, target, modified, status) VALUES(?,?,?,?NOW(3),? );",
             p.getId(), u.getId(), p.getType().name(), p.getTarget(),
             Status.DELETED.name());
     }

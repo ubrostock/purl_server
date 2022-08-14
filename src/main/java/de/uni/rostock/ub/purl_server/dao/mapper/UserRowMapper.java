@@ -39,8 +39,8 @@ public class UserRowMapper implements RowMapper<User> {
         u.setLogin(rs.getString("login"));
         u.setPasswordSHA(rs.getString("password_sha"));
         u.setComment(rs.getString("comment"));
-        u.setCreated(rs.getTimestamp("created").toLocalDateTime());
-        u.setLastmodified(rs.getTimestamp("lastmodified").toLocalDateTime());
+        u.setCreated(rs.getTimestamp("created").toInstant());
+        u.setLastmodified(rs.getTimestamp("lastmodified").toInstant());
         u.setStatus(Status.valueOf(rs.getString("status")));
         return u;
     }

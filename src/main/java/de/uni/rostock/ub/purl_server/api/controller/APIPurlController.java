@@ -18,6 +18,10 @@
  */
 package de.uni.rostock.ub.purl_server.api.controller;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -26,6 +30,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +42,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import de.uni.rostock.ub.purl_server.common.PurlAccess;
 import de.uni.rostock.ub.purl_server.dao.DomainDAO;
@@ -49,6 +59,9 @@ import de.uni.rostock.ub.purl_server.model.Status;
 import de.uni.rostock.ub.purl_server.model.User;
 import de.uni.rostock.ub.purl_server.validate.PurlValidateService;
 
+/**
+ * Retrieve and modify PURLs
+ */
 @Controller
 public class APIPurlController {
     @Autowired
@@ -70,7 +83,7 @@ public class APIPurlController {
     private MessageSource messages;
 
     /**
-     * Retrieve and modify PURLs
+     * Return a purl
      * 
      * @statuscode 200 if the purl was found
      * @statuscode 404 if the purl does not exist
@@ -86,6 +99,44 @@ public class APIPurlController {
         }
         ResponseEntity<Purl> r = new ResponseEntity<Purl>(op.get(), HttpStatus.OK);
         return r;
+    }
+
+    /**
+     * Return a purl
+     * 
+     * @statuscode 200 if the purl was found
+     * @statuscode 404 if the purl does not exist
+     * @return the ResponseEntity object with the retrieved purl include the purl
+     *         history
+     */
+    @RequestMapping(path = "/api/purl/**",
+        method = RequestMethod.GET,
+        produces = "application/x-java-serialized-object")
+    public ResponseEntity<Resource> retrievePurlAsHashMap(HttpServletRequest request) {
+        String purlPath = "/" + new AntPathMatcher().extractPathWithinPattern("/api/purl/**", request.getRequestURI());
+        Optional<Purl> op = purlDAO.retrievePurlWithHistory(purlPath);
+        if (op.isEmpty()) {
+            return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            ObjectMapper mapper = JsonMapper.builder()
+                .addModule(new JavaTimeModule())
+                .build();
+
+            @SuppressWarnings("unchecked")
+            LinkedHashMap<String, Object> result = mapper.readValue(mapper.writeValueAsString(op.get()),
+                LinkedHashMap.class);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+                oos.writeObject(result);
+            }
+            ByteArrayResource res = new ByteArrayResource(baos.toByteArray());
+
+            return new ResponseEntity<Resource>(res, HttpStatus.OK);
+        } catch (IOException e) {
+            return new ResponseEntity<Resource>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**

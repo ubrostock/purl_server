@@ -22,6 +22,8 @@ package de.uni.rostock.ub.purl_server.client;
  * This is a sample application to demonstrate the use of the PURL server REST API.
  */
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.math.BigInteger;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
@@ -32,6 +34,8 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
@@ -134,7 +138,7 @@ public class PurlClient {
         return false;
     }
 
-    public String infoPURL(String purl) {
+    public String getPURLInfoAsJsonString(String purl) {
         if (httpClient.isPresent()) {
             messageBuffer = new StringBuffer();
             HttpRequest request = HttpRequest.newBuilder().GET()
@@ -163,6 +167,67 @@ public class PurlClient {
             messageBuffer.append("\n" + errorMmessage);
         }
         return null;
+    }
+
+    /**
+     * returns the PURL information as LinkedHashMap
+     * 
+     * This prevents us from having a dependency to one particular JSON library
+     * If you want to process the data as JSON, use getPURLInfoAsJsonString()
+     * and process the result with a JSON parser of your choice.
+     * 
+     * @param purl
+     * @return
+     */
+    public LinkedHashMap<String, Object> getPURLInfoAsMap(String purl) {
+        if (httpClient.isPresent()) {
+            messageBuffer = new StringBuffer();
+            HttpRequest request = HttpRequest.newBuilder().GET()
+                .header("Accept", "application/x-java-serialized-object")
+                .uri(URI.create(apiURL + purl)).build();
+            try {
+                lastStatus = null;
+                HttpResponse<InputStream> response = httpClient.get().send(request,
+                    HttpResponse.BodyHandlers.ofInputStream());
+                lastStatus = response.statusCode();
+                if (response.statusCode() == HttpServletResponse.SC_OK) {
+                    try (ObjectInputStream objectInputStream = new ObjectInputStream(response.body())) {
+                        @SuppressWarnings("unchecked")
+                        LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) objectInputStream.readObject();
+                        return map;
+                    } catch (ClassNotFoundException e) {
+                        String message = "PURL " + purl + " not found: " + e.getMessage();
+                        LOGGER.info(message);
+                        messageBuffer.append(message);
+                    }
+                }
+                if (response.statusCode() == HttpServletResponse.SC_NOT_FOUND) {
+                    String message = "PURL " + purl + " not found!";
+                    LOGGER.info(message);
+                    messageBuffer.append(message);
+                }
+            } catch (IOException | InterruptedException e) {
+                String message = "Error retrieving information about a PURL!";
+                LOGGER.error(message, e);
+                messageBuffer.append(message);
+            }
+            return null;
+        } else {
+            String errorMmessage = "Please login into PURL client!";
+            LOGGER.error(errorMmessage);
+            messageBuffer.append("\n" + errorMmessage);
+        }
+        return null;
+    }
+    
+    public boolean hasMatchingPURL(String purl, String targetURL, PurlClient.PURLType type) {
+        Map<String, Object> purlInfo = getPURLInfoAsMap(purl);
+        if (purlInfo != null) {
+            //check JSON output for "target":"/rosdok/ppn1795757256"
+            return targetURL.equals(purlInfo.get("target")) && type.toString().equals(purlInfo.get("type"));
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -219,6 +284,10 @@ public class PurlClient {
         System.out.println("Message: " + app.callMessages());
         System.out.println("HTTP Status: " + app.callStatusCode());
 
+        LinkedHashMap<String, Object> data = app.getPURLInfoAsMap("/test/google");
+        System.out.println(data.keySet());
+        System.out.println("REDIRECT_302".equals(data.get("type")));
+        
         app.logout();
     }
 

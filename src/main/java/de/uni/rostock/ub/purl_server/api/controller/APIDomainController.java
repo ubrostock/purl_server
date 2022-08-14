@@ -31,7 +31,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -78,16 +77,16 @@ public class APIDomainController {
     })
     public ResponseEntity<? extends PurlServerResponse> retrieveDomain(HttpServletRequest request,
         @PathVariable("path") String path, Locale locale) {
-        Optional<Domain> optDomain = domainDAO.retrieveDomain(StringUtils.prependIfMissing(path, "/"));
-        if (optDomain.isPresent()) {
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Content-Location", request.getRequestURL().toString());
-            return new ResponseEntity<Domain>(optDomain.get(), headers, HttpStatus.OK);
-        } else {
-            PurlServerError e = new PurlServerError(HttpStatus.NOT_FOUND.value(),
+        Optional<Domain> oDomain = domainDAO.retrieveDomain(StringUtils.prependIfMissing(path, "/"));
+        if (oDomain.isEmpty()) {
+            PurlServerError e = new PurlServerError(HttpStatus.NOT_FOUND,
                 messages.getMessage("purl_server.error.domain.notfound", null, locale),
                 List.of());
             return new ResponseEntity<PurlServerError>(e, HttpStatus.NOT_FOUND);
         }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Location", request.getRequestURL().toString());
+        return new ResponseEntity<Domain>(oDomain.get(), headers, HttpStatus.OK);
     }
 }

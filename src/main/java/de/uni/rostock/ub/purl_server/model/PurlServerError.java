@@ -21,25 +21,27 @@ package de.uni.rostock.ub.purl_server.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+
 public class PurlServerError implements PurlServerResponse {
-    private int status;
+    private HttpStatus status;
 
     private String message;
 
     private List<String> details = new ArrayList<String>();
 
-    public PurlServerError(int status, String message, List<String> details) {
+    public PurlServerError(HttpStatus status, String message, List<String> details) {
         super();
         this.status = status;
         this.message = message;
         this.details = details;
     }
 
-    public int getStatus() {
+    public HttpStatus getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(HttpStatus status) {
         this.status = status;
     }
 

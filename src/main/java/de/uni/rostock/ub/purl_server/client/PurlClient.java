@@ -23,6 +23,7 @@ package de.uni.rostock.ub.purl_server.client;
  */
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputFilter;
 import java.io.ObjectInputStream;
 import java.math.BigInteger;
 import java.net.Authenticator;
@@ -34,7 +35,11 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -198,6 +203,7 @@ public class PurlClient {
                 lastStatus = response.statusCode();
                 if (response.statusCode() == HttpServletResponse.SC_OK) {
                     try (ObjectInputStream objectInputStream = new ObjectInputStream(response.body())) {
+                        objectInputStream.setObjectInputFilter(PurlClient::serializedHashMapFilter);
                         @SuppressWarnings("unchecked")
                         LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) objectInputStream
                             .readObject();
@@ -265,6 +271,26 @@ public class PurlClient {
             return null;
         }
     }
+    
+    /**
+     * check if the serialized Java object is a LinkedHashMap
+     * @param info
+     * @return
+     */
+    static ObjectInputFilter.Status serializedHashMapFilter(ObjectInputFilter.FilterInfo info) {
+        Class<?> serialClass = info.serialClass();
+        if (serialClass != null) {
+            return ALLOWED_SERIALIZED_CLASSES.contains(serialClass.getName())
+                    ? ObjectInputFilter.Status.ALLOWED
+                    : ObjectInputFilter.Status.REJECTED;
+        }
+        return ObjectInputFilter.Status.UNDECIDED;
+    }
+    
+    private static List<String> ALLOWED_SERIALIZED_CLASSES = Arrays.asList(
+        LinkedHashMap.class.getName(), HashMap.class.getName(), 
+        ArrayList.class.getName(), Map.Entry[].class.getName(), Object[].class.getName(),
+        String.class.getName(), Integer.class.getName(), Number.class.getName(), Boolean.class.getName());
 
     public static PURL buildPURL(Map<String, Object> data) {
         PURL p = new PURL();

@@ -207,7 +207,7 @@ public class PurlDAO {
             Status.DELETED.name(), Type.GONE_410.name(), p.getPath());
         p.setType(Type.GONE_410);
         jdbcTemplate.update(
-            "INSERT INTO purlhistory (purl_id, user_id, type, target, modified, status) VALUES(?,?,?,?NOW(3),? );",
+            "INSERT INTO purlhistory (purl_id, user_id, type, target, modified, status) VALUES(?,?,?,?,NOW(3),? );",
             p.getId(), u.getId(), p.getType().name(), p.getTarget(),
             Status.DELETED.name());
     }

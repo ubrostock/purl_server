@@ -72,6 +72,7 @@ public class PurlDAO {
                 Purl p2 = jdbcTemplate.queryForObject(
                     "SELECT * FROM purl p WHERE LOCATE(path, ?) = 1 AND type = 'partial_302' ORDER BY LENGTH(path) DESC LIMIT 1;",
                     new PurlRowMapper(), path);
+                domainDAO.retrieveDomainWithUser(p2.getDomainId()).ifPresent(d -> p2.setDomain(d));
                 return Optional.of(p2);
             } catch (DataAccessException e2) {
                 return Optional.empty();

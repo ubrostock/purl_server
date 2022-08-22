@@ -182,7 +182,7 @@ public class PurlClient {
      * returns the PURL information as LinkedHashMap
      * 
      * This prevents us from having a dependency to one particular JSON library
-     * If you want to process the data as JSON, use getPURLInfoAsJsonString()
+     * If you want to process the data as JSON, use retrievePURLInfoAsJsonString()
      * and process the result with a JSON parser of your choice.
      * 
      * @param purl

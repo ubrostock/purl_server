@@ -47,7 +47,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 @SpringBootApplication
 public class PurlServerWebApp implements WebMvcConfigurer {
 
-    @Value("${purl_server.static_webcontent_directory}")
+    @Value("${purl_server.static_webcontent_directory:}")
     private String staticWebResourcesLocation;
 
     @PostConstruct

@@ -145,7 +145,7 @@ public class PurlClient {
         return false;
     }
 
-    public String getPURLInfoAsJsonString(String path) {
+    public String retrievePURLInfoAsJsonString(String path) {
         if (httpClient.isPresent()) {
             messageBuffer = new StringBuffer();
             HttpRequest request = HttpRequest.newBuilder()
@@ -188,7 +188,7 @@ public class PurlClient {
      * @param purl
      * @return
      */
-    public LinkedHashMap<String, Object> getPURLInfoAsMap(String path) {
+    public LinkedHashMap<String, Object> retrievePURLInfoAsMap(String path) {
         if (httpClient.isPresent()) {
             messageBuffer = new StringBuffer();
             HttpRequest request = HttpRequest.newBuilder()
@@ -234,7 +234,7 @@ public class PurlClient {
     }
 
     public boolean existsPURL(PURL p) {
-        PURL retrievedPURL = buildPURL(getPURLInfoAsMap(Objects.requireNonNull(p).getPath()));
+        PURL retrievedPURL = buildPURL(retrievePURLInfoAsMap(Objects.requireNonNull(p).getPath()));
         return p.equals(retrievedPURL);
     }
 
@@ -333,7 +333,7 @@ public class PurlClient {
         System.out.println("Message: " + app.callMessages());
         System.out.println("HTTP Status: " + app.callStatusCode());
 
-        LinkedHashMap<String, Object> data = app.getPURLInfoAsMap("/test/google");
+        LinkedHashMap<String, Object> data = app.retrievePURLInfoAsMap("/test/google");
         System.out.println(data.keySet());
         System.out.println("REDIRECT_302".equals(data.get("type")));
 

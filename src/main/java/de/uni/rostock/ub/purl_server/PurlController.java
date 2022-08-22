@@ -18,23 +18,22 @@
  */
 package de.uni.rostock.ub.purl_server;
 
-import java.io.IOException;
 import java.util.Locale;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.NoSuchMessageException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import de.uni.rostock.ub.purl_server.dao.PurlDAO;
@@ -50,6 +49,7 @@ public class PurlController {
     @Autowired
     private MessageSource messages;
 
+    @SuppressWarnings("unused")
     private static Logger LOGGER = LoggerFactory.getLogger(PurlController.class);
 
     /**
@@ -61,7 +61,7 @@ public class PurlController {
      * @return redirect to the target URL
      */
     @RequestMapping(path = "/{domain:" + Domain.REGEX_VALID_DOMAINS + "}/**", method = RequestMethod.GET)
-    public String resolvePurl(HttpServletRequest request, HttpServletResponse resp, @PathVariable String domain) {
+    public String resolvePurl(HttpServletRequest request, @PathVariable String domain) {
         String path = request.getServletPath();
         Optional<Purl> op = purlDAO.retrievePurl(path);
         if (op.isPresent()) {
@@ -73,25 +73,15 @@ public class PurlController {
                 case REDIRECT_302:
                     return "redirect:" + calcRedirectWithParams(request, p.getTarget(), "");
                 case GONE_410:
-                    try {
-                        resp.sendError(HttpServletResponse.SC_GONE,
-                            messages.getMessage(
-                                "purl_server.error.purl_deleted", new Object[] { ServletUriComponentsBuilder
-                                    .fromCurrentContextPath().path("/info/purl" + path).build().toString() },
-                                Locale.getDefault()));
-                    } catch (NoSuchMessageException | IOException e) {
-                        LOGGER.error(messages.getMessage("purl_server.error.sending.error", null, Locale.getDefault()),
-                            e);
-                    }
-                    break;
+                    throw new ResponseStatusException(HttpStatus.GONE,
+                        messages.getMessage(
+                            "purl_server.error.purl_deleted", new Object[] { ServletUriComponentsBuilder
+                                .fromCurrentContextPath().path("/info/purl" + path).build().toString() },
+                            Locale.getDefault()));
             }
         } else {
-            try {
-                resp.sendError(HttpServletResponse.SC_NOT_FOUND,
-                    messages.getMessage("purl_server.error.purl.notfound", null, Locale.getDefault()));
-            } catch (IOException e) {
-                LOGGER.error(messages.getMessage("purl_server.error.sending.error", null, Locale.getDefault()), e);
-            }
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                messages.getMessage("purl_server.error.purl.notfound", null, Locale.getDefault()));
         }
         return null;
     }

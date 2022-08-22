@@ -18,7 +18,6 @@
  */
 package de.uni.rostock.ub.purl_server.info.controller;
 
-import java.io.IOException;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -38,6 +37,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -60,8 +60,7 @@ public class PurlInfoController {
         method = RequestMethod.GET,
         produces = "!"
             + MediaType.APPLICATION_JSON_VALUE)
-    public Object retrieveInfoPurl(HttpServletRequest request, HttpServletResponse resp,
-        @RequestParam(defaultValue = "") String format) {
+    public Object retrieveInfoPurl(HttpServletRequest request, @RequestParam(defaultValue = "") String format) {
         if ("json".equals(format)) {
             return retrieveJSONPurl(request);
         } else {
@@ -71,15 +70,15 @@ public class PurlInfoController {
                 + new AntPathMatcher().extractPathWithinPattern(servletContextPath + "/info/purl/**",
                     request.getRequestURI());
             Optional<Purl> op = purlDAO.retrievePurlWithHistory(purlPath);
-            if (op.isPresent() && op != null) {
+            if (op.isPresent()) {
                 mav.addObject("purl", op.get());
                 mav.addObject("purl_url",
                     ServletUriComponentsBuilder.fromCurrentContextPath().path(purlPath).build().toString());
             } else {
                 try {
-                    resp.sendError(HttpServletResponse.SC_NOT_FOUND,
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND,
                         messages.getMessage("purl_server.error.purl.notfound", null, Locale.getDefault()));
-                } catch (NoSuchMessageException | IOException e) {
+                } catch (NoSuchMessageException e) {
                     LOGGER.error(messages.getMessage("purl_server.error.sending.error", null, Locale.getDefault()), e);
                 }
             }

@@ -44,6 +44,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import de.uni.rostock.ub.purl_server.PurlController;
 import de.uni.rostock.ub.purl_server.dao.PurlDAO;
 import de.uni.rostock.ub.purl_server.model.Purl;
+import de.uni.rostock.ub.purl_server.model.Type;
 
 @Controller
 public class PurlInfoController {
@@ -74,6 +75,9 @@ public class PurlInfoController {
                 mav.addObject("purl", op.get());
                 mav.addObject("purl_url",
                     ServletUriComponentsBuilder.fromCurrentContextPath().path(purlPath).build().toString());
+                if(op.get().getType() == Type.PARTIAL_302) {
+                    mav.addObject("purl_target_suffix", purlPath.substring(op.get().getPath().length()));
+                }
             } else {
                 try {
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND,

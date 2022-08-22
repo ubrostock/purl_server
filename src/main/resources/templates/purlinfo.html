@@ -101,7 +101,7 @@
               </tr>
               <tr>
                 <th th:text="#{purl_server.info.purl.target}"></th>
-                <td th:text="${purl.target}"></td>
+                <td> <span th:text="${purl.target}"></span><span class="font-italic" th:if="${purl_target_suffix}" th:text="${purl_target_suffix}"></span></td>
               </tr>
               <tr>
                 <th th:text="#{purl_server.info.purl.created}"></th>

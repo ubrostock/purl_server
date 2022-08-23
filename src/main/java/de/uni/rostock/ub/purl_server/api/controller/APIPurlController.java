@@ -36,7 +36,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -93,7 +92,7 @@ public class APIPurlController {
      */
     @RequestMapping(path = "/api/purl/**", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Purl> retrievePurl(HttpServletRequest request) {
-        String purlPath = "/" + new AntPathMatcher().extractPathWithinPattern("/api/purl/**", request.getRequestURI());
+        String purlPath = retrievePurlPathFromRequest(request);
         Optional<Purl> op = purlDAO.retrievePurlWithHistory(purlPath);
         if (op.isEmpty()) {
             return new ResponseEntity<Purl>(HttpStatus.NOT_FOUND);
@@ -114,7 +113,7 @@ public class APIPurlController {
         method = RequestMethod.GET,
         produces = "application/x-java-serialized-object")
     public ResponseEntity<Resource> retrievePurlAsHashMap(HttpServletRequest request) {
-        String purlPath = "/" + new AntPathMatcher().extractPathWithinPattern("/api/purl/**", request.getRequestURI());
+        String purlPath = retrievePurlPathFromRequest(request);
         Optional<Purl> op = purlDAO.retrievePurlWithHistory(purlPath);
         if (op.isEmpty()) {
             return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
@@ -154,7 +153,8 @@ public class APIPurlController {
     @RequestMapping(path = "/api/purl/**", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends PurlServerResponse> createPurl(@RequestBody Purl inputPurl, Locale locale,
         HttpServletRequest request) {
-        String purlPath = "/" + new AntPathMatcher().extractPathWithinPattern("/api/purl/**", request.getRequestURI());
+
+        String purlPath = retrievePurlPathFromRequest(request);
         if (inputPurl == null) {
             PurlServerError e = new PurlServerError(HttpStatus.NOT_FOUND,
                 messages.getMessage("purl_server.error.purl.create", null, locale),
@@ -200,7 +200,7 @@ public class APIPurlController {
     @RequestMapping(path = "/api/purl/**", method = RequestMethod.PUT)
     public ResponseEntity<? extends PurlServerResponse> modifyPurl(@RequestBody Purl inputPurl, Locale locale,
         HttpServletRequest request) {
-        String purlPath = "/" + new AntPathMatcher().extractPathWithinPattern("/api/purl/**", request.getRequestURI());
+        String purlPath = retrievePurlPathFromRequest(request);
         if (inputPurl == null) {
             PurlServerError e = new PurlServerError(HttpStatus.CONFLICT,
                 messages.getMessage("purl_server.error.purl.update", null, locale),
@@ -272,7 +272,7 @@ public class APIPurlController {
      */
     @RequestMapping(path = "/api/purl/**", method = RequestMethod.DELETE)
     public ResponseEntity<? extends PurlServerResponse> deletePurl(Locale locale, HttpServletRequest request) {
-        String purlPath = "/" + new AntPathMatcher().extractPathWithinPattern("/api/purl/**", request.getRequestURI());
+        String purlPath = retrievePurlPathFromRequest(request);
         User u = purlAccess.retrieveUserFromRequest(request);
         Purl p = purlDAO.retrievePurl(purlPath).get();
         if (p == null) {
@@ -300,5 +300,9 @@ public class APIPurlController {
         }
         purlDAO.deletePurl(p, u);
         return new ResponseEntity<Purl>(HttpStatus.OK);
+    }
+
+    private String retrievePurlPathFromRequest(HttpServletRequest request) {
+        return request.getRequestURI().substring(request.getRequestURI().indexOf("/api/purl/") + 9);
     }
 }

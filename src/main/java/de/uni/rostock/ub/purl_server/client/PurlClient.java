@@ -235,6 +235,11 @@ public class PurlClient {
 
     public boolean existsPURL(PURL p) {
         PURL retrievedPURL = buildPURL(retrievePURLInfoAsMap(Objects.requireNonNull(p).getPath()));
+        return retrievedPURL != null;
+    }
+
+    public boolean existsIdenticalPURL(PURL p) {
+        PURL retrievedPURL = buildPURL(retrievePURLInfoAsMap(Objects.requireNonNull(p).getPath()));
         return p.equals(retrievedPURL);
     }
 
@@ -271,7 +276,7 @@ public class PurlClient {
             return null;
         }
     }
-    
+
     /**
      * check if the serialized Java object is a LinkedHashMap
      * @param info
@@ -281,18 +286,21 @@ public class PurlClient {
         Class<?> serialClass = info.serialClass();
         if (serialClass != null) {
             return ALLOWED_SERIALIZED_CLASSES.contains(serialClass.getName())
-                    ? ObjectInputFilter.Status.ALLOWED
-                    : ObjectInputFilter.Status.REJECTED;
+                ? ObjectInputFilter.Status.ALLOWED
+                : ObjectInputFilter.Status.REJECTED;
         }
         return ObjectInputFilter.Status.UNDECIDED;
     }
-    
+
     private static List<String> ALLOWED_SERIALIZED_CLASSES = Arrays.asList(
-        LinkedHashMap.class.getName(), HashMap.class.getName(), 
+        LinkedHashMap.class.getName(), HashMap.class.getName(),
         ArrayList.class.getName(), Map.Entry[].class.getName(), Object[].class.getName(),
         String.class.getName(), Integer.class.getName(), Number.class.getName(), Boolean.class.getName());
 
     public static PURL buildPURL(Map<String, Object> data) {
+        if (data == null) {
+            return null;
+        }
         PURL p = new PURL();
         p.setPath(String.valueOf(Objects.requireNonNull(data.get("path"), "path cannot be null")));
         p.setTarget(String.valueOf(Objects.requireNonNull(data.get("target"), "target cannot be null")));

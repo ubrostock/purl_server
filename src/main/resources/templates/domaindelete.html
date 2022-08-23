@@ -16,7 +16,7 @@
               <span th:text="${error}"></span>
             </div>
             <div th:if="${deleted}">
-              <span class="text-success" th:text="#{purl_server.domain.delete.deleted}">Domain deleted!</span>
+              <div class="alert alert-success" th:text="#{purl_server.domain.delete.deleted}">Domain deleted!</div>
             </div>
             <form th:action="@{/admin/manager/domain/delete}" method="post" th:object="${domain}">
               <div class="form-group row">

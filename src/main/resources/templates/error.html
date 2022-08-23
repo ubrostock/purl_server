@@ -30,7 +30,7 @@
             <th th:text="#{purl_server.error.table.status_code}">status code</th>
             <td th:text="${status}"></td>
           </tr>
-          <tr th:if="${trace}">
+          <tr th:if="${trace}" th:unless="${exception} == org.springframework.web.server.ResponseStatusException">
             <th th:text="#{purl_server.error.table.stack_trace}">stack trace</th>
             <td>
               <a class="btn btn-secondary btn-sm" data-toggle="collapse" href="#collapseTrace" role="button">...</a>

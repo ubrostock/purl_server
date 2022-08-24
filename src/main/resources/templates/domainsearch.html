@@ -3,16 +3,17 @@
 <title th:text="#{purl_server.title}">Purls: Domain Management</title>
 <meta th:replace="fragments/page :: html_header" />
 </head>
-<body>
+<body onload="loadFormData()">
   <div class="container">
     <div th:replace="fragments/page :: title"></div>
     <div th:replace="fragments/page :: navigation"></div>
     <div class="card border mb-3">
       <div class="card-body">
-        <h3 class="card-title" th:text="#{purl_server.domain.search.title}">Search for a domain</h3>
         <div class="row">
           <div class="col">
-            <form th:action="@{/admin/manager/domain/search}" method="post">
+            <button type="button" class="btn float-right" onclick="clearFormData()" th:title="#{purl_server.domain.search.clear}">&#9253;</button>
+            <h3 class="card-title" th:text="#{purl_server.domain.search.title}">Search for a domain</h3>
+            <form th:action="@{/admin/manager/domain/search}" method="post" onsubmit="storeFormData()">
               <div class="form-group row">
                 <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.search.path}">Path</label>
                 <div class="col-sm-9">
@@ -48,6 +49,37 @@
                 </div>
               </div>
             </form>
+            <script type="text/javascript">
+              function storeFormData() {
+                sessionStorage.setItem('domain_search_path', document.getElementsByName('searchPath')[0].value);
+                sessionStorage.setItem('domain_search_name', document.getElementsByName('searchName')[0].value);
+                sessionStorage.setItem('domain_search_user', document.getElementsByName('searchUser')[0].value);
+                sessionStorage.setItem('domain_search_tombstoned', document.getElementsByName('searchTombstonedDomain')[0].checked);
+                return true;
+              }
+              
+              function loadFormData() {
+            	  if(sessionStorage.getItem('domain_search_path') != null) {
+                      document.getElementsByName('searchPath')[0].value = sessionStorage.getItem('domain_search_path'); 
+                    }
+                    if(sessionStorage.getItem('domain_search_name') != null) {
+                      document.getElementsByName('searchName')[0].value = sessionStorage.getItem('domain_search_name'); 
+                    }
+                    if(sessionStorage.getItem('domain_search_user') != null) {
+                        document.getElementsByName('searchUser')[0].value = sessionStorage.getItem('domain_search_user'); 
+                      }
+                    if(sessionStorage.getItem('domain_search_tombstoned') != null) {
+                      document.getElementsByName('searchTombstonedDomain')[0].checked = ('true' == sessionStorage.getItem('domain_search_tombstoned')); 
+                    }  
+              }
+              
+              function clearFormData() {
+                document.getElementsByName('searchPath')[0].value = '';
+                document.getElementsByName('searchName')[0].value = '';
+                document.getElementsByName('searchUser')[0].value = '';
+                document.getElementsByName('searchTombstonedDomain')[0].checked = false;
+              }
+             </script>
           </div>
           <div class="col">
             <div class="border p-3 overflow-auto position-absolute" style="top: 0; left: 0; bottom: 0; right: 0;">

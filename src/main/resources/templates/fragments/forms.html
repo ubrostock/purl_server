@@ -59,6 +59,7 @@
     <div class="form-group row" th:unless="${submitted}">
       <div class="col-sm-9 offset-sm-3">
         <button type="submit" name="submit" class="btn btn-primary" th:text="#{purl_server.domain.__${form}__.submit}">Submit</button>
+        <a class="btn btn-secondary" th:href="@{/admin/manager/domain/search}" th:text="#{purl_server.domain.form.cancel}">Abbrechen</a>
       </div>
     </div>
   </div>
@@ -119,6 +120,7 @@
       <div class="col-sm-6 offset-sm-4">
         <button type="submit" class="btn btn-primary" onclick="return encryptPassword();"
           th:text="#{purl_server.user.__${form}__.submit}">Submit</button>
+        <a class="btn btn-secondary" th:href="@{/admin/manager/user/search}" th:text="#{purl_server.user.form.cancel}">Abbrechen</a>
       </div>
     </div>
   </div>
@@ -155,6 +157,7 @@
           <span th:text="#{purl_server.purl.form.info}">Info</span>
         </a>
         <button type="submit" class="btn btn-primary" th:text="#{purl_server.purl.__${form}__.submit}">Submit</button>
+        <a class="btn btn-secondary" th:href="@{/admin/manager/purl/search}" th:text="#{purl_server.purl.form.cancel}">Abbrechen</a>
       </div>
     </div>
   </div>

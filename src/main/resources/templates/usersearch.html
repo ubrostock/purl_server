@@ -3,16 +3,17 @@
 <title th:text="#{purl_server.title}">Purls: Purl Manager</title>
 <meta th:replace="fragments/page :: html_header" />
 </head>
-<body>
+<body onload="loadFormData()">
   <div class="container">
     <div th:replace="fragments/page :: title"></div>
     <div th:replace="fragments/page :: navigation"></div>
     <div class="card border mb-3">
       <div class="card-body">
-        <h3 class="card-title" th:text="#{purl_server.user.search.title}">Search for a user</h3>
         <div class="row">
           <div class="col">
-            <form th:action="@{/admin/manager/user/search}" method="post">
+            <button type="button" class="btn float-right" onclick="clearFormData()" th:title="#{purl_server.user.search.clear}">&#9253;</button>
+            <h3 class="card-title" th:text="#{purl_server.user.search.title}">Search for a user</h3>
+            <form th:action="@{/admin/manager/user/search}" method="post" onsubmit="storeFormData()">
               <div class="form-group row">
                 <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.search.login}">Login</label>
                 <div class="col-sm-8">
@@ -53,6 +54,42 @@
                 </div>
               </div>
             </form>
+            <script type="text/javascript">
+              function storeFormData() {
+                sessionStorage.setItem('user_search_login', document.getElementsByName('searchLogin')[0].value);
+                sessionStorage.setItem('user_search_fullname', document.getElementsByName('searchFullName')[0].value);
+                sessionStorage.setItem('user_search_affiliation', document.getElementsByName('searchAffiliation')[0].value);
+                sessionStorage.setItem('user_search_email', document.getElementsByName('searchEMailAddress')[0].value);
+                sessionStorage.setItem('user_search_tombstoned', document.getElementsByName('searchTombstonedUser')[0].checked);
+                return true;
+              }
+              
+              function loadFormData() {
+            	  if(sessionStorage.getItem('user_search_login') != null) {
+                      document.getElementsByName('searchLogin')[0].value = sessionStorage.getItem('user_search_login'); 
+                    }
+                    if(sessionStorage.getItem('user_search_fullname') != null) {
+                      document.getElementsByName('searchFullName')[0].value = sessionStorage.getItem('user_search_fullname'); 
+                    }
+                    if(sessionStorage.getItem('user_search_affiliation') != null) {
+                        document.getElementsByName('searchAffiliation')[0].value = sessionStorage.getItem('user_search_affiliation'); 
+                      }
+                    if(sessionStorage.getItem('user_search_email') != null) {
+                        document.getElementsByName('searchEMailAddress')[0].value = sessionStorage.getItem('user_search_email'); 
+                      }
+                    if(sessionStorage.getItem('user_search_tombstoned') != null) {
+                      document.getElementsByName('searchTombstonedUser')[0].checked = ('true' == sessionStorage.getItem('user_search_tombstoned')); 
+                    }  
+              }
+              
+              function clearFormData() {
+                document.getElementsByName('searchLogin')[0].value = '';
+                document.getElementsByName('searchFullName')[0].value = '';
+                document.getElementsByName('searchAffiliation')[0].value = '';
+                document.getElementsByName('searchEMailAddress')[0].value = '';
+                document.getElementsByName('searchTombstonedUser')[0].checked = false;
+              }
+             </script>
           </div>
           <div class="col">
             <div class="border p-3 overflow-auto position-absolute" style="top: 0; left: 0; bottom: 0; right: 0;">

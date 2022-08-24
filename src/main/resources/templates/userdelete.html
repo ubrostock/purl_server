@@ -9,9 +9,9 @@
     <div th:replace="fragments/page :: navigation"></div>
     <div class="card border">
       <div class="card-body">
-        <h3 class="card-title" th:text="#{purl_server.user.delete.title}">Delete a user</h3>
         <div class="row">
           <div class="col">
+            <h3 class="card-title" th:text="#{purl_server.user.delete.title}">Delete a user</h3>
             <div class="alert alert-danger" role="alert" th:if="${errors}" th:each="error : ${errors}">
               <span th:text="${error}"></span>
             </div>
@@ -47,6 +47,7 @@
               <div class="form-group row">
                 <div class="col-sm-6 offset-sm-4">
                   <button type="submit" class="btn btn-danger" th:text="#{purl_server.user.delete.delete}">delete</button>
+                  <a class="btn btn-secondary" th:href="@{/admin/manager/user/search}" th:text="#{purl_server.user.form.cancel}">Abbrechen</a>
                 </div>
               </div>
             </form>

@@ -3,16 +3,17 @@
 <title th:text="#{purl_server.title}">Purls: Purl Manager</title>
 <meta th:replace="fragments/page :: html_header" />
 </head>
-<body>
+<body onload="loadFormData()">
   <div class="container">
     <div th:replace="fragments/page :: title"></div>
     <div th:replace="fragments/page :: navigation"></div>
     <div class="card border mb-3">
       <div class="card-body">
-        <h3 class="card-title" th:text="#{purl_server.purl.search.title}">Search for a PURL</h3>
         <div class="row">
           <div class="col">
-            <form th:action="@{/admin/manager/purl/search}" method="post">
+            <button type="button" class="btn float-right" onclick="clearFormData()" th:title="#{purl_server.purl.search.clear}">&#9253;</button>
+            <h3 class="card-title" th:text="#{purl_server.purl.search.title}">Search for a PURL</h3>
+            <form th:action="@{/admin/manager/purl/search}" method="post" onsubmit="storeFormData()">
               <div class="form-group row">
                 <label class="col-sm-3 col-form-label" th:text="#{purl_server.purl.search.path}">Path</label>
                 <div class="col-sm-9">
@@ -41,6 +42,32 @@
                 </div>
               </div>
             </form>
+            <script type="text/javascript">
+              function storeFormData() {
+            	  sessionStorage.setItem('purl_search_path', document.getElementsByName('path')[0].value);
+            	  sessionStorage.setItem('purl_search_target', document.getElementsByName('targetURL')[0].value);
+            	  sessionStorage.setItem('purl_search_tombstoned', document.getElementsByName('tombstoned')[0].checked);
+            	  return true;
+              }
+              
+              function loadFormData() {
+            	  if(sessionStorage.getItem('purl_search_path') != null) {
+                	  document.getElementsByName('path')[0].value = sessionStorage.getItem('purl_search_path'); 
+                  }
+                  if(sessionStorage.getItem('purl_search_target') != null) {
+                	  document.getElementsByName('targetURL')[0].value = sessionStorage.getItem('purl_search_target'); 
+                  }
+                  if(sessionStorage.getItem('purl_search_tombstoned') != null) {
+                	  document.getElementsByName('tombstoned')[0].checked = ('true' == sessionStorage.getItem('purl_search_tombstoned')); 
+                  }  
+              }
+              
+              function clearFormData() {
+            	  document.getElementsByName('path')[0].value = '';
+            	  document.getElementsByName('targetURL')[0].value = '';
+            	  document.getElementsByName('tombstoned')[0].checked = false;
+              }
+             </script>
           </div>
           <div class="col">
             <div class="border p-3 overflow-auto position-absolute" style="top: 0; left: 0; bottom: 0; right: 0;">

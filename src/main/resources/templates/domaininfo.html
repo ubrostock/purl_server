@@ -1,0 +1,41 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<title th:text="#{purl_server.title}">Home: Purl Manager</title>
+<meta th:replace="fragments/page :: html_header" />
+</head>
+<body>
+  <div class="container">
+    <div class="row my-3">
+      <div class="col-8" th:utext="${@environment.getProperty('purl_server.web.html_fragment.title')}">
+          PURL Server
+      </div>
+      <div class="col-4">
+        <div th:replace="fragments/page :: switchLang"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <table class="table table-sm">
+              <colgroup>
+                <col style="width: 12em" />
+              </colgroup>
+              <tr>
+                <th class="h3" th:text="#{purl_server.info.purl.domain}"></th>
+                <td class="pr-0">
+                  <h3 th:text="${domain.path}"></h3>
+                  <div th:replace="fragments/info :: infoDomainTable (${domain})"></div>
+                </td>
+              </tr>
+            </table>
+            <a class="btn btn-sm btn-outline-secondary float-right" th:href="@{?format=json}">🗎 JSON</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div th:replace="fragments/page :: footer"></div>
+  </div>
+  <script th:replace="fragments/page :: html_footer"></script>
+</body>
+</html>

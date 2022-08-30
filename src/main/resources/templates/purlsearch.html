@@ -90,7 +90,6 @@
             <th th:text="#{purl_server.purl.search.tabel.created_lastmodified}">created</th>
             <th th:text="#{purl_server.purl.search.tabel.status}">status</th>
             <th></th>
-            <th></th>
           </tr>
           <colgroup>
             <col style="width: auto;"/>
@@ -98,9 +97,7 @@
             <col style="width: auto;"/>
             <col style="width: auto;"/>
             <col style="width: auto;"/>
-            <col style="width: auto;"/>
-            <col style="width: 3em;"/>
-            <col style="width: 3em;"/>
+            <col style="width: 7.5em;"/>
           </colgroup>
           <tr th:each="purl : ${purls}">
             <td class="text-nowrap" th:text="${purl.path}"></td>
@@ -113,12 +110,12 @@
             </td>
             <td th:text="${purl.status}"></td>
             <td>
-              <a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/manager/purl/modify?id=__${purl.id}__}"
-                 th:title="#{purl_server.purl.search.table.modify}">&#x270F;&#xFE0E;</a>
-            </td>
-            <td>
-              <a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/manager/purl/delete?id=__${purl.id}__}"
-                 th:title="#{purl_server.purl.search.table.delete}">&#x1F5D1;&#xFE0E;</a>
+              <a class="btn btn-sm btn-outline-secondary" style="min-width: 2.3em;"
+                 th:href="@{/info/purl__*{purl.path}__}"  th:title="#{purl_server.purl.search.table.info}">&#128712;</a>
+              <a class="btn btn-sm btn-outline-secondary" style="min-width: 2.3em;"
+                 th:href="@{/admin/manager/purl/modify?id=__${purl.id}__}" th:title="#{purl_server.purl.search.table.modify}">&#x270F;&#xFE0E;</a>
+              <a class="btn btn-sm btn-outline-secondary" style="min-width: 2.3em;"
+                 th:href="@{/admin/manager/purl/delete?id=__${purl.id}__}" th:title="#{purl_server.purl.search.table.delete}">&#x1F5D1;&#xFE0E;</a>
             </td>
           </tr>
         </table>

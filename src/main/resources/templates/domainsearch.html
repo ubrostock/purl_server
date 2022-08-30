@@ -99,8 +99,7 @@
             <col style="width: auto;"/>
             <col style="width: auto;"/>
             <col style="width: auto;"/>
-            <col style="width: 3em;"/>
-            <col style="width: 3em;"/>
+            <col style="width: 7.5em;"/>
           </colgroup>
           <tr>
             <th th:text="#{purl_server.domain.search.table.path}">Path</th>
@@ -121,12 +120,12 @@
               </span>
             </td>
             <td>
-              <a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/manager/domain/modify?id=__${d.id}__}"
-                 th:title="#{purl_server.domain.search.table.modify}" sec:authorize="hasRole('ROLE_ADMIN')">&#x270F;&#xFE0E;</a>
-            </td>
-            <td>
-              <a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/manager/domain/delete?id=__${d.id}__}"
-                 th:title="#{purl_server.domain.search.table.delete}" sec:authorize="hasRole('ROLE_ADMIN')">&#x1F5D1;&#xFE0E;</a>
+              <a class="btn btn-sm btn-outline-secondary" style="min-width: 2.3em;"
+                 th:href="@{/info/domain__*{d.path}__}" th:title="#{purl_server.domain.search.table.info}">&#128712;</a>
+              <a class="btn btn-sm btn-outline-secondary" style="min-width: 2.3em;"
+                 th:href="@{/admin/manager/domain/modify?id=__${d.id}__}" th:title="#{purl_server.domain.search.table.modify}" sec:authorize="hasRole('ROLE_ADMIN')">&#x270F;&#xFE0E;</a>
+              <a class="btn btn-sm btn-outline-secondary" style="min-width: 2.3em;"
+                 th:href="@{/admin/manager/domain/delete?id=__${d.id}__}" th:title="#{purl_server.domain.search.table.delete}" sec:authorize="hasRole('ROLE_ADMIN')">&#x1F5D1;&#xFE0E;</a>
             </td>
           </tr>
         </table>

@@ -64,6 +64,24 @@ public class DomainDAO {
         }
     }
 
+    /**
+     * Retrieve a domain with user by their path
+     * @param id
+     * @return the retrieved domain with user
+     */
+    public Optional<Domain> retrieveDomainWithUser(String path) {
+        try {
+            Domain d = jdbcTemplate.queryForObject("SELECT * FROM domain WHERE path = ?;", new DomainRowMapper(), path);
+            List<DomainUser> list = jdbcTemplate.query(
+                "SELECT u.*, du.* FROM user u JOIN domainuser du ON u.id = du.user_id WHERE du.domain_id = ?;",
+                new DomainUserRowMapper(), d.getId());
+            d.getDomainUserList().addAll(list);
+            return Optional.of(d);
+        } catch (DataAccessException e) {
+            return Optional.empty();
+        }
+    }
+    
     public Optional<Domain> retrieveDomain(Purl p) {
         return retrieveDomain(p.getDomainPath());
     }

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+  <div th:fragment="infoDomainTable (domain)">
+    <table class="table table-sm mt-3">
+      <colgroup>
+        <col style="width: 12em" />
+      </colgroup>
+      <tr>
+        <th th:text="#{purl_server.info.domain.name}"></th>
+        <td th:text="${domain.name}"></td>
+      </tr>
+      <tr>
+        <th th:text="#{purl_server.info.domain.domainuserlist}"></th>
+        <td class="pr-0">
+          <table class="table table-sm">
+            <colgroup>
+              <col style="min-width: 12em; width: 12em" />
+            </colgroup>
+            <tr>
+              <th class="border-top-0" th:text="#{purl_server.info.domain.domainuserlist.user}"></th>
+              <th class="border-top-0" th:text="#{purl_server.info.domain.domainuserlist.cancreate}"></th>
+              <th class="border-top-0" th:text="#{purl_server.info.domain.domainuserlist.canmodify}"></th>
+            </tr>
+            <tr th:each="user : ${domain.domainUserList}">
+              <td th:text="${user.user.fullname}"></td>
+              <td><input type="checkbox" th:checked="${user.canCreate}" disabled="disabled" /></td>
+              <td><input type="checkbox" th:checked="${user.canModify}" disabled="disabled" /></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr th:if="${!#strings.isEmpty(domain.comment)}">
+        <th th:text="#{purl_server.info.domain.comment}"></th>
+        <td th:text="${.domain.comment}"></td>
+      </tr>
+      <tr>
+        <th th:text="#{purl_server.info.domain.created}"></th>
+        <td th:text="${domain.created}"></td>
+      </tr>
+      <tr>
+        <th th:text="#{purl_server.info.domain.lastmodified}"></th>
+        <td th:text="${domain.lastmodified}"></td>
+      </tr>
+      <tr>
+        <th th:text="#{purl_server.info.domain.status}"></th>
+        <td th:text="${domain.status}"></td>
+      </tr>
+    </table>
+  </div>
+</body>
+</html>

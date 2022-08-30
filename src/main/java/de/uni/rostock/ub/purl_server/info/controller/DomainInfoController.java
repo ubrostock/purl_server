@@ -23,11 +23,8 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.NoSuchMessageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +35,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 
-import de.uni.rostock.ub.purl_server.PurlController;
 import de.uni.rostock.ub.purl_server.dao.DomainDAO;
 import de.uni.rostock.ub.purl_server.model.Domain;
 
@@ -50,8 +46,6 @@ public class DomainInfoController {
 
     @Autowired
     private MessageSource messages;
-
-    private static Logger LOGGER = LoggerFactory.getLogger(PurlController.class);
 
     @RequestMapping(path = "/info/domain/**",
         method = RequestMethod.GET,
@@ -67,12 +61,9 @@ public class DomainInfoController {
             if (op.isPresent()) {
                 mav.addObject("domain", op.get());
             } else {
-                try {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        messages.getMessage("purl_server.error.domain.notfound", null, Locale.getDefault()));
-                } catch (NoSuchMessageException e) {
-                    LOGGER.error(messages.getMessage("purl_server.error.sending.error", null, Locale.getDefault()), e);
-                }
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    messages.getMessage("purl_server.error.domain.notfound", null, "Domain not found!",
+                        Locale.getDefault()));
             }
             return mav;
         }

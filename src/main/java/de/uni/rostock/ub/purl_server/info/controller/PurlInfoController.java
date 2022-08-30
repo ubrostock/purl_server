@@ -23,11 +23,8 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.NoSuchMessageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +36,6 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import de.uni.rostock.ub.purl_server.PurlController;
 import de.uni.rostock.ub.purl_server.dao.PurlDAO;
 import de.uni.rostock.ub.purl_server.model.Purl;
 import de.uni.rostock.ub.purl_server.model.Type;
@@ -52,8 +48,6 @@ public class PurlInfoController {
 
     @Autowired
     private MessageSource messages;
-
-    private static Logger LOGGER = LoggerFactory.getLogger(PurlController.class);
 
     @RequestMapping(path = "/info/purl/**",
         method = RequestMethod.GET,
@@ -70,16 +64,12 @@ public class PurlInfoController {
                 mav.addObject("purl", op.get());
                 mav.addObject("purl_url",
                     ServletUriComponentsBuilder.fromCurrentContextPath().path(purlPath).build().toString());
-                if(op.get().getType() == Type.PARTIAL_302) {
+                if (op.get().getType() == Type.PARTIAL_302) {
                     mav.addObject("purl_target_suffix", purlPath.substring(op.get().getPath().length()));
                 }
             } else {
-                try {
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        messages.getMessage("purl_server.error.purl.notfound", null, Locale.getDefault()));
-                } catch (NoSuchMessageException e) {
-                    LOGGER.error(messages.getMessage("purl_server.error.sending.error", null, Locale.getDefault()), e);
-                }
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    messages.getMessage("purl_server.error.purl.notfound", null, "Not found!", Locale.getDefault()));
             }
             return mav;
         }
@@ -95,7 +85,7 @@ public class PurlInfoController {
         ResponseEntity<Purl> r = new ResponseEntity<Purl>(op.get(), HttpStatus.OK);
         return r;
     }
-    
+
     private String retrievePurlPathFromRequest(HttpServletRequest request) {
         return request.getRequestURI().substring(request.getRequestURI().indexOf("/info/purl/") + 10);
     }

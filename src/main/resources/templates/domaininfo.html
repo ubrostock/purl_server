@@ -29,7 +29,29 @@
               </tr>
             </table>
             <div th:replace="fragments/info :: infoDomainTable (${domain})"></div>
-            <a class="btn btn-sm btn-outline-secondary float-right" th:href="@{?format=json}">🗎 JSON</a>
+            <table class="table table-sm table-borderless">
+            <colgroup>
+                <col style="width: 12em" />
+              </colgroup>
+              <tr>
+                <th></th>
+                <td>
+                  <a class="btn btn-sm btn-outline-secondary float-right" th:href="@{?format=json}">🗎 JSON</a>
+                  <form th:action="@{/admin/manager/purl/search}" method="post" onsubmit="storeFormData()">
+                    <input type="hidden" class="form-control" th:value="${domain.path + '/%'}" name="path" />
+                    <button type="submit" class="btn btn-sm btn-secondary" th:text="#{purl_server.info.domain.purl_search}">Zugehörige PURLs suchen</button>
+                  </form>
+                </td>
+              </tr>
+            </table>
+            <script type="text/javascript">
+              function storeFormData() {
+          	    sessionStorage.setItem('purl_search_path', document.getElementsByName('path')[0].value);
+          	    sessionStorage.setItem('purl_search_target', '');
+          	    sessionStorage.setItem('purl_search_tombstoned', false);
+          	    return true;
+              }
+            </script>
           </div>
         </div>
       </div>

@@ -41,6 +41,30 @@ import de.uni.rostock.ub.purl_server.validate.UserValidateService;
 
 @Controller
 public class AdminUserController {
+    private static final String MODEL_ATTRIBUTE_USERS = "users";
+
+    private static final String MODEL_ATTRIBUTE_DELETED = "deleted";
+
+    private static final String MODEL_ATTRIBUTE_MORE_RESULTS = "moreResults";
+
+    private static final String MODEL_ATTRIBUTE_SEARCH_TOMBSTONED_USER = "searchTombstonedUser";
+
+    private static final String MODEL_ATTRIBUTE_SEARCH_LOGIN = "searchLogin";
+
+    private static final String MODEL_ATTRIBUTE_SEARCH_E_MAIL_ADDRESS = "searchEMailAddress";
+
+    private static final String MODEL_ATTRIBUTE_SEARCH_AFFILIATION = "searchAffiliation";
+
+    private static final String MODEL_ATTRIBUTE_SEARCH_FULL_NAME = "searchFullName";
+
+    private static final String MODEL_ATTRIBUTE_SUBMITTED = "submitted";
+
+    private static final String MODEL_ATTRIBUTE_ERRORS = "errors";
+
+    private static final String MODEL_ATTRIBUTE_USER = "user";
+
+    private static final String MODEL_ATTRIBUTE_FORM = "form";
+
     private static int LIMIT = 50;
 
     @Autowired
@@ -64,8 +88,8 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/user/create", method = RequestMethod.GET)
     public String showUserCreate(Model model) {
-        model.addAttribute("form", "create");
-        model.addAttribute("user", new User());
+        model.addAttribute(MODEL_ATTRIBUTE_FORM, "create");
+        model.addAttribute(MODEL_ATTRIBUTE_USER, new User());
         return "usercreate";
     }
 
@@ -79,23 +103,23 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/user/create", method = RequestMethod.POST)
     public String createUser(@ModelAttribute User user, HttpServletRequest request, Locale locale, Model model) {
-        model.addAttribute("form", "create");
+        model.addAttribute(MODEL_ATTRIBUTE_FORM, "create");
         if (userDAO.retrieveUser(user.getLogin()).isPresent()) {
-            model.addAttribute("errors", Arrays.asList(messages.getMessage("purl_server.error.validate.user.exists",
+            model.addAttribute(MODEL_ATTRIBUTE_ERRORS, Arrays.asList(messages.getMessage("purl_server.error.validate.user.exists",
                 new Object[] { user.getLogin() }, Locale.getDefault())));
         } else {
             List<String> errorList = userValidateService.validateUser(user, locale);
             if (errorList.isEmpty()) {
                 User loginUser = purlAccess.retrieveCurrentUser();
                 userDAO.createUser(user, loginUser);
-                model.addAttribute("submitted", true);
+                model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, true);
 
             } else {
-                model.addAttribute("errors", errorList);
-                model.addAttribute("submitted", null);
+                model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
+                model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, null);
             }
         }
-        model.addAttribute("user", user);
+        model.addAttribute(MODEL_ATTRIBUTE_USER, user);
         return "usercreate";
     }
 
@@ -109,8 +133,8 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/user/modify", method = RequestMethod.GET)
     public String showUserModify(@RequestParam("id") int id, Model model) {
-        model.addAttribute("form", "modify");
-        model.addAttribute("user", userDAO.retrieveUser(id).get());
+        model.addAttribute(MODEL_ATTRIBUTE_FORM, "modify");
+        model.addAttribute(MODEL_ATTRIBUTE_USER, userDAO.retrieveUser(id).get());
         return "usermodify";
     }
 
@@ -124,17 +148,17 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/user/modify", method = RequestMethod.POST)
     public String modifyUser(@ModelAttribute User user, HttpServletRequest request, Locale locale, Model model) {
-        model.addAttribute("form", "modify");
+        model.addAttribute(MODEL_ATTRIBUTE_FORM, "modify");
         User loginUser = purlAccess.retrieveCurrentUser();
         List<String> errorList = userValidateService.validateUser(user, locale);
         if (errorList.isEmpty()) {
             userDAO.modifyUser(user, loginUser);
-            model.addAttribute("submitted", true);
+            model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, true);
         } else {
-            model.addAttribute("errors", errorList);
-            model.addAttribute("submitted", false);
+            model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
+            model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, false);
         }
-        model.addAttribute("user", user);
+        model.addAttribute(MODEL_ATTRIBUTE_USER, user);
         return "usermodify";
     }
 
@@ -146,11 +170,11 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/user/search", method = RequestMethod.GET)
     public String showUserSearch(Model model) {
-        model.addAttribute("searchFullName", "");
-        model.addAttribute("searchAffiliation", "");
-        model.addAttribute("searchEMailAddress", "");
-        model.addAttribute("searchLogin", "");
-        model.addAttribute("searchTombstonedUser", false);
+        model.addAttribute(MODEL_ATTRIBUTE_SEARCH_FULL_NAME, "");
+        model.addAttribute(MODEL_ATTRIBUTE_SEARCH_AFFILIATION, "");
+        model.addAttribute(MODEL_ATTRIBUTE_SEARCH_E_MAIL_ADDRESS, "");
+        model.addAttribute(MODEL_ATTRIBUTE_SEARCH_LOGIN, "");
+        model.addAttribute(MODEL_ATTRIBUTE_SEARCH_TOMBSTONED_USER, false);
         return "usersearch";
     }
 
@@ -168,24 +192,24 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/user/search", method = RequestMethod.POST)
     protected String userSearch(
-        @RequestParam(value = "searchFullName", required = false, defaultValue = "") String fullName,
-        @RequestParam(value = "searchAffiliation", required = false, defaultValue = "") String affiliation,
-        @RequestParam(value = "searchEMailAddress", required = false, defaultValue = "") String email,
-        @RequestParam(value = "searchLogin", required = false, defaultValue = "") String login,
-        @RequestParam(value = "searchTombstonedUser", required = false, defaultValue = "false") boolean isTombstoned,
+        @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_FULL_NAME, required = false, defaultValue = "") String fullName,
+        @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_AFFILIATION, required = false, defaultValue = "") String affiliation,
+        @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_E_MAIL_ADDRESS, required = false, defaultValue = "") String email,
+        @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_LOGIN, required = false, defaultValue = "") String login,
+        @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_TOMBSTONED_USER, required = false, defaultValue = "false") boolean isTombstoned,
         Model model) {
         List<User> userList = userDAO.searchUsers(login, fullName, affiliation, email, isTombstoned, LIMIT + 1);
-        model.addAttribute("moreResults", false);
+        model.addAttribute(MODEL_ATTRIBUTE_MORE_RESULTS, false);
         if (userList.size() == LIMIT + 1) {
             userList.remove(LIMIT);
-            model.addAttribute("moreResults", true);
+            model.addAttribute(MODEL_ATTRIBUTE_MORE_RESULTS, true);
         }
-        model.addAttribute("users", userList);
-        model.addAttribute("searchFullName", fullName);
-        model.addAttribute("searchAffiliation", affiliation);
-        model.addAttribute("searchEMailAddress", email);
-        model.addAttribute("searchLogin", login);
-        model.addAttribute("searchTombstonedUser", isTombstoned);
+        model.addAttribute(MODEL_ATTRIBUTE_USERS, userList);
+        model.addAttribute(MODEL_ATTRIBUTE_SEARCH_FULL_NAME, fullName);
+        model.addAttribute(MODEL_ATTRIBUTE_SEARCH_AFFILIATION, affiliation);
+        model.addAttribute(MODEL_ATTRIBUTE_SEARCH_E_MAIL_ADDRESS, email);
+        model.addAttribute(MODEL_ATTRIBUTE_SEARCH_LOGIN, login);
+        model.addAttribute(MODEL_ATTRIBUTE_SEARCH_TOMBSTONED_USER, isTombstoned);
         return "usersearch";
     }
 
@@ -199,7 +223,7 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/admin/manager/user/delete", method = RequestMethod.GET)
     public String showUserDelete(@RequestParam("id") int id, Model model) {
-        model.addAttribute("user", userDAO.retrieveUser(id).get());
+        model.addAttribute(MODEL_ATTRIBUTE_USER, userDAO.retrieveUser(id).get());
         return "userdelete";
     }
 
@@ -215,8 +239,8 @@ public class AdminUserController {
     public String deleteUser(@ModelAttribute User user, HttpServletRequest request, Model model) {
         User loginUser = purlAccess.retrieveCurrentUser();
         userDAO.deleteUser(user, loginUser);
-        model.addAttribute("deleted", true);
-        model.addAttribute("user", user);
+        model.addAttribute(MODEL_ATTRIBUTE_DELETED, true);
+        model.addAttribute(MODEL_ATTRIBUTE_USER, user);
         return "userdelete";
     }
 

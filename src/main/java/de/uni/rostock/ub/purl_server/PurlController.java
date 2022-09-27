@@ -50,7 +50,7 @@ public class PurlController {
     private MessageSource messages;
 
     @SuppressWarnings("unused")
-    private static Logger LOGGER = LoggerFactory.getLogger(PurlController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PurlController.class);
 
     /**
      * Resolve the Purl

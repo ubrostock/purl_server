@@ -50,7 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PurlClient {
-    private static Logger LOGGER = LoggerFactory.getLogger(PurlClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PurlClient.class);
 
     public enum PURLType {
         REDIRECT_302, PARTIAL_302, GONE_410;

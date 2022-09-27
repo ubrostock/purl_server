@@ -51,7 +51,7 @@ import org.springframework.web.util.UriComponents;
 
 @Controller
 public class LoginController {
-    private static Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
     private static final String SQL_UPDATE_RESET_TOKEN = "UPDATE user SET password_reset_token = ? WHERE login = ?;";
 

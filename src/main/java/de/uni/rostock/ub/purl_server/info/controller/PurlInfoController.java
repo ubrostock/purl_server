@@ -29,8 +29,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
@@ -49,8 +48,7 @@ public class PurlInfoController {
     @Autowired
     private MessageSource messages;
 
-    @RequestMapping(path = "/info/purl/**",
-        method = RequestMethod.GET,
+    @GetMapping(path = "/info/purl/**",
         produces = "!"
             + MediaType.APPLICATION_JSON_VALUE)
     public Object retrieveInfoPurl(HttpServletRequest request, @RequestParam(defaultValue = "") String format) {
@@ -75,7 +73,7 @@ public class PurlInfoController {
         }
     }
 
-    @RequestMapping(path = "/info/purl/**", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/info/purl/**", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Purl> retrieveJSONPurl(HttpServletRequest request) {
         String purlPath = retrievePurlPathFromRequest(request);
         Optional<Purl> op = purlDAO.retrievePurlWithHistory(purlPath);

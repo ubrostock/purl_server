@@ -30,9 +30,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -50,7 +49,7 @@ public class PurlController {
     private MessageSource messages;
 
     @SuppressWarnings("unused")
-    private static Logger LOGGER = LoggerFactory.getLogger(PurlController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PurlController.class);
 
     /**
      * Resolve the Purl
@@ -60,7 +59,7 @@ public class PurlController {
      * @param domain  the PathVariable
      * @return redirect to the target URL
      */
-    @RequestMapping(path = "/{domain:" + Domain.REGEX_VALID_DOMAINS + "}/**", method = RequestMethod.GET)
+    @GetMapping(path = "/{domain:" + Domain.REGEX_VALID_DOMAINS + "}/**")
     public String resolvePurl(HttpServletRequest request, @PathVariable String domain) {
         String path = request.getServletPath();
         Optional<Purl> op = purlDAO.retrievePurl(path);

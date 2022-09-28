@@ -53,7 +53,7 @@ public class PurlDAO {
     DomainDAO domainDAO;
 
     @SuppressWarnings("unused")
-    private static Logger LOGGER = LoggerFactory.getLogger(PurlDAO.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PurlDAO.class);
 
     /**
      * Retireve a purl by their path

@@ -38,9 +38,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -90,7 +92,7 @@ public class APIPurlController {
      * @return the ResponseEntity object with the retrieved purl include the purl
      *         history
      */
-    @RequestMapping(path = "/api/purl/**", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/api/purl/**", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Purl> retrievePurl(HttpServletRequest request) {
         String purlPath = retrievePurlPathFromRequest(request);
         Optional<Purl> op = purlDAO.retrievePurlWithHistory(purlPath);
@@ -109,8 +111,7 @@ public class APIPurlController {
      * @return the ResponseEntity object with the retrieved purl include the purl
      *         history
      */
-    @RequestMapping(path = "/api/purl/**",
-        method = RequestMethod.GET,
+    @GetMapping(path = "/api/purl/**",
         produces = "application/x-java-serialized-object")
     public ResponseEntity<Resource> retrievePurlAsHashMap(HttpServletRequest request) {
         String purlPath = retrievePurlPathFromRequest(request);
@@ -150,7 +151,7 @@ public class APIPurlController {
      * @statuscode 409 if the purl already exists
      * @return the ResponseEntity object with the created purl
      */
-    @RequestMapping(path = "/api/purl/**", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/api/purl/**", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<? extends PurlServerResponse> createPurl(@RequestBody Purl inputPurl, Locale locale,
         HttpServletRequest request) {
 
@@ -197,7 +198,7 @@ public class APIPurlController {
      * @statuscode 404 if the purl does not exist
      * @return the ResponseEntity object with the modified purl
      */
-    @RequestMapping(path = "/api/purl/**", method = RequestMethod.PUT)
+    @PutMapping(path = "/api/purl/**")
     public ResponseEntity<? extends PurlServerResponse> modifyPurl(@RequestBody Purl inputPurl, Locale locale,
         HttpServletRequest request) {
         String purlPath = retrievePurlPathFromRequest(request);
@@ -270,7 +271,7 @@ public class APIPurlController {
      * @statuscode 404 if the purl does not exist
      * @return the ResponseEntity
      */
-    @RequestMapping(path = "/api/purl/**", method = RequestMethod.DELETE)
+    @DeleteMapping(path = "/api/purl/**")
     public ResponseEntity<? extends PurlServerResponse> deletePurl(Locale locale, HttpServletRequest request) {
         String purlPath = retrievePurlPathFromRequest(request);
         User u = purlAccess.retrieveUserFromRequest(request);

@@ -42,8 +42,9 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
@@ -51,7 +52,7 @@ import org.springframework.web.util.UriComponents;
 
 @Controller
 public class LoginController {
-    private static Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
     private static final String SQL_UPDATE_RESET_TOKEN = "UPDATE user SET password_reset_token = ? WHERE login = ?;";
 
@@ -95,17 +96,17 @@ public class LoginController {
         return mav;
     }
 
-    @RequestMapping(value = "/admin/login/password", method = RequestMethod.GET)
+    @GetMapping(value = "/admin/login/password")
     public String password() {
         return "login/password_request";
     }
 
-    @RequestMapping(value = "/admin/login/password", method = RequestMethod.GET, params = "token")
+    @GetMapping(value = "/admin/login/password", params = "token")
     public String passwordForm() {
         return "login/password_form";
     }
 
-    @RequestMapping(value = "/admin/login/password", method = RequestMethod.POST, params = "do_set_password")
+    @PostMapping(value = "/admin/login/password", params = "do_set_password")
     public ModelAndView resetPassword(@RequestParam(value = "password_reset_token", required = true) String token,
         @RequestParam(value = "password_sha1", required = true) String passwordSha1) {
         ModelAndView mav = new ModelAndView();
@@ -118,7 +119,7 @@ public class LoginController {
         return mav;
     }
 
-    @RequestMapping(value = "/admin/login/password", method = RequestMethod.POST, params = "do_password_reset")
+    @PostMapping(value = "/admin/login/password", params = "do_password_reset")
     public ModelAndView passwordReset(@RequestParam(value = "login", required = true) String userid) {
         createToken(userid);
         final AtomicBoolean found = new AtomicBoolean(false);

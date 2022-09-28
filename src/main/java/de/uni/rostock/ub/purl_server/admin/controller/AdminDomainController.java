@@ -32,9 +32,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import de.uni.rostock.ub.purl_server.common.PurlAccess;
@@ -47,6 +47,36 @@ import de.uni.rostock.ub.purl_server.validate.DomainValidateService;
 
 @Controller
 public class AdminDomainController {
+    private static final String MODEL_VALUE_FORM_MODIFY = "modify";
+
+    private static final String MODEL_VALUE_FORM_CREATE = "create";
+
+    private static final String MODEL_ATTRIBUTE_CREATED = "created";
+
+    private static final String MODEL_ATTRIBUTE_SUBMITTED = "submitted";
+
+    private static final String MODEL_ATTRIBUTE_MORE_RESULTS = "moreResults";
+
+    private static final String MODEL_ATTRIBUTE_ERRORS = "errors";
+
+    private static final String MODEL_ATTRIBUTE_DELETED = "deleted";
+
+    private static final String MODEL_ATTRIBUTE_SEARCH_TOMBSTONED_DOMAIN = "searchTombstonedDomain";
+
+    private static final String MODEL_ATTRIBUTE_SEARCH_USER = "searchUser";
+
+    private static final String MODEL_ATTRIBUTE_SEARCH_NAME = "searchName";
+
+    private static final String MODEL_ATTRIBUTE_SEARCH_PATH = "searchPath";
+
+    private static final String MODEL_ATTRIBUTE_DOMAINS = "domains";
+
+    private static final String MODEL_ATTRIBUTE_USERS_LOGIN = "usersLogin";
+
+    private static final String MODEL_ATTRIBUTE_DOMAIN = "domain";
+
+    private static final String MODEL_ATTRIBUTE_FORM = "form";
+
     private static int LIMIT = 50;
 
     @Autowired
@@ -71,11 +101,11 @@ public class AdminDomainController {
      * @return the domain create page
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(path = "/admin/manager/domain/create", method = RequestMethod.GET)
+    @GetMapping(path = "/admin/manager/domain/create")
     public String showDomainCreate(Model model) {
-        model.addAttribute("form", "create");
-        model.addAttribute("domain", new Domain());
-        model.addAttribute("usersLogin", userDAO.retrieveActiveUsers());
+        model.addAttribute(MODEL_ATTRIBUTE_FORM, MODEL_VALUE_FORM_CREATE);
+        model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, new Domain());
+        model.addAttribute(MODEL_ATTRIBUTE_USERS_LOGIN, userDAO.retrieveActiveUsers());
         return "domaincreate";
     }
 
@@ -87,38 +117,38 @@ public class AdminDomainController {
      * @return the domain create page
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(path = "/admin/manager/domain/create", method = RequestMethod.POST, params = "submit")
+    @PostMapping(path = "/admin/manager/domain/create", params = "submit")
     public String createDomain(@ModelAttribute Domain domain, HttpServletRequest request, Locale locale, Model model) {
-        model.addAttribute("form", "create");
+        model.addAttribute(MODEL_ATTRIBUTE_FORM, MODEL_VALUE_FORM_CREATE);
         cleanUpDomain(domain);
         User u = purlAccess.retrieveCurrentUser();
         List<String> errorList = domainValidateService.validateCreateDomain(domain, u, locale);
         if (errorList.isEmpty()) {
             Optional<Domain> newDomain = domainDAO.createDomain(domain, u);
             if (newDomain.isPresent()) {
-                model.addAttribute("domain", newDomain.get());
+                model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, newDomain.get());
             } else {
-                model.addAttribute("domain", domain);
+                model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domain);
             }
-            model.addAttribute("submitted", true);
-            model.addAttribute("created", true);
+            model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, true);
+            model.addAttribute(MODEL_ATTRIBUTE_CREATED, true);
         } else {
-            model.addAttribute("domain", domain);
-            model.addAttribute("errors", errorList);
-            model.addAttribute("submitted", false);
+            model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domain);
+            model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
+            model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, false);
         }
-        model.addAttribute("usersLogin", userDAO.retrieveActiveUsers());
+        model.addAttribute(MODEL_ATTRIBUTE_USERS_LOGIN, userDAO.retrieveActiveUsers());
         return "domaincreate";
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(path = "/admin/manager/domain/create", method = RequestMethod.POST, params = "addUser")
+    @PostMapping(path = "/admin/manager/domain/create", params = "addUser")
     public String createDomainAddUser(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
-        model.addAttribute("form", "create");
-        model.addAttribute("domain", domain);
+        model.addAttribute(MODEL_ATTRIBUTE_FORM, MODEL_VALUE_FORM_CREATE);
+        model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domain);
         List<User> list = userDAO.retrieveActiveUsers();
         list.add(new User());
-        model.addAttribute("usersLogin", list);
+        model.addAttribute(MODEL_ATTRIBUTE_USERS_LOGIN, list);
         return "domaincreate";
     }
 
@@ -130,11 +160,11 @@ public class AdminDomainController {
      * @return the domain modify page
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(path = "/admin/manager/domain/modify", method = RequestMethod.GET)
+    @GetMapping(path = "/admin/manager/domain/modify")
     public String showDomainModify(@RequestParam("id") int id, Model model) {
-        model.addAttribute("form", "modify");
-        model.addAttribute("domain", domainDAO.retrieveDomainWithUser(id).get());
-        model.addAttribute("usersLogin", userDAO.retrieveActiveUsers());
+        model.addAttribute(MODEL_ATTRIBUTE_FORM, MODEL_VALUE_FORM_MODIFY);
+        model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domainDAO.retrieveDomainWithUser(id).get());
+        model.addAttribute(MODEL_ATTRIBUTE_USERS_LOGIN, userDAO.retrieveActiveUsers());
         return "domainmodify";
     }
 
@@ -146,32 +176,32 @@ public class AdminDomainController {
      * @return the domain modify page
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(path = "/admin/manager/domain/modify", method = RequestMethod.POST, params = "submit")
+    @PostMapping(path = "/admin/manager/domain/modify", params = "submit")
     public String modifyDomain(@ModelAttribute Domain domain, HttpServletRequest request, Locale locale, Model model) {
-        model.addAttribute("form", "modify");
+        model.addAttribute(MODEL_ATTRIBUTE_FORM, MODEL_VALUE_FORM_MODIFY);
         cleanUpDomain(domain);
         User u = purlAccess.retrieveCurrentUser();
         List<String> errorList = domainValidateService.validateModifyDomain(domain, u, locale);
         if (errorList.isEmpty()) {
             domainDAO.modifyDomain(domain, u);
-            model.addAttribute("submitted", true);
+            model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, true);
         } else {
-            model.addAttribute("errors", errorList);
-            model.addAttribute("submitted", false);
+            model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
+            model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, false);
         }
-        model.addAttribute("domain", domain);
-        model.addAttribute("usersLogin", userDAO.retrieveActiveUsers());
+        model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domain);
+        model.addAttribute(MODEL_ATTRIBUTE_USERS_LOGIN, userDAO.retrieveActiveUsers());
         return "domainmodify";
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(path = "/admin/manager/domain/modify", method = RequestMethod.POST, params = "addUser")
+    @PostMapping(path = "/admin/manager/domain/modify", params = "addUser")
     public String modifyDomainAddUser(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
-        model.addAttribute("form", "modify");
-        model.addAttribute("domain", domain);
+        model.addAttribute(MODEL_ATTRIBUTE_FORM, MODEL_VALUE_FORM_MODIFY);
+        model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domain);
         List<User> list = userDAO.retrieveActiveUsers();
         list.add(new User());
-        model.addAttribute("usersLogin", list);
+        model.addAttribute(MODEL_ATTRIBUTE_USERS_LOGIN, list);
         return "domainmodify";
     }
 
@@ -180,12 +210,12 @@ public class AdminDomainController {
      * 
      * @return the domain search page
      */
-    @RequestMapping(path = "/admin/manager/domain/search", method = RequestMethod.GET)
+    @GetMapping(path = "/admin/manager/domain/search")
     public String showDomainSearch(Model model) {
-        model.addAttribute("searchPath", "");
-        model.addAttribute("searchName", "");
-        model.addAttribute("searchUser", "");
-        model.addAttribute("searchTombstonedDomain", false);
+        model.addAttribute(MODEL_ATTRIBUTE_SEARCH_PATH, "");
+        model.addAttribute(MODEL_ATTRIBUTE_SEARCH_NAME, "");
+        model.addAttribute(MODEL_ATTRIBUTE_SEARCH_USER, "");
+        model.addAttribute(MODEL_ATTRIBUTE_SEARCH_TOMBSTONED_DOMAIN, false);
         return "domainsearch";
     }
 
@@ -199,23 +229,23 @@ public class AdminDomainController {
      * @param model
      * @return the domain search page with the model addtribute "domains"
      */
-    @RequestMapping(path = "/admin/manager/domain/search", method = RequestMethod.POST)
-    public String domainSearch(@RequestParam(value = "searchPath", required = false, defaultValue = "") String path,
-        @RequestParam(value = "searchName", required = false, defaultValue = "") String name,
-        @RequestParam(value = "searchUser", required = false, defaultValue = "") String login,
-        @RequestParam(value = "searchTombstonedDomain", required = false, defaultValue = "false") boolean isTombstoned,
+    @PostMapping(path = "/admin/manager/domain/search")
+    public String domainSearch(@RequestParam(value = MODEL_ATTRIBUTE_SEARCH_PATH, required = false, defaultValue = "") String path,
+        @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_NAME, required = false, defaultValue = "") String name,
+        @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_USER, required = false, defaultValue = "") String login,
+        @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_TOMBSTONED_DOMAIN, required = false, defaultValue = "false") boolean isTombstoned,
         Model model) {
         List<Domain> domainList = domainDAO.searchDomains(path, name, login, isTombstoned, LIMIT + 1);
-        model.addAttribute("moreResults", false);
+        model.addAttribute(MODEL_ATTRIBUTE_MORE_RESULTS, false);
         if (domainList.size() == LIMIT + 1) {
             domainList.remove(LIMIT);
-            model.addAttribute("moreResults", true);
+            model.addAttribute(MODEL_ATTRIBUTE_MORE_RESULTS, true);
         }
-        model.addAttribute("domains", domainList);
-        model.addAttribute("searchPath", path);
-        model.addAttribute("searchName", name);
-        model.addAttribute("searchUser", login);
-        model.addAttribute("searchTombstonedDomain", isTombstoned);
+        model.addAttribute(MODEL_ATTRIBUTE_DOMAINS, domainList);
+        model.addAttribute(MODEL_ATTRIBUTE_SEARCH_PATH, path);
+        model.addAttribute(MODEL_ATTRIBUTE_SEARCH_NAME, name);
+        model.addAttribute(MODEL_ATTRIBUTE_SEARCH_USER, login);
+        model.addAttribute(MODEL_ATTRIBUTE_SEARCH_TOMBSTONED_DOMAIN, isTombstoned);
         return "domainsearch";
     }
 
@@ -224,9 +254,9 @@ public class AdminDomainController {
      * 
      * @return the domain delete page
      */
-    @RequestMapping(path = "/admin/manager/domain/delete", method = RequestMethod.GET)
+    @GetMapping(path = "/admin/manager/domain/delete")
     public String showDomainDelete(@RequestParam("id") int id, Model model) {
-        model.addAttribute("domain", domainDAO.retrieveDomain(id).get());
+        model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domainDAO.retrieveDomain(id).get());
         return "domaindelete";
     }
 
@@ -237,18 +267,18 @@ public class AdminDomainController {
      * @param model
      * @return the domain delete page
      */
-    @RequestMapping(path = "/admin/manager/domain/delete", method = RequestMethod.POST)
+    @PostMapping(path = "/admin/manager/domain/delete")
     public String deleteDomain(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
         User u = purlAccess.retrieveCurrentUser();
         domainDAO.retrieveDomain(domain.getPath()).ifPresent(d -> {
             if (purlAccess.canModifyPurl(d, u)) {
                 domainDAO.deleteDomain(domain.getPath(), u);
-                model.addAttribute("deleted", true);
-                model.addAttribute("domain", domain);
+                model.addAttribute(MODEL_ATTRIBUTE_DELETED, true);
+                model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domain);
             } else {
                 List<String> errorList = new ArrayList<>();
                 errorList.add(messages.getMessage("purl_server.error.domain.delete", null, Locale.getDefault()));
-                model.addAttribute("errors", errorList);
+                model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
             }
         });
         return "domaindelete";

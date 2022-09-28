@@ -18,10 +18,6 @@
  */
 package de.uni.rostock.ub.purl_server.client;
 
-/**
- * This is a sample application to demonstrate the use of the PURL server REST API.
- */
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputFilter;
 import java.io.ObjectInputStream;
@@ -49,6 +45,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This is a sample application to demonstrate the use of the PURL server REST API.
+ */
 public class PurlClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(PurlClient.class);
 
@@ -101,7 +100,7 @@ public class PurlClient {
                 message = response.body();
                 LOGGER.info(message);
                 messageBuffer.append(message);
-            } catch (IOException | InterruptedException e) {
+            } catch (Exception e) {
                 message = "Error creating a PURL!";
                 LOGGER.error(message, e);
                 messageBuffer.append(message);
@@ -132,7 +131,7 @@ public class PurlClient {
                     return true;
                 }
 
-            } catch (IOException | InterruptedException e) {
+            } catch (Exception e) {
                 message = "Error updating a PURL!";
                 messageBuffer.append(message);
                 LOGGER.error(message, e);
@@ -164,7 +163,7 @@ public class PurlClient {
                     LOGGER.info(message);
                     messageBuffer.append(message);
                 }
-            } catch (IOException | InterruptedException e) {
+            } catch (Exception e) {
                 String message = "Error retrieving information about a PURL!";
                 LOGGER.error(message, e);
                 messageBuffer.append(message);
@@ -219,7 +218,7 @@ public class PurlClient {
                     LOGGER.info(message);
                     messageBuffer.append(message);
                 }
-            } catch (IOException | InterruptedException e) {
+            } catch (Exception e) {
                 String message = "Error retrieving information about a PURL!";
                 LOGGER.error(message, e);
                 messageBuffer.append(message);

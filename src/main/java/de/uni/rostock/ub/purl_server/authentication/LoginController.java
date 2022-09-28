@@ -76,6 +76,12 @@ public class LoginController {
     @Value("${purl_server.mail.from}")
     private String mailFrom;
 
+    @GetMapping(value = "/admin/login")
+    public ModelAndView login() {
+        ModelAndView mav = new ModelAndView("login/login");
+        return mav;
+    }
+    
     @PostMapping(value = "/admin/login")
     public ModelAndView login(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("login/login");

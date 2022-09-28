@@ -55,7 +55,7 @@
   
   <div th:fragment="infoPurlTable (purl)">
     <table class="table table-sm">
-      <caption>PURL information</caption>
+      <caption class="d-none">PURL information</caption>
       <colgroup>
         <col style="width: 12em" />
       </colgroup>
@@ -101,7 +101,7 @@
           data-target="#collapsePurlHistory" aria-expanded="true" aria-controlls="collapsePurlHistory">▼</a>
           <div id="collapsePurlHistory" class="collapse" data-parent="#accordionPurlHistory">
             <table class="table table-sm mb-0" th:each="entry, iterStat : ${purl.purlHistory}">
-              <caption>PURL history information</caption>
+              <caption class="d-none">PURL history information</caption>
               <colgroup>
                 <col style="width: 3em" />
               </colgroup>
@@ -111,7 +111,7 @@
                 </th>
                 <td class="pr-0" th:classappend="${iterStat.index == 1} ? 'border-top-0'">
                   <table class="table table-sm mb-0">
-                    <caption>PURL history entry information</caption>
+                    <caption class="d-none">PURL history entry information</caption>
                     <colgroup>
                       <col style="width: 9em" />
                     </colgroup>

@@ -91,7 +91,7 @@ public class UserDAO {
 
         return jdbcTemplate.query(
             "SELECT * FROM user WHERE (login LIKE ?) AND (fullname LIKE ?) AND (affiliation LIKE ?) AND (email LIKE ?)"
-                + " AND INSTR(?, d.status) > 0"
+                + " AND INSTR(?, status) > 0"
                 + " ORDER BY login LIMIT ?;",
             new UserRowMapper(), paramLogin, paramFullName, paramAffiliation, paramEmail, paramStatus, limit);
     }

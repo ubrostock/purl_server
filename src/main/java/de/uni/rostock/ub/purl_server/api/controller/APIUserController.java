@@ -27,8 +27,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import de.uni.rostock.ub.purl_server.dao.UserDAO;
 import de.uni.rostock.ub.purl_server.model.User;
@@ -47,7 +47,7 @@ public class APIUserController {
      * @statuscode 404 if the user does not exist
      * @return the ResponseEntity object with the retrieved user
      */
-    @RequestMapping("/api/user/{login}")
+    @GetMapping("/api/user/{login}")
     public ResponseEntity<User> retrieveUser(@PathVariable("login") String login, HttpServletRequest request) {
         Optional<User> ou = userDAO.retrieveUser(login);
         if (ou.isEmpty()) {

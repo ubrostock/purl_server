@@ -133,34 +133,24 @@ public class DomainDAO {
      * @return a list of founded domains
      */
     public List<Domain> searchDomains(String path, String name, String login, boolean isTombstoned, int limit) {
-        String paramPath = "%";
-        if (StringUtils.hasText(path)) {
-            paramPath = "%" + path + "%";
-        }
-        String paramName = "%";
-        if (StringUtils.hasText(name)) {
-            paramName = "%" + name + "%";
-        }
-        String paramLogin = "%";
-        if (StringUtils.hasText(login)) {
-            paramLogin = "%" + login + "%";
-        }
-        String sqlStatus = " AND (d.status='CREATED' OR d.status='MODIFIED')";
-        if (isTombstoned) {
-            sqlStatus = "";
-        }
+        String paramPath = StringUtils.hasText(path) ? "%" + path + "%" : "%";
+        String paramName = StringUtils.hasText(name) ? "%" + name + "%" : "%";
+        String paramLogin = StringUtils.hasText(login) ? "%" + login + "%" : "%";
+        String paramStatus = isTombstoned ? "CREATED,MODIFIED,DELETED" : "CREATED,MODIFIED";
+
         List<Domain> domainList = Collections.emptyList();
         if (StringUtils.hasText(login)) {
             domainList = jdbcTemplate.query("SELECT d.* FROM domain d, user u, domainuser du "
                 + " WHERE d.id = du.domain_id AND u.id = du.user_id AND (d.path LIKE ?) "
-                + sqlStatus
+                + " AND INSTR(?, d.status) > 0"
                 + " AND (d.name LIKE ?) AND (u.login LIKE ?) GROUP BY d.id ORDER BY d.path LIMIT ?;",
-                new DomainRowMapper(), paramPath, paramName, paramLogin, limit);
+                new DomainRowMapper(), paramPath, paramStatus, paramName, paramLogin, limit);
         } else {
             domainList = jdbcTemplate.query("SELECT * FROM domain d "
                 + " WHERE (d.path LIKE ?) "
-                + sqlStatus
-                + " AND (d.name LIKE ?) ORDER BY d.path LIMIT ?;", new DomainRowMapper(), paramPath, paramName, limit);
+                + " AND INSTR(?, d.status) > 0"
+                + " AND (d.name LIKE ?) ORDER BY d.path LIMIT ?;", new DomainRowMapper(), paramPath, paramStatus,
+                paramName, limit);
         }
 
         for (Domain d : domainList) {

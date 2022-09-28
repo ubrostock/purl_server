@@ -44,7 +44,6 @@ import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
@@ -77,7 +76,7 @@ public class LoginController {
     @Value("${purl_server.mail.from}")
     private String mailFrom;
 
-    @RequestMapping(value = "/admin/login")
+    @PostMapping(value = "/admin/login")
     public ModelAndView login(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("login/login");
         HttpSession session = request.getSession(false);

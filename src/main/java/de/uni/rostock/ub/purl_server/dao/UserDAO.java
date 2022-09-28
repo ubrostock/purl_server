@@ -83,31 +83,17 @@ public class UserDAO {
      */
     public List<User> searchUsers(String login, String fullName, String affiliation, String email, boolean isTombstoned,
         int limit) {
-        String paramFullName = "%";
-        if (StringUtils.hasText(fullName)) {
-            paramFullName = "%" + fullName + "%";
-        }
-        String paramAffiliation = "%";
-        if (StringUtils.hasText(affiliation)) {
-            paramAffiliation = "%" + affiliation + "%";
-        }
-        String paramEmail = "%";
-        if (StringUtils.hasText(email)) {
-            paramEmail = "%" + email + "%";
-        }
-        String paramLogin = "%";
-        if (StringUtils.hasText(login)) {
-            paramLogin = "%" + login + "%";
-        }
-        String sqlStatus = " AND (status='CREATED' OR status='MODIFIED')";
-        if (isTombstoned) {
-            sqlStatus = "";
-        }
+        String paramFullName = StringUtils.hasText(fullName) ? "%" + fullName + "%" : "%";
+        String paramAffiliation = StringUtils.hasText(affiliation) ? "%" + affiliation + "%" : "%";
+        String paramEmail = StringUtils.hasText(email) ? "%" + email + "%" : "%";
+        String paramLogin = StringUtils.hasText(login) ? "%" + login + "%" : "%";
+        String paramStatus = isTombstoned ? "CREATED,MODIFIED,DELETED" : "CREATED,MODIFIED";
+
         return jdbcTemplate.query(
             "SELECT * FROM user WHERE (login LIKE ?) AND (fullname LIKE ?) AND (affiliation LIKE ?) AND (email LIKE ?)"
-                + sqlStatus
+                + " AND INSTR(?, d.status) > 0"
                 + " ORDER BY login LIMIT ?;",
-            new UserRowMapper(), paramLogin, paramFullName, paramAffiliation, paramEmail, limit);
+            new UserRowMapper(), paramLogin, paramFullName, paramAffiliation, paramEmail, paramStatus, limit);
     }
 
     /**
@@ -115,7 +101,7 @@ public class UserDAO {
      * @return list of users
      */
     public List<User> retrieveActiveUsers() {
-        return jdbcTemplate.query("SELECT * FROM user WHERE (status='CREATED' OR status='MODIFIED') ORDER BY login;",
+        return jdbcTemplate.query("SELECT * FROM user WHERE INSTR('CREATED,MODIFIED', status) ORDER BY login;",
             new UserRowMapper());
     }
 

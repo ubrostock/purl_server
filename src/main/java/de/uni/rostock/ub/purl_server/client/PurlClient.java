@@ -18,6 +18,7 @@
  */
 package de.uni.rostock.ub.purl_server.client;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputFilter;
 import java.io.ObjectInputStream;
@@ -100,10 +101,12 @@ public class PurlClient {
                 message = response.body();
                 LOGGER.info(message);
                 messageBuffer.append(message);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 message = "Error creating a PURL!";
                 LOGGER.error(message, e);
                 messageBuffer.append(message);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         } else {
             String errorMmessage = "Please login into PURL client!";
@@ -131,10 +134,12 @@ public class PurlClient {
                     return true;
                 }
 
-            } catch (Exception e) {
+            } catch (IOException e) {
                 message = "Error updating a PURL!";
                 messageBuffer.append(message);
                 LOGGER.error(message, e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         } else {
             String errorMmessage = "Please login into PURL client!";
@@ -163,10 +168,12 @@ public class PurlClient {
                     LOGGER.info(message);
                     messageBuffer.append(message);
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 String message = "Error retrieving information about a PURL!";
                 LOGGER.error(message, e);
                 messageBuffer.append(message);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
             return null;
         } else {
@@ -218,10 +225,12 @@ public class PurlClient {
                     LOGGER.info(message);
                     messageBuffer.append(message);
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 String message = "Error retrieving information about a PURL!";
                 LOGGER.error(message, e);
                 messageBuffer.append(message);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
             return null;
         } else {

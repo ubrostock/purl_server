@@ -70,7 +70,7 @@ public class PurlServerWebApp implements WebMvcConfigurer {
             registrationStatic.addResourceLocations(retrieveStaticWebResourceLocation());
         }
         registrationStatic.addResourceLocations("classpath:/static/");
-    };
+    }
 
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {

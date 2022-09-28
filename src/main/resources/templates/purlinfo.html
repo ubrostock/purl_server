@@ -18,109 +18,16 @@
       <div class="card-body">
         <div class="row">
           <div class="col">
-            <table class="table table-sm">
-              <colgroup>
-                <col style="width: 12em" />
-              </colgroup>
-              <tr>
-                <th class="h3 border-top-0" th:text="#{purl_server.info.purl}"></th>
-                <td class="border-top-0">
-                  <h3 th:text="@{__${purl_url}__}"></h3>
-                </td>
-              </tr>
-            </table>
-            <table class="table table-sm">
-              <colgroup>
-                <col style="width: 12em" />
-              </colgroup>
-              <tr class="h5">
-                <th th:text="#{purl_server.info.purl.path}"></th>
-                <td>
-                  <span th:text="${purl.path}"></span>
-                </td>
-              </tr>
-              <tr id="accordionDomain" class="h5">
-                <th th:text="#{purl_server.info.purl.domain}"></th>
-                <td class="pr-0">
-                  <span th:text="${purl.domain.path}"></span>
-                  <a class="btn btn-sm btn-outline-secondary px-1 py-0 ml-3" data-toggle="collapse"
-                    data-target="#collapseDomain" th:title="#{purl_server.info.more}" aria-expanded="true"
-                    aria-controlls="collapseDomain">▼</a>
-                  <div id="collapseDomain" class="collapse" data-parent="#accordionDomain">
-                    <div th:replace="fragments/info :: infoDomainTable (${purl.domain})"></div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <th th:text="#{purl_server.info.purl.type}"></th>
-                <td th:text="${purl.type}"></td>
-              </tr>
-              <tr>
-                <th th:text="#{purl_server.info.purl.target}"></th>
-                <td> <span th:text="${purl.target}"></span><span class="font-italic" th:if="${purl_target_suffix}" th:text="${purl_target_suffix}"></span></td>
-              </tr>
-              <tr>
-                <th th:text="#{purl_server.info.purl.created}"></th>
-                <td th:text="${purl.created}"></td>
-              </tr>
-              <tr>
-                <th th:text="#{purl_server.info.purl.lastmodified}"></th>
-                <td th:text="${purl.lastmodified}"></td>
-              </tr>
-              <tr>
-                <th th:text="#{purl_server.info.purl.status}"></th>
-                <td th:text="${purl.status}"></td>
-              </tr>
-              <tr id="accordionPurlHistory" th:if="${purl.purlHistory.size > 1}">
-                <th th:text="#{purl_server.info.purl.purlhistory}"></th>
-                <td class="pr-0">
-                  <span th:text="${purl.purlHistory.size-1}"></span>
-                  <span th:text="#{purl_server.info.purl.purlhistory.entry}"></span>
-                  <a class="btn btn-sm btn-outline-secondary px-1 py-0 ml-3" data-toggle="collapse"
-                    data-target="#collapsePurlHistory" aria-expanded="true" aria-controlls="collapsePurlHistory">▼</a>
-                  <div id="collapsePurlHistory" class="collapse" data-parent="#accordionPurlHistory">
-                    <table class="table table-sm mb-0" th:each="entry, iterStat : ${purl.purlHistory}">
-                      <colgroup>
-                        <col style="width: 3em" />
-                      </colgroup>
-                      <tr th:if="${!iterStat.first}">
-                        <th th:classappend="${iterStat.index == 1} ? 'border-top-0'">
-                          <div class="font-weight-bold pt-1" th:text="${iterStat.index}"></div>
-                        </th>
-                        <td class="pr-0" th:classappend="${iterStat.index == 1} ? 'border-top-0'">
-                          <table class="table table-sm mb-0">
-                            <colgroup>
-                              <col style="width: 9em" />
-                            </colgroup>
-                            <tr>
-                              <th class="border-top-0" th:text="#{purl_server.info.purl.purlhistory.status}"></th>
-                              <td class="border-top-0" th:text="${entry.status}"></td>
-                            </tr>
-                            <tr>
-                              <th th:text="#{purl_server.info.purl.purlhistory.type}"></th>
-                              <td th:text="${entry.type}"></td>
-                            </tr>
-                            <tr>
-                              <th th:text="#{purl_server.info.purl.purlhistory.target}"></th>
-                              <td th:text="${entry.target}"></td>
-                            </tr>
-                            <tr>
-                              <th th:text="#{purl_server.info.purl.purlhistory.user}"></th>
-                              <td th:text="${entry.user}"></td>
-                            </tr>
-                            <tr>
-                              <th th:text="#{purl_server.info.purl.purlhistory.lastmodified}"></th>
-                              <td th:text="${entry.lastmodified}"></td>
-                            </tr>
-                          </table>
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
-                </td>
-              </tr>
-            </table>
-            <a class="btn btn-sm btn-outline-secondary float-right" th:href="@{?format=json}">🗎 JSON</a>
+            <div class="p-1 float-left" style="width:12em">
+              <h3 th:text="#{purl_server.info.purl}"></h3>
+            </div>
+            <div class="p-1 float-left">
+              <h3 th:text="@{__${purl_url}__}"></h3>
+            </div>
+            <div th:replace="fragments/info :: infoPurlTable (${purl})"></div>
+            <div class="p-1">
+              <a class="btn btn-sm btn-outline-secondary float-right" th:href="@{?format=json}">🗎 JSON</a>
+            </div>
           </div>
         </div>
       </div>

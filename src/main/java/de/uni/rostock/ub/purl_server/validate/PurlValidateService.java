@@ -62,10 +62,10 @@ public class PurlValidateService {
         if (!StringUtils.hasText(purl.getPath())) {
             errorList.add(
                 messages.getMessage("purl_server.error.validate.purl.create.path.empty", null, locale));
-            return errorList;
         }
-
-        errorList.addAll(validatePurl(purl, locale));
+        if (errorList.isEmpty()) {
+            errorList.addAll(validatePurl(purl, locale));
+        }
         if (errorList.isEmpty()) {
             Optional<Domain> d = domainDAO.retrieveDomain(purl);
             if (d.isPresent()) {
@@ -81,17 +81,9 @@ public class PurlValidateService {
                     new Object[] { purl.getDomainPath() }, locale));
             }
         }
-        if (!errorList.isEmpty()) {
-            return errorList;
-        }
-
-        Optional<Purl> currentPurl = purlDAO.retrievePurl(purl.getPath());
-        if (currentPurl.isEmpty()) {
-
-        } else {
-            if (currentPurl.get().getStatus() == Status.DELETED) {
-
-            } else {
+        if (errorList.isEmpty()) {
+            Optional<Purl> currentPurl = purlDAO.retrievePurl(purl.getPath());
+            if (!currentPurl.isEmpty() && currentPurl.get().getStatus() != Status.DELETED) {
                 if (currentPurl.get().getType() == Type.PARTIAL_302) {
                     if (purl.getPath().length() == currentPurl.get().getPath().length()) {
                         errorList.add(messages.getMessage("purl_server.error.validate.purl.create.exist", null,
@@ -103,7 +95,6 @@ public class PurlValidateService {
                 }
             }
         }
-
         return errorList;
     }
 
@@ -150,7 +141,7 @@ public class PurlValidateService {
                 errorList
                     .add(messages.getMessage("purl_server.error.validate.purl.path.start", null, locale));
             }
-            if (!purl.getPath().matches("\\/[a-zA-Z0-9_\\-]+(\\/[a-zA-Z0-9_\\-]*)*")) {
+            if (!purl.getPath().matches("[a-zA-Z0-9_\\-\\/]*")) {
                 errorList
                     .add(messages.getMessage("purl_server.error.validate.purl.path.match", null, locale));
             }

@@ -44,7 +44,6 @@ import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
@@ -52,6 +51,8 @@ import org.springframework.web.util.UriComponents;
 
 @Controller
 public class LoginController {
+    private static final String MODEL_ATTRIBUTE_ERROR_MESSAGE = "errorMessage";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
     private static final String SQL_UPDATE_RESET_TOKEN = "UPDATE user SET password_reset_token = ? WHERE login = ?;";
@@ -75,7 +76,13 @@ public class LoginController {
     @Value("${purl_server.mail.from}")
     private String mailFrom;
 
-    @RequestMapping(value = "/admin/login")
+    @GetMapping(value = "/admin/login")
+    public ModelAndView login() {
+        ModelAndView mav = new ModelAndView("login/login");
+        return mav;
+    }
+    
+    @PostMapping(value = "/admin/login")
     public ModelAndView login(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("login/login");
         HttpSession session = request.getSession(false);
@@ -83,14 +90,14 @@ public class LoginController {
             AuthenticationException ex = (AuthenticationException) session
                 .getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
             if (ex != null) {
-                StringBuffer sbErrorMessage = new StringBuffer(ex.getMessage());
+                StringBuilder sbErrorMessage = new StringBuilder(ex.getMessage());
                 LOGGER.error(ex.getMessage());
                 Throwable t = ex;
                 while (t.getCause() != null) {
                     t = t.getCause();
                     sbErrorMessage.append("<br />").append(t.getMessage());
                 }
-                mav.addObject("errorMessage", sbErrorMessage.toString());
+                mav.addObject(MODEL_ATTRIBUTE_ERROR_MESSAGE, sbErrorMessage.toString());
             }
         }
         return mav;
@@ -135,7 +142,7 @@ public class LoginController {
             return new ModelAndView("login/email_success");
         } else {
             ModelAndView mav = new ModelAndView("login/password_request");
-            mav.addObject("errorMessage",
+            mav.addObject(MODEL_ATTRIBUTE_ERROR_MESSAGE,
                 context.getMessage("purl_server.login.error_message.unknown_user", null, Locale.getDefault()));
             return mav;
         }
@@ -146,16 +153,16 @@ public class LoginController {
             token);
         if (x == 1 && token.contains("_")) {
             String timeString = token.substring(0, token.indexOf("_"));
-            long time = Long.valueOf(timeString);
+            long time = Long.parseLong(timeString);
             if (time < System.currentTimeMillis()) {
-                mav.addObject("errorMessage",
+                mav.addObject(MODEL_ATTRIBUTE_ERROR_MESSAGE,
                     context.getMessage("purl_server.password.error_message.invalid_time", null, Locale.getDefault()));
                 return false;
             } else {
                 return true;
             }
         } else {
-            mav.addObject("errorMessage",
+            mav.addObject(MODEL_ATTRIBUTE_ERROR_MESSAGE,
                 context.getMessage("purl_server.password.error_message.invalid_token", null, Locale.getDefault()));
             return false;
         }

@@ -47,6 +47,12 @@ import de.uni.rostock.ub.purl_server.model.User;
 
 @Service
 public class DomainDAO {
+    private static final String SQL_SELECT_DOMAIN_BY_ID = "SELECT * FROM domain WHERE id = ?;";
+
+    private static final String SQL_SELECT_DOMAIN_BY_PATH = "SELECT * FROM domain WHERE path = ?;";
+
+    private static final String SQL_SELECT_DOMAIN_WITH_USER_BY_ID = "SELECT u.*, du.* FROM user u JOIN domainuser du ON u.id = du.user_id WHERE du.domain_id = ?;";
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -58,7 +64,7 @@ public class DomainDAO {
     public Optional<Domain> retrieveDomain(String path) {
         try {
             return Optional
-                .of(jdbcTemplate.queryForObject("SELECT * FROM domain WHERE path = ?;", new DomainRowMapper(), path));
+                .of(jdbcTemplate.queryForObject(SQL_SELECT_DOMAIN_BY_PATH, new DomainRowMapper(), path));
         } catch (DataAccessException e) {
             return Optional.empty();
         }
@@ -71,9 +77,9 @@ public class DomainDAO {
      */
     public Optional<Domain> retrieveDomainWithUser(String path) {
         try {
-            Domain d = jdbcTemplate.queryForObject("SELECT * FROM domain WHERE path = ?;", new DomainRowMapper(), path);
+            Domain d = jdbcTemplate.queryForObject(SQL_SELECT_DOMAIN_BY_PATH, new DomainRowMapper(), path);
             List<DomainUser> list = jdbcTemplate.query(
-                "SELECT u.*, du.* FROM user u JOIN domainuser du ON u.id = du.user_id WHERE du.domain_id = ?;",
+                SQL_SELECT_DOMAIN_WITH_USER_BY_ID,
                 new DomainUserRowMapper(), d.getId());
             d.getDomainUserList().addAll(list);
             return Optional.of(d);
@@ -81,7 +87,7 @@ public class DomainDAO {
             return Optional.empty();
         }
     }
-    
+
     public Optional<Domain> retrieveDomain(Purl p) {
         return retrieveDomain(p.getDomainPath());
     }
@@ -94,7 +100,7 @@ public class DomainDAO {
     public Optional<Domain> retrieveDomain(int id) {
         try {
             return Optional
-                .of(jdbcTemplate.queryForObject("SELECT * FROM domain WHERE id = ?;", new DomainRowMapper(), id));
+                .of(jdbcTemplate.queryForObject(SQL_SELECT_DOMAIN_BY_ID, new DomainRowMapper(), id));
         } catch (DataAccessException e) {
             return Optional.empty();
         }
@@ -107,9 +113,9 @@ public class DomainDAO {
      */
     public Optional<Domain> retrieveDomainWithUser(int id) {
         try {
-            Domain d = jdbcTemplate.queryForObject("SELECT * FROM domain WHERE id = ?;", new DomainRowMapper(), id);
+            Domain d = jdbcTemplate.queryForObject(SQL_SELECT_DOMAIN_BY_ID, new DomainRowMapper(), id);
             List<DomainUser> list = jdbcTemplate.query(
-                "SELECT u.*, du.* FROM user u JOIN domainuser du ON u.id = du.user_id WHERE du.domain_id = ?;",
+                SQL_SELECT_DOMAIN_WITH_USER_BY_ID,
                 new DomainUserRowMapper(), d.getId());
             d.getDomainUserList().addAll(list);
             return Optional.of(d);
@@ -127,39 +133,29 @@ public class DomainDAO {
      * @return a list of founded domains
      */
     public List<Domain> searchDomains(String path, String name, String login, boolean isTombstoned, int limit) {
-        String paramPath = "%";
-        if (StringUtils.hasText(path)) {
-            paramPath = "%" + path + "%";
-        }
-        String paramName = "%";
-        if (StringUtils.hasText(name)) {
-            paramName = "%" + name + "%";
-        }
-        String paramLogin = "%";
-        if (StringUtils.hasText(login)) {
-            paramLogin = "%" + login + "%";
-        }
-        String sqlStatus = " AND (d.status='CREATED' OR d.status='MODIFIED')";
-        if (isTombstoned) {
-            sqlStatus = "";
-        }
+        String paramPath = StringUtils.hasText(path) ? "%" + path + "%" : "%";
+        String paramName = StringUtils.hasText(name) ? "%" + name + "%" : "%";
+        String paramLogin = StringUtils.hasText(login) ? "%" + login + "%" : "%";
+        String paramStatus = isTombstoned ? "CREATED,MODIFIED,DELETED" : "CREATED,MODIFIED";
+
         List<Domain> domainList = Collections.emptyList();
         if (StringUtils.hasText(login)) {
             domainList = jdbcTemplate.query("SELECT d.* FROM domain d, user u, domainuser du "
                 + " WHERE d.id = du.domain_id AND u.id = du.user_id AND (d.path LIKE ?) "
-                + sqlStatus
+                + " AND INSTR(?, d.status) > 0"
                 + " AND (d.name LIKE ?) AND (u.login LIKE ?) GROUP BY d.id ORDER BY d.path LIMIT ?;",
-                new DomainRowMapper(), paramPath, paramName, paramLogin, limit);
+                new DomainRowMapper(), paramPath, paramStatus, paramName, paramLogin, limit);
         } else {
             domainList = jdbcTemplate.query("SELECT * FROM domain d "
                 + " WHERE (d.path LIKE ?) "
-                + sqlStatus
-                + " AND (d.name LIKE ?) ORDER BY d.path LIMIT ?;", new DomainRowMapper(), paramPath, paramName, limit);
+                + " AND INSTR(?, d.status) > 0"
+                + " AND (d.name LIKE ?) ORDER BY d.path LIMIT ?;", new DomainRowMapper(), paramPath, paramStatus,
+                paramName, limit);
         }
 
         for (Domain d : domainList) {
             List<DomainUser> list = jdbcTemplate.query(
-                "SELECT u.*, du.* FROM user u JOIN domainuser du ON u.id = du.user_id WHERE du.domain_id = ?;",
+                SQL_SELECT_DOMAIN_WITH_USER_BY_ID,
                 new DomainUserRowMapper(), d.getId());
             d.getDomainUserList().addAll(list);
         }

@@ -63,7 +63,7 @@ public class AdminPurlController {
 
     private static final String MODEL_ATTRIBUTE_FORM = "form";
 
-    private static int LIMIT = 50;
+    private static final int LIMIT = 50;
 
     @Autowired
     PurlAccess purlAccess;

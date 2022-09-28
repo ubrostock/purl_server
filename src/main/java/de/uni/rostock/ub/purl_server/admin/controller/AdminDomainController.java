@@ -47,6 +47,10 @@ import de.uni.rostock.ub.purl_server.validate.DomainValidateService;
 
 @Controller
 public class AdminDomainController {
+    private static final String MODEL_VIEW_DOMAINMODIFY = "domainmodify";
+
+    private static final String MODEL_VIEW_DOMAINCREATE = "domaincreate";
+
     private static final String MODEL_VALUE_FORM_MODIFY = "modify";
 
     private static final String MODEL_VALUE_FORM_CREATE = "create";
@@ -77,7 +81,7 @@ public class AdminDomainController {
 
     private static final String MODEL_ATTRIBUTE_FORM = "form";
 
-    private static int LIMIT = 50;
+    private static final int LIMIT = 50;
 
     @Autowired
     PurlAccess purlAccess;
@@ -106,7 +110,7 @@ public class AdminDomainController {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, MODEL_VALUE_FORM_CREATE);
         model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, new Domain());
         model.addAttribute(MODEL_ATTRIBUTE_USERS_LOGIN, userDAO.retrieveActiveUsers());
-        return "domaincreate";
+        return MODEL_VIEW_DOMAINCREATE;
     }
 
     /**
@@ -138,7 +142,7 @@ public class AdminDomainController {
             model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, false);
         }
         model.addAttribute(MODEL_ATTRIBUTE_USERS_LOGIN, userDAO.retrieveActiveUsers());
-        return "domaincreate";
+        return MODEL_VIEW_DOMAINCREATE;
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -149,7 +153,7 @@ public class AdminDomainController {
         List<User> list = userDAO.retrieveActiveUsers();
         list.add(new User());
         model.addAttribute(MODEL_ATTRIBUTE_USERS_LOGIN, list);
-        return "domaincreate";
+        return MODEL_VIEW_DOMAINCREATE;
     }
 
     /**
@@ -165,7 +169,7 @@ public class AdminDomainController {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, MODEL_VALUE_FORM_MODIFY);
         model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domainDAO.retrieveDomainWithUser(id).get());
         model.addAttribute(MODEL_ATTRIBUTE_USERS_LOGIN, userDAO.retrieveActiveUsers());
-        return "domainmodify";
+        return MODEL_VIEW_DOMAINMODIFY;
     }
 
     /**
@@ -191,7 +195,7 @@ public class AdminDomainController {
         }
         model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domain);
         model.addAttribute(MODEL_ATTRIBUTE_USERS_LOGIN, userDAO.retrieveActiveUsers());
-        return "domainmodify";
+        return MODEL_VIEW_DOMAINMODIFY;
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -202,7 +206,7 @@ public class AdminDomainController {
         List<User> list = userDAO.retrieveActiveUsers();
         list.add(new User());
         model.addAttribute(MODEL_ATTRIBUTE_USERS_LOGIN, list);
-        return "domainmodify";
+        return MODEL_VIEW_DOMAINMODIFY;
     }
 
     /**

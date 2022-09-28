@@ -32,7 +32,7 @@ import de.uni.rostock.ub.purl_server.model.User;
 @Service
 public class UserValidateService {
 
-    private static String SHA_EMPTY_STRING = "da39a3ee5e6b4b0d3255bfef95601890afd80709";
+    private static final String SHA_EMPTY_STRING = "da39a3ee5e6b4b0d3255bfef95601890afd80709";
 
     @Autowired
     MessageSource messages;

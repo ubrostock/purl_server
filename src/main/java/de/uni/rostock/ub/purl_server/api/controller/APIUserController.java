@@ -55,7 +55,6 @@ public class APIUserController {
         }
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", request.getRequestURL().append("/").append(ou.get().getId()).toString());
-        ResponseEntity<User> r = new ResponseEntity<User>(ou.get(), headers, HttpStatus.OK);
-        return r;
+        return new ResponseEntity<User>(ou.get(), headers, HttpStatus.OK);
     }
 }

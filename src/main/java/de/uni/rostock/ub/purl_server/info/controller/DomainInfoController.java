@@ -74,8 +74,7 @@ public class DomainInfoController {
         if (op.isEmpty()) {
             return new ResponseEntity<Domain>(HttpStatus.NOT_FOUND);
         }
-        ResponseEntity<Domain> r = new ResponseEntity<Domain>(op.get(), HttpStatus.OK);
-        return r;
+        return new ResponseEntity<Domain>(op.get(), HttpStatus.OK);
     }
 
     private String retrieveDomainPathFromRequest(HttpServletRequest request) {

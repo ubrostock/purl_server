@@ -80,8 +80,7 @@ public class PurlInfoController {
         if (op.isEmpty()) {
             return new ResponseEntity<Purl>(HttpStatus.NOT_FOUND);
         }
-        ResponseEntity<Purl> r = new ResponseEntity<Purl>(op.get(), HttpStatus.OK);
-        return r;
+        return new ResponseEntity<Purl>(op.get(), HttpStatus.OK);
     }
 
     private String retrievePurlPathFromRequest(HttpServletRequest request) {

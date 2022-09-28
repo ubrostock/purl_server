@@ -47,6 +47,12 @@ import de.uni.rostock.ub.purl_server.model.User;
 
 @Service
 public class DomainDAO {
+    private static final String SQL_SELECT_DOMAIN_BY_ID = "SELECT * FROM domain WHERE id = ?;";
+
+    private static final String SQL_SELECT_DOMAIN_BY_PATH = "SELECT * FROM domain WHERE path = ?;";
+
+    private static final String SQL_SELECT_DOMAIN_WITH_USER_BY_ID = "SELECT u.*, du.* FROM user u JOIN domainuser du ON u.id = du.user_id WHERE du.domain_id = ?;";
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -58,7 +64,7 @@ public class DomainDAO {
     public Optional<Domain> retrieveDomain(String path) {
         try {
             return Optional
-                .of(jdbcTemplate.queryForObject("SELECT * FROM domain WHERE path = ?;", new DomainRowMapper(), path));
+                .of(jdbcTemplate.queryForObject(SQL_SELECT_DOMAIN_BY_PATH, new DomainRowMapper(), path));
         } catch (DataAccessException e) {
             return Optional.empty();
         }
@@ -71,9 +77,9 @@ public class DomainDAO {
      */
     public Optional<Domain> retrieveDomainWithUser(String path) {
         try {
-            Domain d = jdbcTemplate.queryForObject("SELECT * FROM domain WHERE path = ?;", new DomainRowMapper(), path);
+            Domain d = jdbcTemplate.queryForObject(SQL_SELECT_DOMAIN_BY_PATH, new DomainRowMapper(), path);
             List<DomainUser> list = jdbcTemplate.query(
-                "SELECT u.*, du.* FROM user u JOIN domainuser du ON u.id = du.user_id WHERE du.domain_id = ?;",
+                SQL_SELECT_DOMAIN_WITH_USER_BY_ID,
                 new DomainUserRowMapper(), d.getId());
             d.getDomainUserList().addAll(list);
             return Optional.of(d);
@@ -81,7 +87,7 @@ public class DomainDAO {
             return Optional.empty();
         }
     }
-    
+
     public Optional<Domain> retrieveDomain(Purl p) {
         return retrieveDomain(p.getDomainPath());
     }
@@ -94,7 +100,7 @@ public class DomainDAO {
     public Optional<Domain> retrieveDomain(int id) {
         try {
             return Optional
-                .of(jdbcTemplate.queryForObject("SELECT * FROM domain WHERE id = ?;", new DomainRowMapper(), id));
+                .of(jdbcTemplate.queryForObject(SQL_SELECT_DOMAIN_BY_ID, new DomainRowMapper(), id));
         } catch (DataAccessException e) {
             return Optional.empty();
         }
@@ -107,9 +113,9 @@ public class DomainDAO {
      */
     public Optional<Domain> retrieveDomainWithUser(int id) {
         try {
-            Domain d = jdbcTemplate.queryForObject("SELECT * FROM domain WHERE id = ?;", new DomainRowMapper(), id);
+            Domain d = jdbcTemplate.queryForObject(SQL_SELECT_DOMAIN_BY_ID, new DomainRowMapper(), id);
             List<DomainUser> list = jdbcTemplate.query(
-                "SELECT u.*, du.* FROM user u JOIN domainuser du ON u.id = du.user_id WHERE du.domain_id = ?;",
+                SQL_SELECT_DOMAIN_WITH_USER_BY_ID,
                 new DomainUserRowMapper(), d.getId());
             d.getDomainUserList().addAll(list);
             return Optional.of(d);
@@ -159,7 +165,7 @@ public class DomainDAO {
 
         for (Domain d : domainList) {
             List<DomainUser> list = jdbcTemplate.query(
-                "SELECT u.*, du.* FROM user u JOIN domainuser du ON u.id = du.user_id WHERE du.domain_id = ?;",
+                SQL_SELECT_DOMAIN_WITH_USER_BY_ID,
                 new DomainUserRowMapper(), d.getId());
             d.getDomainUserList().addAll(list);
         }

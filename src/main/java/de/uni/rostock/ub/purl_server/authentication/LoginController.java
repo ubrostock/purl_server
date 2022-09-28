@@ -52,6 +52,8 @@ import org.springframework.web.util.UriComponents;
 
 @Controller
 public class LoginController {
+    private static final String MODEL_ATTRIBUTE_ERROR_MESSAGE = "errorMessage";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
     private static final String SQL_UPDATE_RESET_TOKEN = "UPDATE user SET password_reset_token = ? WHERE login = ?;";
@@ -83,14 +85,14 @@ public class LoginController {
             AuthenticationException ex = (AuthenticationException) session
                 .getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
             if (ex != null) {
-                StringBuffer sbErrorMessage = new StringBuffer(ex.getMessage());
+                StringBuilder sbErrorMessage = new StringBuilder(ex.getMessage());
                 LOGGER.error(ex.getMessage());
                 Throwable t = ex;
                 while (t.getCause() != null) {
                     t = t.getCause();
                     sbErrorMessage.append("<br />").append(t.getMessage());
                 }
-                mav.addObject("errorMessage", sbErrorMessage.toString());
+                mav.addObject(MODEL_ATTRIBUTE_ERROR_MESSAGE, sbErrorMessage.toString());
             }
         }
         return mav;
@@ -135,7 +137,7 @@ public class LoginController {
             return new ModelAndView("login/email_success");
         } else {
             ModelAndView mav = new ModelAndView("login/password_request");
-            mav.addObject("errorMessage",
+            mav.addObject(MODEL_ATTRIBUTE_ERROR_MESSAGE,
                 context.getMessage("purl_server.login.error_message.unknown_user", null, Locale.getDefault()));
             return mav;
         }
@@ -146,16 +148,16 @@ public class LoginController {
             token);
         if (x == 1 && token.contains("_")) {
             String timeString = token.substring(0, token.indexOf("_"));
-            long time = Long.valueOf(timeString);
+            long time = Long.parseLong(timeString);
             if (time < System.currentTimeMillis()) {
-                mav.addObject("errorMessage",
+                mav.addObject(MODEL_ATTRIBUTE_ERROR_MESSAGE,
                     context.getMessage("purl_server.password.error_message.invalid_time", null, Locale.getDefault()));
                 return false;
             } else {
                 return true;
             }
         } else {
-            mav.addObject("errorMessage",
+            mav.addObject(MODEL_ATTRIBUTE_ERROR_MESSAGE,
                 context.getMessage("purl_server.password.error_message.invalid_token", null, Locale.getDefault()));
             return false;
         }

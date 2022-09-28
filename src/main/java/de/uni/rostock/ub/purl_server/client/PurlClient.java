@@ -52,6 +52,13 @@ import org.slf4j.LoggerFactory;
 public class PurlClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(PurlClient.class);
 
+    private static final String ERROR_MESSAGE_LOGIN = "Please login into PURL client!";
+
+    private static final List<String> ALLOWED_SERIALIZED_CLASSES = Arrays.asList(
+        LinkedHashMap.class.getName(), HashMap.class.getName(),
+        ArrayList.class.getName(), Map.Entry[].class.getName(), Object[].class.getName(),
+        String.class.getName(), Integer.class.getName(), Number.class.getName(), Boolean.class.getName());
+    
     public enum PURLType {
         REDIRECT_302, PARTIAL_302, GONE_410;
     }
@@ -60,7 +67,7 @@ public class PurlClient {
 
     private Optional<HttpClient> httpClient = Optional.empty();
 
-    private StringBuffer messageBuffer = new StringBuffer();
+    private StringBuilder messageBuffer = new StringBuilder();
 
     private Integer lastStatus = null;
 
@@ -109,9 +116,8 @@ public class PurlClient {
                 Thread.currentThread().interrupt();
             }
         } else {
-            String errorMmessage = "Please login into PURL client!";
-            LOGGER.error(errorMmessage);
-            messageBuffer.append("\n" + errorMmessage);
+            LOGGER.error(ERROR_MESSAGE_LOGIN);
+            messageBuffer.append("\n" + ERROR_MESSAGE_LOGIN);
         }
         return false;
     }
@@ -142,16 +148,15 @@ public class PurlClient {
                 Thread.currentThread().interrupt();
             }
         } else {
-            String errorMmessage = "Please login into PURL client!";
-            LOGGER.error(errorMmessage);
-            messageBuffer.append("\n" + errorMmessage);
+            LOGGER.error(ERROR_MESSAGE_LOGIN);
+            messageBuffer.append("\n" + ERROR_MESSAGE_LOGIN);
         }
         return false;
     }
 
     public String retrievePURLInfoAsJsonString(String path) {
         if (httpClient.isPresent()) {
-            messageBuffer = new StringBuffer();
+            messageBuffer = new StringBuilder();
             HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(apiURL + path))
@@ -177,9 +182,8 @@ public class PurlClient {
             }
             return null;
         } else {
-            String errorMmessage = "Please login into PURL client!";
-            LOGGER.error(errorMmessage);
-            messageBuffer.append("\n" + errorMmessage);
+            LOGGER.error(ERROR_MESSAGE_LOGIN);
+            messageBuffer.append("\n" + ERROR_MESSAGE_LOGIN);
         }
         return null;
     }
@@ -194,9 +198,9 @@ public class PurlClient {
      * @param purl
      * @return
      */
-    public LinkedHashMap<String, Object> retrievePURLInfoAsMap(String path) {
+    public Map<String, Object> retrievePURLInfoAsMap(String path) {
         if (httpClient.isPresent()) {
-            messageBuffer = new StringBuffer();
+            messageBuffer = new StringBuilder();
             HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .header("Accept", "application/x-java-serialized-object")
@@ -208,17 +212,7 @@ public class PurlClient {
                     HttpResponse.BodyHandlers.ofInputStream());
                 lastStatus = response.statusCode();
                 if (response.statusCode() == HttpServletResponse.SC_OK) {
-                    try (ObjectInputStream objectInputStream = new ObjectInputStream(response.body())) {
-                        objectInputStream.setObjectInputFilter(PurlClient::serializedHashMapFilter);
-                        @SuppressWarnings("unchecked")
-                        LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) objectInputStream
-                            .readObject();
-                        return map;
-                    } catch (ClassNotFoundException e) {
-                        String message = "PURL " + path + " not found: " + e.getMessage();
-                        LOGGER.info(message);
-                        messageBuffer.append(message);
-                    }
+                    return retrieveMapFromResponse(path, response);
                 }
                 if (response.statusCode() == HttpServletResponse.SC_NOT_FOUND) {
                     String message = "PURL " + path + " not found!";
@@ -234,9 +228,23 @@ public class PurlClient {
             }
             return null;
         } else {
-            String errorMmessage = "Please login into PURL client!";
-            LOGGER.error(errorMmessage);
-            messageBuffer.append("\n" + errorMmessage);
+            LOGGER.error(ERROR_MESSAGE_LOGIN);
+            messageBuffer.append("\n" + ERROR_MESSAGE_LOGIN);
+        }
+        return null;
+    }
+
+    private LinkedHashMap<String, Object> retrieveMapFromResponse(String path, HttpResponse<InputStream> response) throws IOException {
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(response.body())) {
+            objectInputStream.setObjectInputFilter(PurlClient::serializedHashMapFilter);
+            @SuppressWarnings("unchecked")
+            LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) objectInputStream
+                .readObject();
+            return map;
+        } catch (ClassNotFoundException e) {
+            String message = "PURL " + path + " not found: " + e.getMessage();
+            LOGGER.info(message);
+            messageBuffer.append(message);
         }
         return null;
     }
@@ -256,7 +264,7 @@ public class PurlClient {
      */
     public String callMessages() {
         String result = messageBuffer.toString();
-        messageBuffer = new StringBuffer();
+        messageBuffer = new StringBuilder();
         return result;
     }
 
@@ -300,29 +308,21 @@ public class PurlClient {
         return ObjectInputFilter.Status.UNDECIDED;
     }
 
-    private static List<String> ALLOWED_SERIALIZED_CLASSES = Arrays.asList(
-        LinkedHashMap.class.getName(), HashMap.class.getName(),
-        ArrayList.class.getName(), Map.Entry[].class.getName(), Object[].class.getName(),
-        String.class.getName(), Integer.class.getName(), Number.class.getName(), Boolean.class.getName());
-
     public static PURL buildPURL(Map<String, Object> data) {
         if (data == null) {
             return null;
         }
-        PURL p = new PURL();
-        p.setPath(String.valueOf(Objects.requireNonNull(data.get("path"), "path cannot be null")));
-        p.setTarget(String.valueOf(Objects.requireNonNull(data.get("target"), "target cannot be null")));
-        p.setType(
-            PURLType.valueOf(String.valueOf(Objects.requireNonNull(data.get("type"), "type cannot be null"))));
-        return p;
+        return new PURL(
+        String.valueOf(Objects.requireNonNull(data.get("path"), "path cannot be null")),
+        String.valueOf(Objects.requireNonNull(data.get("target"), "target cannot be null")),
+        PURLType.valueOf(String.valueOf(Objects.requireNonNull(data.get("type"), "type cannot be null"))));
     }
 
     public static PURL buildPURL(String path, String target, PURLType type) {
-        PURL p = new PURL(
+        return new PURL(
             String.valueOf(Objects.requireNonNull(path, "path cannot be null")),
             String.valueOf(Objects.requireNonNull(target, "target cannot be null")),
             PURLType.valueOf(String.valueOf(Objects.requireNonNull(type, "type cannot be null"))));
-        return p;
     }
 
     public static String outputPURLPayloadAsJSON(PURL p) {
@@ -331,10 +331,6 @@ public class PurlClient {
 
     public static void main(String[] args) {
         PurlClient app = new PurlClient("http://localhost:8080").login("test", "test123");
-        //      app.createPURL("/test/bcd", "http://google.de/", TYPE_PARTIAL_302);
-        //      app.createPURL("/nureintest/testneu12345", "http://google.de/", TYPE_PARTIAL_302);
-        //      app.updatePURL("/nureintest/testneu12345", "http://test1", TYPE_PARTIAL_302);
-
         boolean result = app.createPURL(buildPURL("/test/google", "http://google.de/", PURLType.REDIRECT_302));
         if (!result) {
             System.out.println("FEHLER!!!");
@@ -349,7 +345,7 @@ public class PurlClient {
         System.out.println("Message: " + app.callMessages());
         System.out.println("HTTP Status: " + app.callStatusCode());
 
-        LinkedHashMap<String, Object> data = app.retrievePURLInfoAsMap("/test/google");
+        Map<String, Object> data = app.retrievePURLInfoAsMap("/test/google");
         System.out.println(data.keySet());
         System.out.println("REDIRECT_302".equals(data.get("type")));
 
@@ -442,9 +438,7 @@ public class PurlClient {
             if (target == null) {
                 if (other.target != null)
                     return false;
-            } else if (!target.equals(other.target))
-                return false;
-            if (type != other.type)
+            } else if (!target.equals(other.target) || type != other.type)
                 return false;
             return true;
         }

@@ -18,33 +18,20 @@
       <div class="card-body">
         <div class="row">
           <div class="col">
-            <table class="table table-sm">
-              <colgroup>
-                <col style="width: 12em" />
-              </colgroup>
-              <tr>
-                <th class="h3 border-top-0" th:text="#{purl_server.info.purl.domain}"></th>
-                <td class="border-top-0">
-                  <h3 th:text="${domain.path}"></h3>
-                </td>
-              </tr>
-            </table>
+            <div class="p-1 float-left" style="width:12em">
+              <h3 th:text="#{purl_server.info.purl.domain}"></h3>
+            </div>
+            <div class="p-1 float-left">
+              <h3 th:text="${domain.path}"></h3>
+            </div>
             <div th:replace="fragments/info :: infoDomainTable (${domain})"></div>
-            <table class="table table-sm table-borderless">
-            <colgroup>
-                <col style="width: 12em" />
-              </colgroup>
-              <tr>
-                <th></th>
-                <td>
-                  <a class="btn btn-sm btn-outline-secondary float-right" th:href="@{?format=json}">🗎 JSON</a>
-                  <form th:action="@{/admin/manager/purl/search}" method="post" onsubmit="storeFormData()">
-                    <input type="hidden" class="form-control" th:value="${domain.path + '/%'}" name="path" />
-                    <button type="submit" class="btn btn-sm btn-secondary" th:text="#{purl_server.info.domain.purl_search}">Zugehörige PURLs suchen</button>
-                  </form>
-                </td>
-              </tr>
-            </table>
+            <div class="p-1" style="margin-left:12em;">
+              <a class="btn btn-sm btn-outline-secondary float-right" th:href="@{?format=json}">🗎 JSON</a>
+              <form th:action="@{/admin/manager/purl/search}" method="post" onsubmit="storeFormData()">
+                <input type="hidden" class="form-control" th:value="${domain.path + '/%'}" name="path" />
+                <button type="submit" class="btn btn-sm btn-secondary" th:text="#{purl_server.info.domain.purl_search}">Zugehörige PURLs suchen</button>
+              </form>
+            </div>
             <script type="text/javascript">
               function storeFormData() {
           	    sessionStorage.setItem('purl_search_path', document.getElementsByName('path')[0].value);

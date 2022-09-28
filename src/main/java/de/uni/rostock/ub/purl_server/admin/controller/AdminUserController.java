@@ -29,7 +29,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -86,7 +88,7 @@ public class AdminUserController {
      * @return the user create page
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(path = "/admin/manager/user/create", method = RequestMethod.GET)
+    @GetMapping(path = "/admin/manager/user/create")
     public String showUserCreate(Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "create");
         model.addAttribute(MODEL_ATTRIBUTE_USER, new User());
@@ -101,7 +103,7 @@ public class AdminUserController {
      * @return the user create page
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(path = "/admin/manager/user/create", method = RequestMethod.POST)
+    @PostMapping(path = "/admin/manager/user/create")
     public String createUser(@ModelAttribute User user, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "create");
         if (userDAO.retrieveUser(user.getLogin()).isPresent()) {
@@ -131,7 +133,7 @@ public class AdminUserController {
      * @return the user modify page
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(path = "/admin/manager/user/modify", method = RequestMethod.GET)
+    @GetMapping(path = "/admin/manager/user/modify")
     public String showUserModify(@RequestParam("id") int id, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "modify");
         model.addAttribute(MODEL_ATTRIBUTE_USER, userDAO.retrieveUser(id).get());
@@ -146,7 +148,7 @@ public class AdminUserController {
      * @return the user modify page
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(path = "/admin/manager/user/modify", method = RequestMethod.POST)
+    @PostMapping(path = "/admin/manager/user/modify")
     public String modifyUser(@ModelAttribute User user, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "modify");
         User loginUser = purlAccess.retrieveCurrentUser();
@@ -168,7 +170,7 @@ public class AdminUserController {
      * @return the user search page
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(path = "/admin/manager/user/search", method = RequestMethod.GET)
+    @GetMapping(path = "/admin/manager/user/search")
     public String showUserSearch(Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_SEARCH_FULL_NAME, "");
         model.addAttribute(MODEL_ATTRIBUTE_SEARCH_AFFILIATION, "");
@@ -190,7 +192,7 @@ public class AdminUserController {
      * @return the user search page with the model addtribute "users"
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(path = "/admin/manager/user/search", method = RequestMethod.POST)
+    @PostMapping(path = "/admin/manager/user/search")
     protected String userSearch(
         @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_FULL_NAME, required = false, defaultValue = "") String fullName,
         @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_AFFILIATION, required = false, defaultValue = "") String affiliation,
@@ -221,7 +223,7 @@ public class AdminUserController {
      * @return the user delete page
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(path = "/admin/manager/user/delete", method = RequestMethod.GET)
+    @GetMapping(path = "/admin/manager/user/delete")
     public String showUserDelete(@RequestParam("id") int id, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_USER, userDAO.retrieveUser(id).get());
         return "userdelete";
@@ -235,7 +237,7 @@ public class AdminUserController {
      * @return the user delete page
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(path = "/admin/manager/user/delete", method = RequestMethod.POST)
+    @PostMapping(path = "/admin/manager/user/delete")
     public String deleteUser(@ModelAttribute User user, HttpServletRequest request, Model model) {
         User loginUser = purlAccess.retrieveCurrentUser();
         userDAO.deleteUser(user, loginUser);

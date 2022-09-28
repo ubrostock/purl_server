@@ -32,9 +32,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import de.uni.rostock.ub.purl_server.common.PurlAccess;
@@ -97,7 +97,7 @@ public class AdminDomainController {
      * @return the domain create page
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(path = "/admin/manager/domain/create", method = RequestMethod.GET)
+    @GetMapping(path = "/admin/manager/domain/create")
     public String showDomainCreate(Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "create");
         model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, new Domain());
@@ -113,7 +113,7 @@ public class AdminDomainController {
      * @return the domain create page
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(path = "/admin/manager/domain/create", method = RequestMethod.POST, params = "submit")
+    @PostMapping(path = "/admin/manager/domain/create", params = "submit")
     public String createDomain(@ModelAttribute Domain domain, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "create");
         cleanUpDomain(domain);
@@ -138,7 +138,7 @@ public class AdminDomainController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(path = "/admin/manager/domain/create", method = RequestMethod.POST, params = "addUser")
+    @PostMapping(path = "/admin/manager/domain/create", params = "addUser")
     public String createDomainAddUser(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "create");
         model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domain);
@@ -156,7 +156,7 @@ public class AdminDomainController {
      * @return the domain modify page
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(path = "/admin/manager/domain/modify", method = RequestMethod.GET)
+    @GetMapping(path = "/admin/manager/domain/modify")
     public String showDomainModify(@RequestParam("id") int id, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "modify");
         model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domainDAO.retrieveDomainWithUser(id).get());
@@ -172,7 +172,7 @@ public class AdminDomainController {
      * @return the domain modify page
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(path = "/admin/manager/domain/modify", method = RequestMethod.POST, params = "submit")
+    @PostMapping(path = "/admin/manager/domain/modify", params = "submit")
     public String modifyDomain(@ModelAttribute Domain domain, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "modify");
         cleanUpDomain(domain);
@@ -191,7 +191,7 @@ public class AdminDomainController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @RequestMapping(path = "/admin/manager/domain/modify", method = RequestMethod.POST, params = "addUser")
+    @PostMapping(path = "/admin/manager/domain/modify", params = "addUser")
     public String modifyDomainAddUser(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "modify");
         model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domain);
@@ -206,7 +206,7 @@ public class AdminDomainController {
      * 
      * @return the domain search page
      */
-    @RequestMapping(path = "/admin/manager/domain/search", method = RequestMethod.GET)
+    @GetMapping(path = "/admin/manager/domain/search")
     public String showDomainSearch(Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_SEARCH_PATH, "");
         model.addAttribute(MODEL_ATTRIBUTE_SEARCH_NAME, "");
@@ -225,7 +225,7 @@ public class AdminDomainController {
      * @param model
      * @return the domain search page with the model addtribute "domains"
      */
-    @RequestMapping(path = "/admin/manager/domain/search", method = RequestMethod.POST)
+    @PostMapping(path = "/admin/manager/domain/search")
     public String domainSearch(@RequestParam(value = MODEL_ATTRIBUTE_SEARCH_PATH, required = false, defaultValue = "") String path,
         @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_NAME, required = false, defaultValue = "") String name,
         @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_USER, required = false, defaultValue = "") String login,
@@ -250,7 +250,7 @@ public class AdminDomainController {
      * 
      * @return the domain delete page
      */
-    @RequestMapping(path = "/admin/manager/domain/delete", method = RequestMethod.GET)
+    @GetMapping(path = "/admin/manager/domain/delete")
     public String showDomainDelete(@RequestParam("id") int id, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domainDAO.retrieveDomain(id).get());
         return "domaindelete";
@@ -263,7 +263,7 @@ public class AdminDomainController {
      * @param model
      * @return the domain delete page
      */
-    @RequestMapping(path = "/admin/manager/domain/delete", method = RequestMethod.POST)
+    @PostMapping(path = "/admin/manager/domain/delete")
     public String deleteDomain(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
         User u = purlAccess.retrieveCurrentUser();
         domainDAO.retrieveDomain(domain.getPath()).ifPresent(d -> {

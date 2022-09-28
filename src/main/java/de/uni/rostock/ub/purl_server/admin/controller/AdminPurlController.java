@@ -29,7 +29,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -86,7 +88,7 @@ public class AdminPurlController {
      * @param model
      * @return the purl create page
      */
-    @RequestMapping(path = "/admin/manager/purl/create", method = RequestMethod.GET)
+    @GetMapping(path = "/admin/manager/purl/create")
     public String showPurlCreate(Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "create");
         model.addAttribute(MODEL_ATTRIBUTE_PURL, new Purl());
@@ -100,7 +102,7 @@ public class AdminPurlController {
      * @param model
      * @return the purl create page
      */
-    @RequestMapping(path = "/admin/manager/purl/create", method = RequestMethod.POST)
+    @PostMapping(path = "/admin/manager/purl/create")
     public String createPurl(@ModelAttribute Purl purl, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "create");
         User u = purlAccess.retrieveCurrentUser();
@@ -129,7 +131,7 @@ public class AdminPurlController {
      * @param model
      * @return the purl modify page
      */
-    @RequestMapping(path = "/admin/manager/purl/modify", method = RequestMethod.GET)
+    @GetMapping(path = "/admin/manager/purl/modify")
     public String showPurlModify(@RequestParam("id") int id, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "modify");
         model.addAttribute(MODEL_ATTRIBUTE_PURL, purlDAO.retrievePurl(id).get());
@@ -143,7 +145,7 @@ public class AdminPurlController {
      * @param model
      * @return the purl modify page
      */
-    @RequestMapping(path = "/admin/manager/purl/modify", method = RequestMethod.POST)
+    @PostMapping(path = "/admin/manager/purl/modify")
     public String modifyPurl(@ModelAttribute Purl purl, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "modify");
         User u = purlAccess.retrieveCurrentUser();
@@ -164,7 +166,7 @@ public class AdminPurlController {
      * 
      * @return the purl search page
      */
-    @RequestMapping(path = "/admin/manager/purl/search", method = RequestMethod.GET)
+    @GetMapping(path = "/admin/manager/purl/search")
     public String showPurlSearch(Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_PATH, "");
         model.addAttribute(MODEL_ATTRIBUTE_TARGET_URL, "");
@@ -181,7 +183,7 @@ public class AdminPurlController {
      * @param model
      * @return the purl search page with the model addtribute "purls"
      */
-    @RequestMapping(path = "/admin/manager/purl/search", method = RequestMethod.POST)
+    @PostMapping(path = "/admin/manager/purl/search")
     protected String purlSearch(@RequestParam(value = MODEL_ATTRIBUTE_PATH, required = false, defaultValue = "") String path,
         @RequestParam(value = MODEL_ATTRIBUTE_TARGET_URL, required = false, defaultValue = "") String url,
         @RequestParam(value = MODEL_ATTRIBUTE_TOMBSTONED, required = false, defaultValue = "false") Boolean isTombstoned,
@@ -206,7 +208,7 @@ public class AdminPurlController {
      * @param model
      * @return the purl delete page
     **/
-    @RequestMapping(path = "/admin/manager/purl/delete", method = RequestMethod.GET)
+    @GetMapping(path = "/admin/manager/purl/delete")
     public String showPurlDelete(@RequestParam("id") int id, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_PURL, purlDAO.retrievePurl(id).get());
         return "purldelete";
@@ -219,7 +221,7 @@ public class AdminPurlController {
      * @param model
      * @return the purl delete page
      */
-    @RequestMapping(path = "/admin/manager/purl/delete", method = RequestMethod.POST)
+    @PostMapping(path = "/admin/manager/purl/delete")
     public String deletePurl(@ModelAttribute Purl purl, HttpServletRequest request, Model model) {
         User u = purlAccess.retrieveCurrentUser();
         Purl deletePurl = purlDAO.retrievePurl(purl.getPath()).get();

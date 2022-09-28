@@ -19,8 +19,7 @@
 package de.uni.rostock.ub.purl_server.admin.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class AdminIndexController {
@@ -30,12 +29,12 @@ public class AdminIndexController {
      * 
      * @return the index page
      */
-    @RequestMapping(path = "/admin/manager", method = RequestMethod.GET)
+    @GetMapping(path = "/admin/manager")
     public String showIndex() {
         return "index";
     }
 
-    @RequestMapping(path = "/", method = RequestMethod.GET)
+    @GetMapping(path = "/")
     public String showStart() {
         return "index";
     }
@@ -45,7 +44,7 @@ public class AdminIndexController {
      * 
      * @return the help page
      */
-    @RequestMapping(path = "/admin/manager/help", method = RequestMethod.GET)
+    @GetMapping(path = "/admin/manager/help")
     public String showHelp() {
         return "help";
     }

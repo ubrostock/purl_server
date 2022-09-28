@@ -31,9 +31,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.uni.rostock.ub.purl_server.dao.DomainDAO;
@@ -61,8 +60,7 @@ public class APIDomainController {
     /**
      * Retrieve the domain
      */
-    @RequestMapping(path = "/api/domain/{path}",
-        method = RequestMethod.GET,
+    @GetMapping(path = "/api/domain/{path}",
         produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses({
         @ApiResponse(responseCode = "200",

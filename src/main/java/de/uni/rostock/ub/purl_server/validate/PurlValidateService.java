@@ -150,7 +150,7 @@ public class PurlValidateService {
                 errorList
                     .add(messages.getMessage("purl_server.error.validate.purl.path.start", null, locale));
             }
-            if (!purl.getPath().matches("\\/[a-zA-Z0-9_\\-]+(\\/[a-zA-Z0-9_\\-]*)*")) {
+            if (!purl.getPath().matches("[a-zA-Z0-9_\\-\\/]*")) {
                 errorList
                     .add(messages.getMessage("purl_server.error.validate.purl.path.match", null, locale));
             }

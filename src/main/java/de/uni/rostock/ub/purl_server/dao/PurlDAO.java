@@ -46,6 +46,8 @@ import de.uni.rostock.ub.purl_server.model.User;
 
 @Service
 public class PurlDAO {
+    private static final String SQL_INSERT_PURLHISTORY = "INSERT INTO purlhistory (purl_id, user_id, type, target, modified, status) VALUES(?,?,?,?,NOW(3),? );";
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -105,20 +107,12 @@ public class PurlDAO {
      * @return a list of founded purls
      */
     public List<Purl> searchPurls(String path, String target, boolean isTombstoned, int limit) {
-        String paramPath = "%";
-        if (StringUtils.hasText(path)) {
-            paramPath = "%" + path + "%";
-        }
-        String paramTarget = "%";
-        if (StringUtils.hasText(target)) {
-            paramTarget = "%" + target + "%";
-        }
-        int paramStatus = 3;
-        if (isTombstoned) {
-            paramStatus = 10;
-        }
+        String paramPath = StringUtils.hasText(path) ? "%" + path + "%" : "%";
+        String paramTarget = StringUtils.hasText(target) ? "%" + target + "%" : "%";
+        String paramStatus = isTombstoned ? "CREATED,MODIFIED,DELETED" : "CREATED,MODIFIED";
+        
         List<Purl> purlList = jdbcTemplate.query(
-            "SELECT * FROM purl WHERE (path LIKE ?) AND (status < ?) AND (target LIKE ?) LIMIT ?;", new PurlRowMapper(),
+            "SELECT * FROM purl WHERE (path LIKE ?) AND INSTR(?, d.status) > 0 AND (target LIKE ?) LIMIT ?;", new PurlRowMapper(),
             paramPath, paramStatus, paramTarget, limit);
         for (Purl p : purlList) {
             domainDAO.retrieveDomain(p.getDomainId()).ifPresent(d -> p.setDomain(d));
@@ -172,7 +166,7 @@ public class PurlDAO {
             }
         }, purlId);
         jdbcTemplate.update(
-            "INSERT INTO purlhistory (purl_id, user_id, type, target, modified, status) VALUES(?,?,?,?,NOW(3),? );",
+            SQL_INSERT_PURLHISTORY,
             purlId.getKey().intValue(), u.getId(), p.getType().name(),
             p.getTarget(), Status.CREATED.name());
 
@@ -191,7 +185,7 @@ public class PurlDAO {
             p.getPath(), p.getTarget(),
             Status.MODIFIED.name(), p.getType().name(), p.getId());
         jdbcTemplate.update(
-            "INSERT INTO purlhistory (purl_id, user_id, type, target, modified, status) VALUES(?,?,?,?,NOW(3),? );",
+            SQL_INSERT_PURLHISTORY,
             p.getId(), u.getId(), p.getType().name(),
             p.getTarget(), Status.MODIFIED.name());
         return retrievePurl(p.getPath());
@@ -207,7 +201,7 @@ public class PurlDAO {
             Status.DELETED.name(), Type.GONE_410.name(), p.getPath());
         p.setType(Type.GONE_410);
         jdbcTemplate.update(
-            "INSERT INTO purlhistory (purl_id, user_id, type, target, modified, status) VALUES(?,?,?,?,NOW(3),? );",
+            SQL_INSERT_PURLHISTORY,
             p.getId(), u.getId(), p.getType().name(), p.getTarget(),
             Status.DELETED.name());
     }

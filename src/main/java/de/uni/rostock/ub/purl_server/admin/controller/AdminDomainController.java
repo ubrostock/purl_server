@@ -47,41 +47,45 @@ import de.uni.rostock.ub.purl_server.validate.DomainValidateService;
 
 @Controller
 public class AdminDomainController {
-    private static final String MODEL_VIEW_DOMAINMODIFY = "domainmodify";
-
-    private static final String MODEL_VIEW_DOMAINCREATE = "domaincreate";
-
-    private static final String MODEL_VALUE_FORM_MODIFY = "modify";
-
-    private static final String MODEL_VALUE_FORM_CREATE = "create";
+    private static final int LIMIT = 50;
 
     private static final String MODEL_ATTRIBUTE_CREATED = "created";
 
-    private static final String MODEL_ATTRIBUTE_SUBMITTED = "submitted";
+    private static final String MODEL_ATTRIBUTE_DELETED = "deleted";
 
-    private static final String MODEL_ATTRIBUTE_MORE_RESULTS = "moreResults";
+    private static final String MODEL_ATTRIBUTE_DOMAIN = "domain";
+
+    private static final String MODEL_ATTRIBUTE_DOMAINS = "domains";
 
     private static final String MODEL_ATTRIBUTE_ERRORS = "errors";
 
-    private static final String MODEL_ATTRIBUTE_DELETED = "deleted";
+    private static final String MODEL_ATTRIBUTE_FORM = "form";
 
-    private static final String MODEL_ATTRIBUTE_SEARCH_TOMBSTONED_DOMAIN = "searchTombstonedDomain";
-
-    private static final String MODEL_ATTRIBUTE_SEARCH_USER = "searchUser";
+    private static final String MODEL_ATTRIBUTE_MORE_RESULTS = "moreResults";
 
     private static final String MODEL_ATTRIBUTE_SEARCH_NAME = "searchName";
 
     private static final String MODEL_ATTRIBUTE_SEARCH_PATH = "searchPath";
 
-    private static final String MODEL_ATTRIBUTE_DOMAINS = "domains";
+    private static final String MODEL_ATTRIBUTE_SEARCH_TOMBSTONED_DOMAIN = "searchTombstonedDomain";
+
+    private static final String MODEL_ATTRIBUTE_SEARCH_USER = "searchUser";
+
+    private static final String MODEL_ATTRIBUTE_SUBMITTED = "submitted";
 
     private static final String MODEL_ATTRIBUTE_USERS_LOGIN = "usersLogin";
 
-    private static final String MODEL_ATTRIBUTE_DOMAIN = "domain";
+    private static final String MODEL_VALUE_FORM_CREATE = "create";
 
-    private static final String MODEL_ATTRIBUTE_FORM = "form";
+    private static final String MODEL_VALUE_FORM_MODIFY = "modify";
 
-    private static final int LIMIT = 50;
+    private static final String MODEL_VIEW_DOMAINCREATE = "domaincreate";
+
+    private static final String MODEL_VIEW_DOMAINDELETE = "domaindelete";
+
+    private static final String MODEL_VIEW_DOMAINMODIFY = "domainmodify";
+
+    private static final String MODEL_VIEW_DOMAINSEARCH = "domainsearch";
 
     @Autowired
     PurlAccess purlAccess;
@@ -220,7 +224,7 @@ public class AdminDomainController {
         model.addAttribute(MODEL_ATTRIBUTE_SEARCH_NAME, "");
         model.addAttribute(MODEL_ATTRIBUTE_SEARCH_USER, "");
         model.addAttribute(MODEL_ATTRIBUTE_SEARCH_TOMBSTONED_DOMAIN, false);
-        return "domainsearch";
+        return MODEL_VIEW_DOMAINSEARCH;
     }
 
     /**
@@ -250,7 +254,7 @@ public class AdminDomainController {
         model.addAttribute(MODEL_ATTRIBUTE_SEARCH_NAME, name);
         model.addAttribute(MODEL_ATTRIBUTE_SEARCH_USER, login);
         model.addAttribute(MODEL_ATTRIBUTE_SEARCH_TOMBSTONED_DOMAIN, isTombstoned);
-        return "domainsearch";
+        return MODEL_VIEW_DOMAINSEARCH;
     }
 
     /**
@@ -261,7 +265,7 @@ public class AdminDomainController {
     @GetMapping(path = "/admin/manager/domain/delete")
     public String showDomainDelete(@RequestParam("id") int id, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domainDAO.retrieveDomain(id).get());
-        return "domaindelete";
+        return MODEL_VIEW_DOMAINDELETE;
     }
 
     /**
@@ -285,7 +289,7 @@ public class AdminDomainController {
                 model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
             }
         });
-        return "domaindelete";
+        return MODEL_VIEW_DOMAINDELETE;
     }
 
     /**

@@ -78,8 +78,7 @@ public class LoginController {
 
     @GetMapping(value = "/admin/login")
     public ModelAndView login() {
-        ModelAndView mav = new ModelAndView("login/login");
-        return mav;
+        return new ModelAndView("login/login");
     }
     
     @PostMapping(value = "/admin/login")

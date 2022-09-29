@@ -5,8 +5,7 @@
 </head>
 <body>
   <div th:fragment="infoDomainTable (domain)">
-    <table class="table table-sm mt-3">
-      <caption>Domain information</caption>
+    <table class="table table-sm mt-3" aria-label="Domain information">
       <colgroup>
         <col style="width: 12em" />
       </colgroup>
@@ -54,8 +53,7 @@
   </div>
   
   <div th:fragment="infoPurlTable (purl)">
-    <table class="table table-sm">
-      <caption class="d-none">PURL information</caption>
+    <table class="table table-sm" aria-label="PURL information">
       <colgroup>
         <col style="width: 12em" />
       </colgroup>
@@ -100,8 +98,7 @@
           class="btn btn-sm btn-outline-secondary px-1 py-0 ml-3" data-toggle="collapse"
           data-target="#collapsePurlHistory" aria-expanded="true" aria-controlls="collapsePurlHistory">▼</a>
           <div id="collapsePurlHistory" class="collapse" data-parent="#accordionPurlHistory">
-            <table class="table table-sm mb-0" th:each="entry, iterStat : ${purl.purlHistory}">
-              <caption class="d-none">PURL history information</caption>
+            <table class="table table-sm mb-0" aria-label="PURL history information" th:each="entry, iterStat : ${purl.purlHistory}">
               <colgroup>
                 <col style="width: 3em" />
               </colgroup>
@@ -110,8 +107,7 @@
                   <div class="font-weight-bold pt-1" th:text="${iterStat.index}"></div>
                 </th>
                 <td class="pr-0" th:classappend="${iterStat.index == 1} ? 'border-top-0'">
-                  <table class="table table-sm mb-0">
-                    <caption class="d-none">PURL history entry information</caption>
+                  <table class="table table-sm mb-0" aria-label="PURL history entry information">
                     <colgroup>
                       <col style="width: 9em" />
                     </colgroup>

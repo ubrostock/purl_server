@@ -83,8 +83,7 @@
         <p class="alert alert-info" th:if="${purls != null && #lists.size(purls) == 0}"
           th:text="#{purl_server.common.search.result.empty}"></p>
         <p class="alert alert-info" th:if="${moreResults}" th:text="#{purl_server.common.search.result.more}"></p>
-        <table class="table table-striped table-sm mt-3">
-          <caption class="d-none">PURL search results</caption>
+        <table class="table table-striped table-sm mt-3" aria-label="PURL search results">
           <tr>
             <th th:text="#{purl_server.purl.search.tabel.name}">name</th>
             <th th:text="#{purl_server.purl.search.tabel.type}">type</th>

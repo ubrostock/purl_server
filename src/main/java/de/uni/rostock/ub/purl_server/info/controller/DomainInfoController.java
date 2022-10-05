@@ -29,6 +29,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -53,17 +54,16 @@ public class DomainInfoController {
     @Autowired
     private MessageSource messages;
 
-    @GetMapping(path = "/info/domain/**",
+    @GetMapping(path = "/info/domain/{path}",
         produces = "!"
             + MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get the information from a domain")
-    public Object retrieveInfoDomain(HttpServletRequest request, @RequestParam(defaultValue = "") String format) {
+    public Object retrieveInfoDomain(@PathVariable("path") String path, @RequestParam(defaultValue = "") String format) {
         if ("json".equals(format)) {
-            return retrieveJSONDomain(request);
+            return retrieveJSONDomain(path);
         } else {
             ModelAndView mav = new ModelAndView("domaininfo");
-            String domainPath = retrieveDomainPathFromRequest(request);
-            Optional<Domain> op = domainDAO.retrieveDomainWithUser(domainPath);
+            Optional<Domain> op = domainDAO.retrieveDomainWithUser("/" + path);
             if (op.isPresent()) {
                 mav.addObject("domain", op.get());
             } else {
@@ -75,7 +75,7 @@ public class DomainInfoController {
         }
     }
 
-    @GetMapping(path = "/info/domain/**", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/info/domain/{path}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get the information from a domain as json")
     @ApiResponses({
         @ApiResponse(responseCode = "200",
@@ -85,17 +85,12 @@ public class DomainInfoController {
                      description = "Not Found! A domain with the given path does not exist.",
                      content = @Content(schema = @Schema(hidden = true)))
     })
-    public ResponseEntity<Domain> retrieveJSONDomain(HttpServletRequest request) {
-        String domainPath = retrieveDomainPathFromRequest(request);
-        Optional<Domain> op = domainDAO.retrieveDomainWithUser(domainPath);
+    public ResponseEntity<Domain> retrieveJSONDomain(@PathVariable("path") String path) {
+        Optional<Domain> op = domainDAO.retrieveDomainWithUser("/" + path);
         if (op.isEmpty()) {
             return new ResponseEntity<Domain>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<Domain>(op.get(), HttpStatus.OK);
-    }
-
-    private String retrieveDomainPathFromRequest(HttpServletRequest request) {
-        return request.getRequestURI().substring(request.getRequestURI().indexOf("/info/domain/") + 12);
     }
 
 }

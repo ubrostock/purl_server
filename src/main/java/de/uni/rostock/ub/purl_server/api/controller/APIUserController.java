@@ -25,15 +25,24 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
 import de.uni.rostock.ub.purl_server.dao.UserDAO;
 import de.uni.rostock.ub.purl_server.model.User;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Controller
+@Tag(name = "user", description = "User API")
+@RestController
 public class APIUserController {
     @Autowired
     UserDAO userDAO;
@@ -47,7 +56,20 @@ public class APIUserController {
      * @statuscode 404 if the user does not exist
      * @return the ResponseEntity object with the retrieved user
      */
-    @GetMapping("/api/user/{login}")
+    @GetMapping(path = "/api/user/{login}", 
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get the user by login")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200",
+            description = "OK",
+            headers = @Header(name = "Location",
+                description = "the URL of the resource.",
+                schema = @Schema(type = "string", format = "url")),
+            content = @Content(schema = @Schema(implementation = User.class))),
+        @ApiResponse(responseCode = "404",
+            description = "Not Found! The user does not exist.",
+            content = @Content(schema = @Schema(hidden = true)))
+    })
     public ResponseEntity<User> retrieveUser(@PathVariable("login") String login, HttpServletRequest request) {
         Optional<User> ou = userDAO.retrieveUser(login);
         if (ou.isEmpty()) {

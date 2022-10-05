@@ -35,7 +35,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,6 +42,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -60,11 +60,18 @@ import de.uni.rostock.ub.purl_server.model.PurlServerResponse;
 import de.uni.rostock.ub.purl_server.model.Status;
 import de.uni.rostock.ub.purl_server.model.User;
 import de.uni.rostock.ub.purl_server.validate.PurlValidateService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Retrieve and modify PURLs
  */
-@Controller
+@Tag(name = "purl", description = "PURL API")
+@RestController
 public class APIPurlController {
     @Autowired
     PurlAccess purlAccess;
@@ -85,14 +92,20 @@ public class APIPurlController {
     private MessageSource messages;
 
     /**
-     * Return a purl
-     * 
-     * @statuscode 200 if the purl was found
-     * @statuscode 404 if the purl does not exist
      * @return the ResponseEntity object with the retrieved purl include the purl
      *         history
      */
-    @GetMapping(path = "/api/purl/**", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/api/purl/**", 
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get the PURL with PURL history")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200",
+            description = "OK",
+            content = @Content(schema = @Schema(implementation = Purl.class))),
+        @ApiResponse(responseCode = "404",
+            description = "Not Found! The PURL does not exist.",
+            content = @Content(schema = @Schema(hidden = true)))
+    })
     public ResponseEntity<Purl> retrievePurl(HttpServletRequest request) {
         String purlPath = retrievePurlPathFromRequest(request);
         Optional<Purl> op = purlDAO.retrievePurlWithHistory(purlPath);
@@ -103,15 +116,24 @@ public class APIPurlController {
     }
 
     /**
-     * Return a purl
      * 
-     * @statuscode 200 if the purl was found
-     * @statuscode 404 if the purl does not exist
      * @return the ResponseEntity object with the retrieved purl include the purl
      *         history
      */
     @GetMapping(path = "/api/purl/**",
         produces = "application/x-java-serialized-object")
+    @Operation(summary = "Get the PURL as HashMap with the PURL history")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200",
+            description = "OK",
+            content = @Content(schema = @Schema(implementation = Purl.class))),
+        @ApiResponse(responseCode = "404",
+            description = "Not Found! The PURL does not exist.",
+            content = @Content(schema = @Schema(hidden = true))),
+        @ApiResponse(responseCode = "500",
+            description = "Internal server error.",
+            content = @Content(schema = @Schema(hidden = true)))
+    })
     public ResponseEntity<Resource> retrievePurlAsHashMap(HttpServletRequest request) {
         String purlPath = retrievePurlPathFromRequest(request);
         Optional<Purl> op = purlDAO.retrievePurlWithHistory(purlPath);
@@ -140,17 +162,27 @@ public class APIPurlController {
         }
     }
 
-    /**
-     * Create a purl
-     * 
+    /** 
      * @param inputPurl
-     * @statuscode 201 if the purl was created
-     * @statuscode 401 if the user is unauthorized
-     * @statuscode 404 if the purl does not exist
-     * @statuscode 409 if the purl already exists
      * @return the ResponseEntity object with the created purl
      */
-    @PostMapping(path = "/api/purl/**", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/api/purl/**", 
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Create a PURL")
+    @ApiResponses({
+        @ApiResponse(responseCode = "201",
+            description = "Created",
+            content = @Content(schema = @Schema(implementation = Purl.class))),
+        @ApiResponse(responseCode = "401",
+            description = "User unauthorized to create a PURL",
+            content = @Content(schema = @Schema(hidden = true))),
+        @ApiResponse(responseCode = "404",
+            description = "Not Found! The PURL does not exist",
+            content = @Content(schema = @Schema(hidden = true))),
+        @ApiResponse(responseCode = "409",
+            description = "PURL already exists",
+            content = @Content(schema = @Schema(hidden = true))),
+    })
     public ResponseEntity<? extends PurlServerResponse> createPurl(@RequestBody Purl inputPurl, Locale locale,
         HttpServletRequest request) {
 
@@ -188,15 +220,23 @@ public class APIPurlController {
     }
 
     /**
-     * Modify a purl
-     * 
      * @param inputPurl
-     * @statuscode 200 if the purl was modified
-     * @statuscode 401 if the user is unauthorized
-     * @statuscode 404 if the purl does not exist
      * @return the ResponseEntity object with the modified purl
      */
-    @PutMapping(path = "/api/purl/**")
+    @PutMapping(path = "/api/purl/**", 
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Modify a PURL")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200",
+            description = "Modified",
+            content = @Content(schema = @Schema(implementation = Purl.class))),
+        @ApiResponse(responseCode = "401",
+            description = "User unauthorized to modify a PURL!",
+            content = @Content(schema = @Schema(hidden = true))),
+        @ApiResponse(responseCode = "404",
+            description = "Not Found! The PURL does not exist.",
+            content = @Content(schema = @Schema(hidden = true)))
+    })
     public ResponseEntity<? extends PurlServerResponse> modifyPurl(@RequestBody Purl inputPurl, Locale locale,
         HttpServletRequest request) {
         String purlPath = retrievePurlPathFromRequest(request);
@@ -262,15 +302,23 @@ public class APIPurlController {
     }
 
     /**
-     * Delete a purl
-     * 
      * @param inputPurl
-     * @statuscode 200 if the purl was deleted
-     * @statuscode 401 if the user is unauthorized
-     * @statuscode 404 if the purl does not exist
      * @return the ResponseEntity
      */
-    @DeleteMapping(path = "/api/purl/**")
+    @DeleteMapping(path = "/api/purl/**", 
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Delete a PURL")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200",
+            description = "Deleted",
+            content = @Content(schema = @Schema(implementation = Purl.class))),
+        @ApiResponse(responseCode = "401",
+            description = "User unauthorized to delete a PURL!",
+            content = @Content(schema = @Schema(hidden = true))),
+        @ApiResponse(responseCode = "404",
+            description = "Not Found! The PURL does not exist.",
+            content = @Content(schema = @Schema(hidden = true)))
+    })
     public ResponseEntity<? extends PurlServerResponse> deletePurl(Locale locale, HttpServletRequest request) {
         String purlPath = retrievePurlPathFromRequest(request);
         User u = purlAccess.retrieveUserFromRequest(request);

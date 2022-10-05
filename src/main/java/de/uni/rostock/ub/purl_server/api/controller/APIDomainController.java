@@ -40,12 +40,15 @@ import de.uni.rostock.ub.purl_server.dao.UserDAO;
 import de.uni.rostock.ub.purl_server.model.Domain;
 import de.uni.rostock.ub.purl_server.model.PurlServerError;
 import de.uni.rostock.ub.purl_server.model.PurlServerResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "domain", description = "Domain API")
 @RestController
 public class APIDomainController {
     @Autowired
@@ -57,11 +60,9 @@ public class APIDomainController {
     @Autowired
     private MessageSource messages;
 
-    /**
-     * Retrieve the domain
-     */
     @GetMapping(path = "/api/domain/{path}",
         produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get the domain")
     @ApiResponses({
         @ApiResponse(responseCode = "200",
             description = "OK",

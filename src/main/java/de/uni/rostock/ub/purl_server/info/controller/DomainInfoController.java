@@ -28,16 +28,23 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 
 import de.uni.rostock.ub.purl_server.dao.DomainDAO;
 import de.uni.rostock.ub.purl_server.model.Domain;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Controller
+@Tag(name = "domain info", description = "Public domain information")
+@RestController
 public class DomainInfoController {
 
     @Autowired
@@ -49,6 +56,7 @@ public class DomainInfoController {
     @GetMapping(path = "/info/domain/**",
         produces = "!"
             + MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get the information from a domain")
     public Object retrieveInfoDomain(HttpServletRequest request, @RequestParam(defaultValue = "") String format) {
         if ("json".equals(format)) {
             return retrieveJSONDomain(request);
@@ -68,6 +76,15 @@ public class DomainInfoController {
     }
 
     @GetMapping(path = "/info/domain/**", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get the information from a domain as json")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200",
+                     description = "OK",
+                     content = @Content(schema = @Schema(implementation = Domain.class))),
+        @ApiResponse(responseCode = "404",
+                     description = "Not Found! A domain with the given path does not exist.",
+                     content = @Content(schema = @Schema(hidden = true)))
+    })
     public ResponseEntity<Domain> retrieveJSONDomain(HttpServletRequest request) {
         String domainPath = retrieveDomainPathFromRequest(request);
         Optional<Domain> op = domainDAO.retrieveDomainWithUser(domainPath);

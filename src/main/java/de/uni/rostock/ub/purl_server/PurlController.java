@@ -59,10 +59,11 @@ public class PurlController {
      * @param domain  the PathVariable
      * @return redirect to the target URL
      */
-    @GetMapping(path = "/{domain:" + Domain.REGEX_VALID_DOMAINS + "}/**")
-    public String resolvePurl(HttpServletRequest request, @PathVariable String domain) {
-        String path = request.getServletPath();
-        Optional<Purl> op = purlDAO.retrievePurl(path);
+    @GetMapping(path = "/{domain:" + Domain.REGEX_VALID_DOMAINS + "}/{*path}")
+    public String resolvePurl(@PathVariable String domain, @PathVariable("path") String path,
+        HttpServletRequest request) {
+        String purl = "/" + domain + path;
+        Optional<Purl> op = purlDAO.retrievePurl(purl);
         if (op.isPresent()) {
             Purl p = op.get();
             switch (p.getType()) {

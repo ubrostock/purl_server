@@ -39,6 +39,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -92,10 +93,13 @@ public class APIPurlController {
     private MessageSource messages;
 
     /**
+     * catch-all pattern in REST APIs with access to the captured path segments through a @PathVariable
+     * https://spring.io/blog/2020/06/30/url-matching-with-pathpattern-in-spring-mvc#pathpattern
+     * 
      * @return the ResponseEntity object with the retrieved purl include the purl
      *         history
      */
-    @GetMapping(path = "/api/purl/**", 
+    @GetMapping(path = "/api/purl/{*path}",
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get the PURL with PURL history")
     @ApiResponses({
@@ -106,9 +110,8 @@ public class APIPurlController {
             description = "Not Found! The PURL does not exist.",
             content = @Content(schema = @Schema(hidden = true)))
     })
-    public ResponseEntity<Purl> retrievePurl(HttpServletRequest request) {
-        String purlPath = retrievePurlPathFromRequest(request);
-        Optional<Purl> op = purlDAO.retrievePurlWithHistory(purlPath);
+    public ResponseEntity<Purl> retrievePurl(@PathVariable("path") String path) {
+        Optional<Purl> op = purlDAO.retrievePurlWithHistory(path);
         if (op.isEmpty()) {
             return new ResponseEntity<Purl>(HttpStatus.NOT_FOUND);
         }
@@ -120,7 +123,7 @@ public class APIPurlController {
      * @return the ResponseEntity object with the retrieved purl include the purl
      *         history
      */
-    @GetMapping(path = "/api/purl/**",
+    @GetMapping(path = "/api/purl/{*path}",
         produces = "application/x-java-serialized-object")
     @Operation(summary = "Get the PURL as HashMap with the PURL history")
     @ApiResponses({
@@ -134,9 +137,8 @@ public class APIPurlController {
             description = "Internal server error.",
             content = @Content(schema = @Schema(hidden = true)))
     })
-    public ResponseEntity<Resource> retrievePurlAsHashMap(HttpServletRequest request) {
-        String purlPath = retrievePurlPathFromRequest(request);
-        Optional<Purl> op = purlDAO.retrievePurlWithHistory(purlPath);
+    public ResponseEntity<Resource> retrievePurlAsHashMap(@PathVariable("path") String path) {
+        Optional<Purl> op = purlDAO.retrievePurlWithHistory(path);
         if (op.isEmpty()) {
             return new ResponseEntity<Resource>(HttpStatus.NOT_FOUND);
         }
@@ -166,7 +168,7 @@ public class APIPurlController {
      * @param inputPurl
      * @return the ResponseEntity object with the created purl
      */
-    @PostMapping(path = "/api/purl/**", 
+    @PostMapping(path = "/api/purl/{*path}",
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create a PURL")
     @ApiResponses({
@@ -183,10 +185,9 @@ public class APIPurlController {
             description = "PURL already exists",
             content = @Content(schema = @Schema(hidden = true))),
     })
-    public ResponseEntity<? extends PurlServerResponse> createPurl(@RequestBody Purl inputPurl, Locale locale,
+    public ResponseEntity<? extends PurlServerResponse> createPurl(@PathVariable("path") String path,
+        @RequestBody Purl inputPurl, Locale locale,
         HttpServletRequest request) {
-
-        String purlPath = retrievePurlPathFromRequest(request);
         String msgErrorPurlCreate = messages.getMessage("purl_server.error.purl.create", null, locale);
         if (inputPurl == null) {
             PurlServerError e = new PurlServerError(HttpStatus.NOT_FOUND,
@@ -194,7 +195,7 @@ public class APIPurlController {
                 List.of(messages.getMessage("purl_server.error.purl.input.empty", null, locale)));
             return new ResponseEntity<PurlServerError>(e, HttpStatus.NOT_FOUND);
         }
-        inputPurl.setPath(purlPath);
+        inputPurl.setPath(path);
         User u = purlAccess.retrieveUserFromRequest(request);
         List<String> errorList = purlValidateService.validateCreatePurl(inputPurl, u, locale);
         if (!errorList.isEmpty()) {
@@ -213,7 +214,7 @@ public class APIPurlController {
                     locale)));
             return new ResponseEntity<PurlServerError>(e, HttpStatus.UNAUTHORIZED);
         }
-        inputPurl.setPath(purlPath);
+        inputPurl.setPath(path);
         purlDAO.createPurl(inputPurl, u);
 
         return new ResponseEntity<Purl>(purlDAO.retrievePurlWithHistory(inputPurl.getPath()).get(), HttpStatus.CREATED);
@@ -223,7 +224,7 @@ public class APIPurlController {
      * @param inputPurl
      * @return the ResponseEntity object with the modified purl
      */
-    @PutMapping(path = "/api/purl/**", 
+    @PutMapping(path = "/api/purl/{*path}",
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Modify a PURL")
     @ApiResponses({
@@ -237,9 +238,9 @@ public class APIPurlController {
             description = "Not Found! The PURL does not exist.",
             content = @Content(schema = @Schema(hidden = true)))
     })
-    public ResponseEntity<? extends PurlServerResponse> modifyPurl(@RequestBody Purl inputPurl, Locale locale,
+    public ResponseEntity<? extends PurlServerResponse> modifyPurl(@PathVariable("path") String path,
+        @RequestBody Purl inputPurl, Locale locale,
         HttpServletRequest request) {
-        String purlPath = retrievePurlPathFromRequest(request);
         String msgErrorPurlUpdate = messages.getMessage("purl_server.error.purl.update", null, locale);
         if (inputPurl == null) {
             PurlServerError e = new PurlServerError(HttpStatus.CONFLICT,
@@ -247,7 +248,7 @@ public class APIPurlController {
                 List.of(messages.getMessage("purl_server.error.purl.input.empty", null, locale)));
             return new ResponseEntity<PurlServerError>(e, HttpStatus.CONFLICT);
         }
-        inputPurl.setPath(purlPath);
+        inputPurl.setPath(path);
         User u = purlAccess.retrieveUserFromRequest(request);
         List<String> errorList = purlValidateService.validateModifyPurl(inputPurl, u, locale);
         if (!errorList.isEmpty()) {
@@ -256,11 +257,11 @@ public class APIPurlController {
                 errorList);
             return new ResponseEntity<PurlServerError>(e, HttpStatus.CONFLICT);
         }
-        Purl p = purlDAO.retrievePurl(purlPath).get();
+        Purl p = purlDAO.retrievePurl(path).get();
         if (p == null) {
             PurlServerError e = new PurlServerError(HttpStatus.NOT_FOUND,
                 msgErrorPurlUpdate,
-                List.of(messages.getMessage("purl_server.error.purl.path", new Object[] { purlPath },
+                List.of(messages.getMessage("purl_server.error.purl.path", new Object[] { path },
                     locale)));
             return new ResponseEntity<PurlServerError>(e, HttpStatus.NOT_FOUND);
         }
@@ -305,7 +306,7 @@ public class APIPurlController {
      * @param inputPurl
      * @return the ResponseEntity
      */
-    @DeleteMapping(path = "/api/purl/**", 
+    @DeleteMapping(path = "/api/purl/{*path}",
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Delete a PURL")
     @ApiResponses({
@@ -319,15 +320,15 @@ public class APIPurlController {
             description = "Not Found! The PURL does not exist.",
             content = @Content(schema = @Schema(hidden = true)))
     })
-    public ResponseEntity<? extends PurlServerResponse> deletePurl(Locale locale, HttpServletRequest request) {
-        String purlPath = retrievePurlPathFromRequest(request);
+    public ResponseEntity<? extends PurlServerResponse> deletePurl(@PathVariable("path") String path, Locale locale,
+        HttpServletRequest request) {
         User u = purlAccess.retrieveUserFromRequest(request);
-        Purl p = purlDAO.retrievePurl(purlPath).get();
+        Purl p = purlDAO.retrievePurl(path).get();
         String msgErrorPurlDelete = messages.getMessage("purl_server.error.purl.delete", null, locale);
         if (p == null) {
             PurlServerError e = new PurlServerError(HttpStatus.NOT_FOUND,
                 msgErrorPurlDelete,
-                List.of(messages.getMessage("purl_server.error.purl.path", new Object[] { purlPath },
+                List.of(messages.getMessage("purl_server.error.purl.path", new Object[] { path },
                     locale)));
             return new ResponseEntity<PurlServerError>(e, HttpStatus.NOT_FOUND);
         }
@@ -335,7 +336,7 @@ public class APIPurlController {
         if (d.isEmpty()) {
             PurlServerError e = new PurlServerError(HttpStatus.NOT_FOUND,
                 msgErrorPurlDelete,
-                List.of(messages.getMessage("purl_server.error.purl.domain", new Object[] { purlPath },
+                List.of(messages.getMessage("purl_server.error.purl.domain", new Object[] { path },
                     locale)));
             return new ResponseEntity<PurlServerError>(e, HttpStatus.NOT_FOUND);
         } else {
@@ -351,7 +352,4 @@ public class APIPurlController {
         return new ResponseEntity<Purl>(HttpStatus.OK);
     }
 
-    private String retrievePurlPathFromRequest(HttpServletRequest request) {
-        return request.getRequestURI().substring(request.getRequestURI().indexOf("/api/purl/") + 9);
-    }
 }

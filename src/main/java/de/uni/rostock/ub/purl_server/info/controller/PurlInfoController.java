@@ -21,8 +21,6 @@ package de.uni.rostock.ub.purl_server.info.controller;
 import java.util.Locale;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
@@ -32,6 +30,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -60,7 +59,7 @@ public class PurlInfoController {
     @Autowired
     private MessageSource messages;
 
-    @GetMapping(path = "/info/purl/**",
+    @GetMapping(path = "/info/purl/{*path}",
         produces = { MediaType.TEXT_HTML_VALUE, MediaType.APPLICATION_JSON_VALUE })
     @Operation(summary = "Get the information from a PURL")
     @ApiResponses({
@@ -71,11 +70,10 @@ public class PurlInfoController {
             description = "Not Found! The PURL does not exist.",
             content = @Content(schema = @Schema(hidden = true)))
     })
-    public Object retrieveInfoPurl(HttpServletRequest request,
+    public Object retrieveInfoPurl(@PathVariable("path") String path,
         @RequestParam(defaultValue = "") String format,
         @RequestHeader(name = HttpHeaders.ACCEPT, defaultValue = "") @Parameter(hidden = true) String accept) {
-        String purlPath = retrievePurlPathFromRequest(request);
-        Optional<Purl> op = purlDAO.retrievePurlWithHistory(purlPath);
+        Optional<Purl> op = purlDAO.retrievePurlWithHistory(path);
         if ("json".equals(format) || (accept.toLowerCase().contains("json"))) {
             if (op.isEmpty()) {
                 return new ResponseEntity<Purl>(HttpStatus.NOT_FOUND);
@@ -88,9 +86,9 @@ public class PurlInfoController {
             if (op.isPresent()) {
                 mav.addObject("purl", op.get());
                 mav.addObject("purl_url",
-                    ServletUriComponentsBuilder.fromCurrentContextPath().path(purlPath).build().toString());
+                    ServletUriComponentsBuilder.fromCurrentContextPath().path(path).build().toString());
                 if (op.get().getType() == Type.PARTIAL_302) {
-                    mav.addObject("purl_target_suffix", purlPath.substring(op.get().getPath().length()));
+                    mav.addObject("purl_target_suffix", path.substring(op.get().getPath().length()));
                 }
             } else {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -98,10 +96,6 @@ public class PurlInfoController {
             }
             return mav;
         }
-    }
-
-    private String retrievePurlPathFromRequest(HttpServletRequest request) {
-        return request.getRequestURI().substring(request.getRequestURI().indexOf("/info/purl/") + 10);
     }
 
 }

@@ -96,6 +96,10 @@ public class APIPurlController {
      * catch-all pattern in REST APIs with access to the captured path segments through a @PathVariable
      * https://spring.io/blog/2020/06/30/url-matching-with-pathpattern-in-spring-mvc#pathpattern
      * 
+     * swagger cannot handle '/' in url parameters
+     * there is no option to not url-encode them.
+     * https://github.com/OAI/OpenAPI-Specification/issues/892
+     * 
      * @return the ResponseEntity object with the retrieved purl include the purl
      *         history
      */

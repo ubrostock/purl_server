@@ -54,6 +54,10 @@ public class PurlController {
     /**
      * Resolve the Purl
      * 
+     * swagger cannot handle '/' in url parameters
+     * there is no option to not url-encode them.
+     * https://github.com/OAI/OpenAPI-Specification/issues/892
+     * 
      * @param request the HttpServletRequest
      * @param resp    the HttpServletResponse
      * @param domain  the PathVariable

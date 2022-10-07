@@ -22,12 +22,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +38,6 @@ import de.uni.rostock.ub.purl_server.model.Domain;
 import de.uni.rostock.ub.purl_server.model.PurlServerError;
 import de.uni.rostock.ub.purl_server.model.PurlServerResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -66,16 +62,13 @@ public class APIDomainController {
     @ApiResponses({
         @ApiResponse(responseCode = "200",
             description = "OK",
-            headers = @Header(name = "Content-Location",
-                description = "the URL of the resource.",
-                schema = @Schema(type = "string", format = "url")),
             content = @Content(schema = @Schema(implementation = Domain.class))),
         @ApiResponse(responseCode = "404",
             description = "Not Found! A domain with the given path does not exist.",
             content = @Content(schema = @Schema(hidden = true)))
     })
-    public ResponseEntity<? extends PurlServerResponse> retrieveDomain(HttpServletRequest request,
-        @PathVariable("path") String path, Locale locale) {
+    public ResponseEntity<? extends PurlServerResponse> retrieveDomain(@PathVariable("path") String path,
+        Locale locale) {
         Optional<Domain> oDomain = domainDAO.retrieveDomain(StringUtils.prependIfMissing(path, "/"));
         if (oDomain.isEmpty()) {
             PurlServerError e = new PurlServerError(HttpStatus.NOT_FOUND,
@@ -83,9 +76,6 @@ public class APIDomainController {
                 List.of());
             return new ResponseEntity<PurlServerError>(e, HttpStatus.NOT_FOUND);
         }
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Location", request.getRequestURL().toString());
-        return new ResponseEntity<Domain>(oDomain.get(), headers, HttpStatus.OK);
+        return new ResponseEntity<Domain>(oDomain.get(), HttpStatus.OK);
     }
 }

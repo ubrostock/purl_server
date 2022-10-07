@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uni.rostock.ub.purl_server;
+package de.uni.rostock.ub.purl_server.controller;
 
 import java.util.Locale;
 import java.util.Optional;

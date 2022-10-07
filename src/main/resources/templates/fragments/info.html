@@ -26,7 +26,7 @@
               <th class="border-top-0" th:text="#{purl_server.info.domain.domainuserlist.canmodify}"></th>
             </tr>
             <tr th:each="user : ${domain.domainUserList}">
-              <td th:text="${user.user.fullname}"></td>
+              <td th:text="${user.user.login}"></td>
               <td><input type="checkbox" th:checked="${user.canCreate}" disabled="disabled" /></td>
               <td><input type="checkbox" th:checked="${user.canModify}" disabled="disabled" /></td>
             </tr>

@@ -29,7 +29,7 @@
               <a class="btn btn-sm btn-outline-secondary float-right" th:href="@{?format=json}">🗎 JSON</a>
               <form th:action="@{/admin/manager/purl/search}" method="post" onsubmit="storeFormData()">
                 <input type="hidden" class="form-control" th:value="${domain.path + '/%'}" name="path" />
-                <button type="submit" class="btn btn-sm btn-secondary" th:text="#{purl_server.info.domain.purl_search}">Zugehörige PURLs suchen</button>
+                <button sec:authorize="isAuthenticated()" type="submit" class="btn btn-sm btn-secondary" th:text="#{purl_server.info.domain.purl_search}">Zugehörige PURLs suchen</button>
               </form>
             </div>
             <script type="text/javascript">

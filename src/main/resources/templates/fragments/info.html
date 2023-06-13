@@ -57,15 +57,15 @@
       <colgroup>
         <col style="width: 12em" />
       </colgroup>
-      <tr class="h5">
-        <th th:text="#{purl_server.info.purl.path}"></th>
-        <td><span th:text="${purl.path}"></span></td>
+      <tr>
+        <th class="h5" th:text="#{purl_server.info.purl.path}"></th>
+        <td><span class="h5" th:text="${purl.path}"></span></td>
       </tr>
-      <tr id="accordionDomain" class="h5">
-        <th th:text="#{purl_server.info.purl.domain}"></th>
-        <td class="pr-0"><span th:text="${purl.domain.path}"></span> <a
-          class="btn btn-sm btn-outline-secondary px-1 py-0 ml-3" data-toggle="collapse" data-target="#collapseDomain"
-          th:title="#{purl_server.info.more}" aria-expanded="true" aria-controlls="collapseDomain">▼</a>
+      <tr id="accordionDomain">
+        <th class="h5" th:text="#{purl_server.info.purl.domain}"></th>
+        <td class="pr-0"><span class="h5" th:text="${purl.domain.path}"></span> 
+          <a class="btn btn-sm btn-outline-secondary px-1 py-0 ml-3" data-toggle="collapse" data-target="#collapseDomain"
+             th:title="#{purl_server.info.more}" aria-expanded="true" aria-controlls="collapseDomain">▼</a>
           <div id="collapseDomain" class="collapse" data-parent="#accordionDomain">
             <div th:replace="fragments/info :: infoDomainTable (${purl.domain})"></div>
           </div></td>

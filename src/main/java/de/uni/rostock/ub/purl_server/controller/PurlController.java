@@ -72,7 +72,7 @@ public class PurlController {
             Purl p = op.get();
             switch (p.getType()) {
                 case PARTIAL_302:
-                    String restPath = path.substring(p.getPath().length());
+                    String restPath = purl.substring(p.getPath().length());
                     return "redirect:" + calcRedirectWithParams(request, p.getTarget(), restPath);
                 case REDIRECT_302:
                     return "redirect:" + calcRedirectWithParams(request, p.getTarget(), "");

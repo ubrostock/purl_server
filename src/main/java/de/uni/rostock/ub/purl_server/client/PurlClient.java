@@ -81,7 +81,7 @@ public class PurlClient {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 String encrPasswd = sha1(password);
-                return encrPasswd != null ? new PasswordAuthentication(user, sha1(password).toCharArray()) : null;
+                return encrPasswd != null ? new PasswordAuthentication(user, encrPasswd.toCharArray()) : null;
             }
         }).build());
         return this;

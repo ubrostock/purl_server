@@ -132,7 +132,9 @@ public class AdminPurlController {
     @GetMapping(path = "/admin/manager/purl/modify")
     public String showPurlModify(@RequestParam("id") int id, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "modify");
-        model.addAttribute(MODEL_ATTRIBUTE_PURL, purlDAO.retrievePurl(id).get());
+        purlDAO.retrievePurl(id).ifPresent(p -> {
+            model.addAttribute(MODEL_ATTRIBUTE_PURL, p);
+        });
         return "purlmodify";
     }
 
@@ -182,9 +184,12 @@ public class AdminPurlController {
      * @return the purl search page with the model addtribute "purls"
      */
     @PostMapping(path = "/admin/manager/purl/search")
-    protected String purlSearch(@RequestParam(value = MODEL_ATTRIBUTE_PATH, required = false, defaultValue = "") String path,
+    protected String purlSearch(
+        @RequestParam(value = MODEL_ATTRIBUTE_PATH, required = false, defaultValue = "") String path,
         @RequestParam(value = MODEL_ATTRIBUTE_TARGET_URL, required = false, defaultValue = "") String url,
-        @RequestParam(value = MODEL_ATTRIBUTE_TOMBSTONED, required = false, defaultValue = "false") Boolean isTombstoned,
+        @RequestParam(value = MODEL_ATTRIBUTE_TOMBSTONED,
+            required = false,
+            defaultValue = "false") Boolean isTombstoned,
         Model model) {
         List<Purl> purlList = purlDAO.searchPurls(path, url, isTombstoned, LIMIT + 1);
         model.addAttribute(MODEL_ATTRIBUTE_MORE_RESULTS, false);
@@ -208,7 +213,9 @@ public class AdminPurlController {
     **/
     @GetMapping(path = "/admin/manager/purl/delete")
     public String showPurlDelete(@RequestParam("id") int id, Model model) {
-        model.addAttribute(MODEL_ATTRIBUTE_PURL, purlDAO.retrievePurl(id).get());
+        purlDAO.retrievePurl(id).ifPresent(p -> {
+            model.addAttribute(MODEL_ATTRIBUTE_PURL, p);
+        });
         return "purldelete";
     }
 
@@ -222,18 +229,20 @@ public class AdminPurlController {
     @PostMapping(path = "/admin/manager/purl/delete")
     public String deletePurl(@ModelAttribute Purl purl, HttpServletRequest request, Model model) {
         User u = purlAccess.retrieveCurrentUser();
-        Purl deletePurl = purlDAO.retrievePurl(purl.getPath()).get();
-        domainDAO.retrieveDomain(deletePurl).ifPresent(d -> {
-            if (purlAccess.canModifyPurl(d, u)) {
-                purlDAO.deletePurl(deletePurl, u);
-                model.addAttribute(MODEL_ATTRIBUTE_DELETED, true);
-                model.addAttribute(MODEL_ATTRIBUTE_PURL, deletePurl);
-            } else {
-                List<String> errorList = new ArrayList<>();
-                errorList.add(
-                    messages.getMessage("purl_server.error.user.delete.purl.unauthorized", null, Locale.getDefault()));
-                model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
-            }
+        purlDAO.retrievePurl(purl.getPath()).ifPresent(deletePurl -> {
+            domainDAO.retrieveDomain(deletePurl).ifPresent(d -> {
+                if (purlAccess.canModifyPurl(d, u)) {
+                    purlDAO.deletePurl(deletePurl, u);
+                    model.addAttribute(MODEL_ATTRIBUTE_DELETED, true);
+                    model.addAttribute(MODEL_ATTRIBUTE_PURL, deletePurl);
+                } else {
+                    List<String> errorList = new ArrayList<>();
+                    errorList.add(
+                        messages.getMessage("purl_server.error.user.delete.purl.unauthorized", null,
+                            Locale.getDefault()));
+                    model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
+                }
+            });
         });
         // TODO Was passiert im Fehlerfall, Domain not present.
         return "purldelete";

@@ -105,8 +105,9 @@ public class AdminUserController {
     public String createUser(@ModelAttribute User user, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "create");
         if (userDAO.retrieveUser(user.getLogin()).isPresent()) {
-            model.addAttribute(MODEL_ATTRIBUTE_ERRORS, Arrays.asList(messages.getMessage("purl_server.error.validate.user.exists",
-                new Object[] { user.getLogin() }, Locale.getDefault())));
+            model.addAttribute(MODEL_ATTRIBUTE_ERRORS,
+                Arrays.asList(messages.getMessage("purl_server.error.validate.user.exists",
+                    new Object[] { user.getLogin() }, Locale.getDefault())));
         } else {
             List<String> errorList = userValidateService.validateUser(user, locale);
             if (errorList.isEmpty()) {
@@ -134,7 +135,9 @@ public class AdminUserController {
     @GetMapping(path = "/admin/manager/user/modify")
     public String showUserModify(@RequestParam("id") int id, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "modify");
-        model.addAttribute(MODEL_ATTRIBUTE_USER, userDAO.retrieveUser(id).get());
+        userDAO.retrieveUser(id).ifPresent(u -> {
+            model.addAttribute(MODEL_ATTRIBUTE_USER, u);
+        });
         return "usermodify";
     }
 
@@ -193,10 +196,14 @@ public class AdminUserController {
     @PostMapping(path = "/admin/manager/user/search")
     protected String userSearch(
         @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_FULL_NAME, required = false, defaultValue = "") String fullName,
-        @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_AFFILIATION, required = false, defaultValue = "") String affiliation,
+        @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_AFFILIATION,
+            required = false,
+            defaultValue = "") String affiliation,
         @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_E_MAIL_ADDRESS, required = false, defaultValue = "") String email,
         @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_LOGIN, required = false, defaultValue = "") String login,
-        @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_TOMBSTONED_USER, required = false, defaultValue = "false") boolean isTombstoned,
+        @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_TOMBSTONED_USER,
+            required = false,
+            defaultValue = "false") boolean isTombstoned,
         Model model) {
         List<User> userList = userDAO.searchUsers(login, fullName, affiliation, email, isTombstoned, LIMIT + 1);
         model.addAttribute(MODEL_ATTRIBUTE_MORE_RESULTS, false);
@@ -223,7 +230,9 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(path = "/admin/manager/user/delete")
     public String showUserDelete(@RequestParam("id") int id, Model model) {
-        model.addAttribute(MODEL_ATTRIBUTE_USER, userDAO.retrieveUser(id).get());
+        userDAO.retrieveUser(id).ifPresent(u -> {
+            model.addAttribute(MODEL_ATTRIBUTE_USER, u);
+        });
         return "userdelete";
     }
 

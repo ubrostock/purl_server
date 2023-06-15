@@ -80,7 +80,7 @@ public class LoginController {
     public ModelAndView login() {
         return new ModelAndView("login/login");
     }
-    
+
     @PostMapping(value = "/admin/login")
     public ModelAndView login(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("login/login");
@@ -148,9 +148,9 @@ public class LoginController {
     }
 
     private boolean validateToken(String token, ModelAndView mav) {
-        int x = jdbcTemplate.queryForObject("SELECT COUNT(*) from user WHERE password_reset_token = ?", Integer.class,
-            token);
-        if (x == 1 && token.contains("_")) {
+        Integer x = jdbcTemplate.queryForObject("SELECT COUNT(*) from user WHERE password_reset_token = ?",
+            Integer.class, token);
+        if (x != null && x == 1 && token.contains("_")) {
             String timeString = token.substring(0, token.indexOf("_"));
             long time = Long.parseLong(timeString);
             if (time < System.currentTimeMillis()) {

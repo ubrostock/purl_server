@@ -78,14 +78,17 @@ public class DomainDAO {
     public Optional<Domain> retrieveDomainWithUser(String path) {
         try {
             Domain d = jdbcTemplate.queryForObject(SQL_SELECT_DOMAIN_BY_PATH, new DomainRowMapper(), path);
-            List<DomainUser> list = jdbcTemplate.query(
-                SQL_SELECT_DOMAIN_WITH_USER_BY_ID,
-                new DomainUserRowMapper(), d.getId());
-            d.getDomainUserList().addAll(list);
-            return Optional.of(d);
+            if (d != null) {
+                List<DomainUser> list = jdbcTemplate.query(
+                    SQL_SELECT_DOMAIN_WITH_USER_BY_ID,
+                    new DomainUserRowMapper(), d.getId());
+                d.getDomainUserList().addAll(list);
+                return Optional.of(d);
+            }
         } catch (DataAccessException e) {
-            return Optional.empty();
+            //do nothing
         }
+        return Optional.empty();
     }
 
     public Optional<Domain> retrieveDomain(Purl p) {
@@ -185,15 +188,19 @@ public class DomainDAO {
                 return ps;
             }
         }, domainHolder);
-        domain.setId(domainHolder.getKey().intValue());
+        if (domainHolder.getKey() != null) {
+            domain.setId(domainHolder.getKey().intValue());
+        }
 
         jdbcTemplate.update("DELETE FROM domainuser WHERE domain_id = ?", domain.getId());
         for (DomainUser du : domain.getDomainUserList()) {
-            int userId = jdbcTemplate.queryForObject("SELECT id FROM user WHERE login = ?;", Integer.class,
+            Integer userId = jdbcTemplate.queryForObject("SELECT id FROM user WHERE login = ?;", Integer.class,
                 du.getUser().getLogin());
-            jdbcTemplate.update("INSERT INTO domainuser (user_id, domain_id, can_create, can_modify) VALUES(?,?,?,?);",
-                userId, domain.getId(),
-                du.isCanCreate(), du.isCanModify());
+            if (userId != null) {
+                jdbcTemplate.update(
+                    "INSERT INTO domainuser (user_id, domain_id, can_create, can_modify) VALUES(?,?,?,?);",
+                    userId, domain.getId(), du.isCanCreate(), du.isCanModify());
+            }
         }
         return retrieveDomain(domain.getPath());
     }
@@ -209,11 +216,13 @@ public class DomainDAO {
             domain.getName(), domain.getComment(), domain.getId());
         jdbcTemplate.update("DELETE FROM domainuser WHERE domain_id = ?", domain.getId());
         for (DomainUser du : domain.getDomainUserList()) {
-            int userId = jdbcTemplate.queryForObject("SELECT id FROM user WHERE login = ?;", Integer.class,
+            Integer userId = jdbcTemplate.queryForObject("SELECT id FROM user WHERE login = ?;", Integer.class,
                 du.getUser().getLogin());
-            jdbcTemplate.update("INSERT INTO domainuser (user_id, domain_id, can_create, can_modify) VALUES(?,?,?,?);",
-                userId, domain.getId(),
-                du.isCanCreate(), du.isCanModify());
+            if (userId != null) {
+                jdbcTemplate.update(
+                    "INSERT INTO domainuser (user_id, domain_id, can_create, can_modify) VALUES(?,?,?,?);",
+                    userId, domain.getId(), du.isCanCreate(), du.isCanModify());
+            }
         }
         return retrieveDomain(domain.getPath());
     }

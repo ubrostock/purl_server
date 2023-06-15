@@ -171,7 +171,10 @@ public class AdminDomainController {
     @GetMapping(path = "/admin/manager/domain/modify")
     public String showDomainModify(@RequestParam("id") int id, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, MODEL_VALUE_FORM_MODIFY);
-        model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domainDAO.retrieveDomainWithUser(id).get());
+        domainDAO.retrieveDomainWithUser(id).ifPresent(d -> {
+            model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, d);
+        });
+        //TODO Fehlerfall "falsche ID"
         model.addAttribute(MODEL_ATTRIBUTE_USERS_LOGIN, userDAO.retrieveActiveUsers());
         return MODEL_VIEW_DOMAINMODIFY;
     }
@@ -238,10 +241,13 @@ public class AdminDomainController {
      * @return the domain search page with the model addtribute "domains"
      */
     @PostMapping(path = "/admin/manager/domain/search")
-    public String domainSearch(@RequestParam(value = MODEL_ATTRIBUTE_SEARCH_PATH, required = false, defaultValue = "") String path,
+    public String domainSearch(
+        @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_PATH, required = false, defaultValue = "") String path,
         @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_NAME, required = false, defaultValue = "") String name,
         @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_USER, required = false, defaultValue = "") String login,
-        @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_TOMBSTONED_DOMAIN, required = false, defaultValue = "false") boolean isTombstoned,
+        @RequestParam(value = MODEL_ATTRIBUTE_SEARCH_TOMBSTONED_DOMAIN,
+            required = false,
+            defaultValue = "false") boolean isTombstoned,
         Model model) {
         List<Domain> domainList = domainDAO.searchDomains(path, name, login, isTombstoned, LIMIT + 1);
         model.addAttribute(MODEL_ATTRIBUTE_MORE_RESULTS, false);
@@ -264,7 +270,9 @@ public class AdminDomainController {
      */
     @GetMapping(path = "/admin/manager/domain/delete")
     public String showDomainDelete(@RequestParam("id") int id, Model model) {
-        model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domainDAO.retrieveDomain(id).get());
+        domainDAO.retrieveDomain(id).ifPresent(d -> {
+            model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, d);
+        });
         return MODEL_VIEW_DOMAINDELETE;
     }
 

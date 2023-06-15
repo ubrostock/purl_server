@@ -58,7 +58,7 @@ public class PurlClient {
         LinkedHashMap.class.getName(), HashMap.class.getName(),
         ArrayList.class.getName(), Map.Entry[].class.getName(), Object[].class.getName(),
         String.class.getName(), Integer.class.getName(), Number.class.getName(), Boolean.class.getName());
-    
+
     public enum PURLType {
         REDIRECT_302, PARTIAL_302, GONE_410;
     }
@@ -80,7 +80,8 @@ public class PurlClient {
         httpClient = Optional.of(HttpClient.newBuilder().authenticator(new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(user, sha1(password).toCharArray());
+                String encrPasswd = sha1(password);
+                return encrPasswd != null ? new PasswordAuthentication(user, sha1(password).toCharArray()) : null;
             }
         }).build());
         return this;
@@ -234,7 +235,8 @@ public class PurlClient {
         return null;
     }
 
-    private LinkedHashMap<String, Object> retrieveMapFromResponse(String path, HttpResponse<InputStream> response) throws IOException {
+    private LinkedHashMap<String, Object> retrieveMapFromResponse(String path, HttpResponse<InputStream> response)
+        throws IOException {
         try (ObjectInputStream objectInputStream = new ObjectInputStream(response.body())) {
             objectInputStream.setObjectInputFilter(PurlClient::serializedHashMapFilter);
             @SuppressWarnings("unchecked")
@@ -313,9 +315,9 @@ public class PurlClient {
             return null;
         }
         return new PURL(
-        String.valueOf(Objects.requireNonNull(data.get("path"), "path cannot be null")),
-        String.valueOf(Objects.requireNonNull(data.get("target"), "target cannot be null")),
-        PURLType.valueOf(String.valueOf(Objects.requireNonNull(data.get("type"), "type cannot be null"))));
+            String.valueOf(Objects.requireNonNull(data.get("path"), "path cannot be null")),
+            String.valueOf(Objects.requireNonNull(data.get("target"), "target cannot be null")),
+            PURLType.valueOf(String.valueOf(Objects.requireNonNull(data.get("type"), "type cannot be null"))));
     }
 
     public static PURL buildPURL(String path, String target, PURLType type) {

@@ -117,14 +117,17 @@ public class DomainDAO {
     public Optional<Domain> retrieveDomainWithUser(int id) {
         try {
             Domain d = jdbcTemplate.queryForObject(SQL_SELECT_DOMAIN_BY_ID, new DomainRowMapper(), id);
-            List<DomainUser> list = jdbcTemplate.query(
-                SQL_SELECT_DOMAIN_WITH_USER_BY_ID,
-                new DomainUserRowMapper(), d.getId());
-            d.getDomainUserList().addAll(list);
-            return Optional.of(d);
+            if (d != null) {
+                List<DomainUser> list = jdbcTemplate.query(
+                    SQL_SELECT_DOMAIN_WITH_USER_BY_ID,
+                    new DomainUserRowMapper(), d.getId());
+                d.getDomainUserList().addAll(list);
+                return Optional.of(d);
+            }
         } catch (DataAccessException e) {
-            return Optional.empty();
+            //do nothing
         }
+        return Optional.empty();
     }
 
     /**
@@ -188,8 +191,9 @@ public class DomainDAO {
                 return ps;
             }
         }, domainHolder);
-        if (domainHolder.getKey() != null) {
-            domain.setId(domainHolder.getKey().intValue());
+        Number key = domainHolder.getKey();
+        if (key != null) {
+            domain.setId(key.intValue());
         }
 
         jdbcTemplate.update("DELETE FROM domainuser WHERE domain_id = ?", domain.getId());

@@ -174,12 +174,10 @@ public class PurlDAO {
                     return ps;
                 }
             }, purlId);
-            if (purlId.getKey() != null) {
-                jdbcTemplate.update(
-                    SQL_INSERT_PURLHISTORY,
-                    purlId.getKey().intValue(), u.getId(), p.getType().name(),
-                    p.getTarget(), Status.CREATED.name());
-
+            Number key = purlId.getKey();
+            if (key != null) {
+                jdbcTemplate.update(SQL_INSERT_PURLHISTORY,
+                    key.intValue(), u.getId(), p.getType().name(), p.getTarget(), Status.CREATED.name());
                 return retrievePurl(p.getPath());
             }
         }

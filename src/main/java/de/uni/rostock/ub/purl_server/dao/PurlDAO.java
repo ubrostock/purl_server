@@ -120,7 +120,7 @@ public class PurlDAO {
         String paramStatus = isTombstoned ? "CREATED,MODIFIED,DELETED" : "CREATED,MODIFIED";
 
         List<Purl> purlList = jdbcTemplate.query(
-            "SELECT * FROM purl WHERE (path LIKE ?) AND INSTR(?, d.status) > 0 AND (target LIKE ?) LIMIT ?;",
+            "SELECT * FROM purl WHERE (path LIKE ?) AND INSTR(?, status) > 0 AND (target LIKE ?) LIMIT ?;",
             new PurlRowMapper(),
             paramPath, paramStatus, paramTarget, limit);
         for (Purl p : purlList) {

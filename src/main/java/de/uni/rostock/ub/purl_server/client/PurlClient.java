@@ -154,6 +154,38 @@ public class PurlClient {
         }
         return false;
     }
+    
+    public boolean deletePURL(PURL p) {
+        if (httpClient.isPresent()) {
+            String message = "";
+            HttpRequest request = HttpRequest.newBuilder()
+                .DELETE()
+                .header("Content-Type", "application/json").uri(URI.create(apiURL + p.getPath()))
+                .build();
+            try {
+                lastStatus = null;
+                HttpResponse<String> response = httpClient.get().send(request, HttpResponse.BodyHandlers.ofString());
+                lastStatus = response.statusCode();
+                message = response.body();
+                LOGGER.info(message);
+                messageBuffer.append(message);
+                if (response.statusCode() == HttpServletResponse.SC_OK) {
+                    return true;
+                }
+
+            } catch (IOException e) {
+                message = "Error updating a PURL!";
+                messageBuffer.append(message);
+                LOGGER.error(message, e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        } else {
+            LOGGER.error(ERROR_MESSAGE_LOGIN);
+            messageBuffer.append("\n" + ERROR_MESSAGE_LOGIN);
+        }
+        return false;
+    }
 
     public String retrievePURLInfoAsJsonString(String path) {
         if (httpClient.isPresent()) {

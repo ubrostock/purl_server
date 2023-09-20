@@ -21,89 +21,67 @@ package de.uni.rostock.ub.purl_server.authentication;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
 
+/* Migration Spring Security 5 to 6
+ * ---------------------------------
+ * https://spring.io/blog/2022/02/21/spring-security-without-the-websecurityconfigureradapter
+ *  
+ * Method Annotation:
+ * @EnableGlobalMethodSecurity -> @EnableMethodSecurity
+ * https://docs.spring.io/spring-security/reference/servlet/authorization/method-security.html#migration-enableglobalmethodsecurity
+ * 
+ * PasswordEncoder:
+ * https://docs.spring.io/spring-security/reference/features/authentication/password-storage.html#authentication-password-storage-configuration
+ * (DelegatingPasswordEncoder by default)
+ * 
+ */
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableMethodSecurity
+public class SpringSecurityConfig {
     @Autowired
     DataSource dataSource;
 
-    @Configuration
-    @Order(1)
-    public static class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher("/api/**").csrf().disable()
-                .authorizeRequests(auth -> auth.antMatchers(HttpMethod.POST).authenticated()
-                    .antMatchers(HttpMethod.PUT).authenticated().antMatchers(HttpMethod.DELETE).authenticated()
-                    .antMatchers(HttpMethod.GET).permitAll())
-                .httpBasic();
-        }
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+            http
+            .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers(HttpMethod.POST).authenticated()
+                    .requestMatchers(HttpMethod.PUT).authenticated()
+                    .requestMatchers(HttpMethod.DELETE).authenticated()
+                    .requestMatchers(HttpMethod.GET).permitAll())
+            .logout(l -> l
+                .logoutUrl("/admin/logout"))
+            .formLogin(fl -> fl
+                .loginPage("/admin/login")
+                .defaultSuccessUrl("/admin/manager/"))
+            //fine tune authorization for urls of login pages
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/admin/manager/**").authenticated()
+                .requestMatchers("/admin/login").permitAll()
+                .requestMatchers("/admin/login/**").permitAll())
+            
+            .httpBasic(Customizer.withDefaults());
+            return http.build();
     }
 
-    @Configuration
-    @Order(2)
-    public static class ActuatorSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            http.requestMatcher(EndpointRequest.toAnyEndpoint())
-                .authorizeRequests((requests) -> requests.anyRequest().hasAuthority("ADMIN"))
-                .httpBasic();
-        }
+    @Bean
+    public UserDetailsManager users(DataSource dataSource) {
+        JdbcUserDetailsManager users = new JdbcUserDetailsManager(dataSource);
+        users.setUsersByUsernameQuery(
+            "SELECT login,password_sha, (status = 'CREATED' OR status = 'MODIFIED') FROM user WHERE login = ?;");
+        users.setAuthoritiesByUsernameQuery("SELECT * FROM (SELECT login, 'ROLE_USER' FROM user UNION SELECT login, 'ROLE_ADMIN' FROM user WHERE admin = true) AS x WHERE x.login = ?;");
+        return users;
     }
-
-    @Configuration
-    @Order(3)
-    public static class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            http.logout(l -> l.logoutUrl("/admin/logout"))
-                .formLogin().loginPage("/admin/login").defaultSuccessUrl("/admin/manager/")
-                .and().antMatcher("/admin/**")
-                .authorizeRequests(auth -> auth.antMatchers("/admin/manager/**").authenticated()
-                    .antMatchers("/admin/login").permitAll().antMatchers("/admin/login/**").permitAll());
-        }
-    }
-
-    @Configuration
-    @Order(4)
-    public static class DefaultWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
-
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            http.authorizeRequests(authorize -> authorize.anyRequest().permitAll());
-        }
-    }
-
-    @Autowired
-    @SuppressWarnings("deprecation")
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        /*
-        //in-memory authentication 
-        String password = "admin";
-        byte[] sha1 = MessageDigest.getInstance("SHA-1").digest(password.getBytes());
-        String sha1Hex = String.format("%040x", new BigInteger(1, sha1));
-        String bcryptedPassword = new BCryptPasswordEncoder().encode(sha1Hex);
-        auth.inMemoryAuthentication().withUser("admin").password("{bcrypt}" +
-            bcryptedPassword).roles("USER");
-        */
-
-        auth.jdbcAuthentication().dataSource(dataSource).passwordEncoder(NoOpPasswordEncoder.getInstance())
-            .usersByUsernameQuery(
-                "SELECT login,password_sha, (status = 'CREATED' OR status = 'MODIFIED') FROM user WHERE login = ?;")
-            .authoritiesByUsernameQuery(
-                "SELECT * FROM (SELECT login, 'ROLE_USER' FROM user UNION SELECT login, 'ROLE_ADMIN' FROM user WHERE admin = true) AS x WHERE x.login = ?;");
-    }
-
 }

@@ -2,19 +2,19 @@
 <html lang="de" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <title th:text="#{purl_server.title}">Home: Purl Manager</title>
-<meta th:replace="fragments/page :: html_header" />
+<meta th:replace="~{fragments/page :: html_header}" />
 </head>
 <body>
   <div class="container">
-    <div th:replace="fragments/page :: title"></div>
-    <div sec:authorize="isAuthenticated()" th:replace="fragments/page :: navigation"></div>
+    <div th:replace="~{fragments/page :: title}"></div>
+    <div sec:authorize="isAuthenticated()" th:replace="~{fragments/page :: navigation}"></div>
     <div class="card">
       <div class="card-body">
         <span th:text="#{purl_server.index.title}">Welcome</span>
       </div>
     </div>
-    <div th:replace="fragments/page :: footer"></div>
+    <div th:replace="~{fragments/page :: footer}"></div>
   </div>
-  <script th:replace="fragments/page :: html_footer"></script>
+  <script th:replace="~{fragments/page :: html_footer}"></script>
 </body>
 </html>

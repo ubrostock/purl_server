@@ -21,7 +21,7 @@ package de.uni.rostock.ub.purl_server.controller;
 import java.util.Locale;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

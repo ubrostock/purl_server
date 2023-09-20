@@ -28,6 +28,8 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
@@ -83,5 +85,11 @@ public class SpringSecurityConfig {
             "SELECT login,password_sha, (status = 'CREATED' OR status = 'MODIFIED') FROM user WHERE login = ?;");
         users.setAuthoritiesByUsernameQuery("SELECT * FROM (SELECT login, 'ROLE_USER' FROM user UNION SELECT login, 'ROLE_ADMIN' FROM user WHERE admin = true) AS x WHERE x.login = ?;");
         return users;
+    }
+    
+    @Bean
+    //TODO remove and work with default DelegatingPasswordEncoder
+    public static PasswordEncoder passwordEncoder() {
+        return NoOpPasswordEncoder.getInstance();
     }
 }

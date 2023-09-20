@@ -12,11 +12,11 @@
     <div class="card">
       <div class="card-body">
         <h3 class="card-title" th:text="#{purl_server.login.title}">Login</h3>
-        <div class="alert alert-danger" th:if="${#httpServletRequest.getParameter('error')}">
+        <div class="alert alert-danger" th:if="${param.error}">
           <h5 th:utext="#{purl_server.login.error_message.failed}">Login failed!</h5>
           <span th:if="${errorMessage}" th:utext="${errorMessage}">error details</span>
         </div>
-        <div class="alert alert-info" th:if="${#httpServletRequest.getParameter('logout')}">
+        <div class="alert alert-info" th:if="${param.logout}">
           <h5 th:utext="#{purl_server.logout.message}">You have been logged off!</h5>
         </div>
         <form th:action="@{/admin/login}" method="post">

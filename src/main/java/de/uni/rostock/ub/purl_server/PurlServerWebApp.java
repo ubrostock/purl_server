@@ -19,8 +19,7 @@
 package de.uni.rostock.ub.purl_server;
 
 import java.util.Locale;
-
-import jakarta.annotation.PostConstruct;
+import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -37,6 +36,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
+import jakarta.annotation.PostConstruct;
 
 @OpenAPIDefinition(
     info = @Info(
@@ -56,10 +56,11 @@ public class PurlServerWebApp implements WebMvcConfigurer {
         return staticWebResourcesLocation;
     }
     
-    @Bean(name = "localeResolver")
+    @Bean
     public LocaleResolver localeResolver() {
         SessionLocaleResolver slr = new SessionLocaleResolver();
-        slr.setDefaultLocale(Locale.GERMAN);
+        slr.setDefaultLocaleFunction(request -> {return Locale.GERMAN;});
+        slr.setDefaultTimeZoneFunction(request -> {return TimeZone.getTimeZone("Europe/Berlin");});
         return slr;
     }
 

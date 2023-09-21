@@ -24,7 +24,7 @@
             <div class="p-1 float-left">
               <h3 th:text="@{__${purl_url}__}"></h3>
             </div>
-            <div th:replace="fragments/info :: infoPurlTable (${purl})"></div>
+            <div th:replace="~{fragments/info :: infoPurlTable (${purl})}"></div>
             <div class="p-1">
               <a class="btn btn-sm btn-outline-secondary float-right" th:href="@{?format=json}">🗎 JSON</a>
             </div>

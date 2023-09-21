@@ -19,7 +19,7 @@
             <div th:if="${submitted}" class="alert alert-success" th:text="#{purl_server.purl.create.created}">
               Purl created!</div>
             <form th:action="@{/admin/manager/purl/create}" method="post" th:object="${purl}">
-              <div th:replace="fragments/forms :: purlForm"></div>
+              <div th:replace="~{fragments/forms :: purlForm}"></div>
             </form>
           </div>
           <div class="col">

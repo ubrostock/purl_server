@@ -19,7 +19,7 @@
             <div th:if="${submitted}" class="alert alert-success" th:text="#{purl_server.domain.create.created}">
               Domain created!</div>
             <form th:action="@{/admin/manager/domain/create}" method="post" th:object="${domain}">
-              <div th:replace="fragments/forms :: domainForm"></div>
+              <div th:replace="~{fragments/forms :: domainForm}"></div>
             </form>
           </div>
           <div class="col">

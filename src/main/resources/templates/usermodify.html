@@ -24,7 +24,7 @@
                 same!</span>
             </div>
             <form th:action="@{/admin/manager/user/modify}" method="post" th:object="${user}">
-              <div th:replace="fragments/forms :: userForm"></div>
+              <div th:replace="~{fragments/forms :: userForm}"></div>
             </form>
           </div>
           <div class="col">

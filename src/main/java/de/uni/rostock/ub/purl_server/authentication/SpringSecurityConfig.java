@@ -28,7 +28,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
@@ -58,21 +58,22 @@ public class SpringSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
             http
             .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
-            .authorizeHttpRequests(auth -> auth
-                    .requestMatchers(HttpMethod.POST).authenticated()
-                    .requestMatchers(HttpMethod.PUT).authenticated()
-                    .requestMatchers(HttpMethod.DELETE).authenticated()
-                    .requestMatchers(HttpMethod.GET).permitAll())
             .logout(l -> l
                 .logoutUrl("/admin/logout"))
             .formLogin(fl -> fl
                 .loginPage("/admin/login")
-                .defaultSuccessUrl("/admin/manager/"))
+                .defaultSuccessUrl("/admin/manager"))
             //fine tune authorization for urls of login pages
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/admin/manager/**").authenticated()
                 .requestMatchers("/admin/login").permitAll()
                 .requestMatchers("/admin/login/**").permitAll())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.POST).authenticated()
+                .requestMatchers(HttpMethod.PUT).authenticated()
+                .requestMatchers(HttpMethod.DELETE).authenticated()
+                //required for resources from webjars, javascript and css files:
+                .requestMatchers(HttpMethod.GET).permitAll())
             
             .httpBasic(Customizer.withDefaults());
             return http.build();
@@ -88,8 +89,11 @@ public class SpringSecurityConfig {
     }
     
     @Bean
-    //TODO remove and work with default DelegatingPasswordEncoder
+    //TODO remove and try to work with default DelegatingPasswordEncoder
     public static PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+        //return NoOpPasswordEncoder.getInstance();
+        //return new BCryptPasswordEncoder();
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
+    
 }

@@ -40,6 +40,7 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,6 +62,9 @@ public class LoginController {
 
     private static final String SQL_UPATE_PASSWORD = "UPDATE user SET password_sha = ?, password_reset_token=null WHERE password_reset_token = ?;";
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+    
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -117,7 +121,7 @@ public class LoginController {
         @RequestParam(value = "password_sha1", required = true) String passwordSha1) {
         ModelAndView mav = new ModelAndView();
         if (validateToken(token, mav)) {
-            jdbcTemplate.update(SQL_UPATE_PASSWORD, passwordSha1, token);
+            jdbcTemplate.update(SQL_UPATE_PASSWORD, passwordEncoder.encode(passwordSha1), token);
             mav.setViewName("login/password_success");
         } else {
             mav.setViewName("login/login");

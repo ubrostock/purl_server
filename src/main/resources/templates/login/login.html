@@ -3,20 +3,20 @@
   xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
 <title th:text="#{purl_server.title}"></title>
-<meta th:replace="fragments/page :: html_header" />
+<meta th:replace="~{fragments/page :: html_header}" />
 <script type="text/javascript" th:src="@{/static/login/sha1.js}"></script>
 </head>
 <body>
   <div class="container mb-5">
-    <div th:replace="fragments/page :: title"></div>
+    <div th:replace="~{fragments/page :: title}"></div>
     <div class="card">
       <div class="card-body">
         <h3 class="card-title" th:text="#{purl_server.login.title}">Login</h3>
-        <div class="alert alert-danger" th:if="${#httpServletRequest.getParameter('error')}">
+        <div class="alert alert-danger" th:if="${param.error}">
           <h5 th:utext="#{purl_server.login.error_message.failed}">Login failed!</h5>
           <span th:if="${errorMessage}" th:utext="${errorMessage}">error details</span>
         </div>
-        <div class="alert alert-info" th:if="${#httpServletRequest.getParameter('logout')}">
+        <div class="alert alert-info" th:if="${param.logout}">
           <h5 th:utext="#{purl_server.logout.message}">You have been logged off!</h5>
         </div>
         <form th:action="@{/admin/login}" method="post">
@@ -44,9 +44,9 @@
         </form>
       </div>
     </div>
-    <div th:replace="fragments/page :: footer"></div>
+    <div th:replace="~{fragments/page :: footer}"></div>
   </div>
-  <script th:replace="fragments/page :: html_footer"></script>
+  <script th:replace="~{fragments/page :: html_footer}"></script>
   
   <script type="text/javascript">
 			function encryptPassword() {

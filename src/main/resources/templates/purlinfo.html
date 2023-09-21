@@ -2,7 +2,7 @@
 <html lang="de" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <title th:text="#{purl_server.title}">Home: Purl Manager</title>
-<meta th:replace="fragments/page :: html_header" />
+<meta th:replace="~{fragments/page :: html_header}" />
 </head>
 <body>
   <div class="container">
@@ -11,7 +11,7 @@
           PURL Server
       </div>
       <div class="col-4">
-        <div th:replace="fragments/page :: switchLang"></div>
+        <div th:replace="~{fragments/page :: switchLang}"></div>
       </div>
     </div>
     <div class="card">
@@ -24,7 +24,7 @@
             <div class="p-1 float-left">
               <h3 th:text="@{__${purl_url}__}"></h3>
             </div>
-            <div th:replace="fragments/info :: infoPurlTable (${purl})"></div>
+            <div th:replace="~{fragments/info :: infoPurlTable (${purl})}"></div>
             <div class="p-1">
               <a class="btn btn-sm btn-outline-secondary float-right" th:href="@{?format=json}">🗎 JSON</a>
             </div>
@@ -32,8 +32,8 @@
         </div>
       </div>
     </div>
-    <div th:replace="fragments/page :: footer"></div>
+    <div th:replace="~{fragments/page :: footer}"></div>
   </div>
-  <script th:replace="fragments/page :: html_footer"></script>
+  <script th:replace="~{fragments/page :: html_footer}"></script>
 </body>
 </html>

@@ -67,7 +67,7 @@
           <a class="btn btn-sm btn-outline-secondary px-1 py-0 ml-3" data-toggle="collapse" data-target="#collapseDomain"
              th:title="#{purl_server.info.more}" aria-expanded="true" aria-controlls="collapseDomain">▼</a>
           <div id="collapseDomain" class="collapse" data-parent="#accordionDomain">
-            <div th:replace="fragments/info :: infoDomainTable (${purl.domain})"></div>
+            <div th:replace="~{fragments/info :: infoDomainTable (${purl.domain})}"></div>
           </div></td>
       </tr>
       <tr>

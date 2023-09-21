@@ -12,7 +12,7 @@
           PURL Server
       </div>
       <div class="col-4">
-        <div th:replace="fragments/page :: switchLang"></div>
+        <div th:replace="~{fragments/page :: switchLang}"></div>
         <form th:action="@{/admin/logout}" method="POST" class="form-inline mt-2"
           sec:authorize="isAuthenticated()">
           <div class="input-group input-group-sm">

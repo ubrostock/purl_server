@@ -2,12 +2,12 @@
 <html lang="de" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
 <head>
 <title th:text="#{purl_server.title}">Purls: Purl Manager</title>
-<meta th:replace="fragments/page :: html_header" />
+<meta th:replace="~{fragments/page :: html_header}" />
 </head>
 <body onload="loadFormData()">
   <div class="container">
-    <div th:replace="fragments/page :: title"></div>
-    <div th:replace="fragments/page :: navigation"></div>
+    <div th:replace="~{fragments/page :: title}"></div>
+    <div th:replace="~{fragments/page :: navigation}"></div>
     <div class="card border mb-3">
       <div class="card-body">
         <div class="row">
@@ -122,8 +122,8 @@
         </table>
       </div>
     </div>
-    <div th:replace="fragments/page :: footer"></div>
+    <div th:replace="~{fragments/page :: footer}"></div>
   </div>
-  <script th:replace="fragments/page :: html_footer"></script>
+  <script th:replace="~{fragments/page :: html_footer}"></script>
 </body>
 </html>

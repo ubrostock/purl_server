@@ -24,6 +24,7 @@ import java.io.ObjectInputFilter;
 import java.io.ObjectInputStream;
 import java.math.BigInteger;
 import java.net.Authenticator;
+import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -40,8 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,7 +102,7 @@ public class PurlClient {
                 lastStatus = null;
                 HttpResponse<String> response = httpClient.get().send(request, HttpResponse.BodyHandlers.ofString());
                 lastStatus = response.statusCode();
-                if (response.statusCode() == HttpServletResponse.SC_CREATED) {
+                if (response.statusCode() == HttpURLConnection.HTTP_CREATED) {
                     return true;
                 }
                 message = response.body();
@@ -137,7 +136,7 @@ public class PurlClient {
                 message = response.body();
                 LOGGER.info(message);
                 messageBuffer.append(message);
-                if (response.statusCode() == HttpServletResponse.SC_OK) {
+                if (response.statusCode() == HttpURLConnection.HTTP_OK) {
                     return true;
                 }
 
@@ -169,7 +168,7 @@ public class PurlClient {
                 message = response.body();
                 LOGGER.info(message);
                 messageBuffer.append(message);
-                if (response.statusCode() == HttpServletResponse.SC_OK) {
+                if (response.statusCode() == HttpURLConnection.HTTP_OK) {
                     return true;
                 }
 
@@ -198,10 +197,10 @@ public class PurlClient {
                 lastStatus = null;
                 HttpResponse<String> response = httpClient.get().send(request, HttpResponse.BodyHandlers.ofString());
                 lastStatus = response.statusCode();
-                if (response.statusCode() == HttpServletResponse.SC_OK) {
+                if (response.statusCode() == HttpURLConnection.HTTP_OK) {
                     return response.body();
                 }
-                if (response.statusCode() == HttpServletResponse.SC_NOT_FOUND) {
+                if (response.statusCode() == HttpURLConnection.HTTP_NOT_FOUND) {
                     String message = "PURL " + path + " not found!";
                     LOGGER.info(message);
                     messageBuffer.append(message);
@@ -244,10 +243,10 @@ public class PurlClient {
                 HttpResponse<InputStream> response = httpClient.get().send(request,
                     HttpResponse.BodyHandlers.ofInputStream());
                 lastStatus = response.statusCode();
-                if (response.statusCode() == HttpServletResponse.SC_OK) {
+                if (response.statusCode() == HttpURLConnection.HTTP_OK) {
                     return retrieveMapFromResponse(path, response);
                 }
-                if (response.statusCode() == HttpServletResponse.SC_NOT_FOUND) {
+                if (response.statusCode() == HttpURLConnection.HTTP_NOT_FOUND) {
                     String message = "PURL " + path + " not found!";
                     LOGGER.info(message);
                     messageBuffer.append(message);

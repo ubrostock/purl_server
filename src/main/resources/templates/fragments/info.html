@@ -38,12 +38,18 @@
         <td th:text="${.domain.comment}"></td>
       </tr>
       <tr>
-        <th th:text="#{purl_server.info.domain.created}"></th>
-        <td th:text="${domain.created}"></td>
+        <th th:text="#{purl_server.info.common.created}"></th>
+        <td>
+		  <label th:text="#{purl_server.info.common.at}"></label>
+	      <span th:text="${domain.created}"></span>
+		</td>
       </tr>
       <tr>
-        <th th:text="#{purl_server.info.domain.lastmodified}"></th>
-        <td th:text="${domain.lastmodified}"></td>
+        <th th:text="#{purl_server.info.common.modified}"></th>
+        <td>
+		  <label th:text="#{purl_server.info.common.at}"></label>
+		  <span th:text="${domain.lastmodified}"></span>
+		</td>
       </tr>
       <tr>
         <th th:text="#{purl_server.info.domain.status}"></th>
@@ -80,12 +86,18 @@
           th:text="${purl_target_suffix}"></span></td>
       </tr>
       <tr>
-        <th th:text="#{purl_server.info.purl.created}"></th>
-        <td th:text="${purl.created}"></td>
+        <th th:text="#{purl_server.info.common.created}"></th>
+        <td>
+		  <label th:text="#{purl_server.info.common.at}"></label>
+		  <span th:text="${purl.created}"></span>
+		</td>
       </tr>
       <tr>
-        <th th:text="#{purl_server.info.purl.lastmodified}"></th>
-        <td th:text="${purl.lastmodified}"></td>
+        <th th:text="#{purl_server.info.common.modified}"></th>
+        <td>
+		  <label th:text="#{purl_server.info.common.at}"></label>
+		  <span th:text="${purl.lastmodified}"></span>
+		</td>
       </tr>
       <tr>
         <th th:text="#{purl_server.info.purl.status}"></th>
@@ -124,12 +136,13 @@
                       <td th:text="${entry.target}"></td>
                     </tr>
                     <tr>
-                      <th th:text="#{purl_server.info.purl.purlhistory.user}"></th>
-                      <td th:text="${entry.user}"></td>
-                    </tr>
-                    <tr>
-                      <th th:text="#{purl_server.info.purl.purlhistory.lastmodified}"></th>
-                      <td th:text="${entry.lastmodified}"></td>
+                      <th th:text="#{purl_server.info.common.modified}"></th>
+                      <td>
+						<label th:text="#{purl_server.info.common.at}"></label>
+						<span th:text="${entry.lastmodified}"></span>
+						<label class="ml-3" th:text="#{purl_server.info.common.by}"></label>
+						<span th:text="${entry.user}"></span>
+					  </td>
                     </tr>
                   </table>
                 </td>

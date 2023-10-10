@@ -40,16 +40,16 @@
       <tr>
         <th th:text="#{purl_server.info.common.created}"></th>
         <td>
-		  <label th:text="#{purl_server.info.common.at}"></label>
-	      <span th:text="${domain.created}"></span>
-		</td>
+          <label th:text="#{purl_server.info.common.at}"></label>
+          <span th:text="${domain.created}"></span>
+      </td>
       </tr>
       <tr>
         <th th:text="#{purl_server.info.common.modified}"></th>
         <td>
-		  <label th:text="#{purl_server.info.common.at}"></label>
-		  <span th:text="${domain.lastmodified}"></span>
-		</td>
+          <label th:text="#{purl_server.info.common.at}"></label>
+          <span th:text="${domain.lastmodified}"></span>
+      </td>
       </tr>
       <tr>
         <th th:text="#{purl_server.info.domain.status}"></th>
@@ -57,7 +57,7 @@
       </tr>
     </table>
   </div>
-  
+
   <div th:fragment="infoPurlTable (purl)">
     <table class="table table-sm" aria-label="PURL information">
       <colgroup>
@@ -88,16 +88,16 @@
       <tr>
         <th th:text="#{purl_server.info.common.created}"></th>
         <td>
-		  <label th:text="#{purl_server.info.common.at}"></label>
-		  <span th:text="${purl.created}"></span>
-		</td>
+          <label th:text="#{purl_server.info.common.at}"></label>
+          <span th:text="${purl.created}"></span>
+        </td>
       </tr>
       <tr>
         <th th:text="#{purl_server.info.common.modified}"></th>
         <td>
-		  <label th:text="#{purl_server.info.common.at}"></label>
-		  <span th:text="${purl.lastmodified}"></span>
-		</td>
+          <label th:text="#{purl_server.info.common.at}"></label>
+          <span th:text="${purl.lastmodified}"></span>
+        </td>
       </tr>
       <tr>
         <th th:text="#{purl_server.info.purl.status}"></th>
@@ -138,11 +138,11 @@
                     <tr>
                       <th th:text="#{purl_server.info.common.modified}"></th>
                       <td>
-						<label th:text="#{purl_server.info.common.at}"></label>
-						<span th:text="${entry.lastmodified}"></span>
-						<label class="ml-3" th:text="#{purl_server.info.common.by}"></label>
-						<span th:text="${entry.user}"></span>
-					  </td>
+                        <label th:text="#{purl_server.info.common.at}"></label>
+                        <span th:text="${entry.lastmodified}"></span>
+                        <label class="ml-3" th:text="#{purl_server.info.common.by}"></label>
+                        <span th:text="${entry.user}"></span>
+                      </td>
                     </tr>
                   </table>
                 </td>

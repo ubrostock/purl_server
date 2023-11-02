@@ -168,5 +168,17 @@
       </div>
     </div>
   </div>
+  
+  <div th:fragment="help (text)">
+    <div class="row mt-3">
+      <div class="col offset-3">
+        <button class="btn btn-outline-secondary float-right" data-toggle="collapse" data-target="#collapseHelp" aria-expanded="false" 
+                aria-controls="collapseHelp" th:text="#{purl_server.common.help}"></button>
+        <div class="collapse border p-1" style="min-height: 4em;" id="collapseHelp">
+          <span class="p-1" th:text="#{purl_server.purl.create.help}">Help...</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

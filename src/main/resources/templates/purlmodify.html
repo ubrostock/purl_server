@@ -22,12 +22,8 @@
               <div th:replace="~{fragments/forms :: purlForm}"></div>
             </form>
           </div>
-          <div class="col">
-            <div class="border p-3 overflow-auto position-absolute" style="top: 0; left: 0; bottom: 0; right: 0;">
-              <span th:text="#{purl_server.purl.modify.help}">Help...</span>
-            </div>
-          </div>
         </div>
+        <div th:replace="~{fragments/forms :: help (#{purl_server.purl.modify.help})}"></div>
         <div class="row mt-3" th:if="${submitted}">
           <div class="col">
             <a class="btn btn-secondary" th:href="@{/admin/manager/purl/modify?id=__${purl.id}__}"

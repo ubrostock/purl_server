@@ -40,6 +40,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import de.uni.rostock.ub.purl_server.dao.PurlDAO;
 import de.uni.rostock.ub.purl_server.model.Purl;
+import de.uni.rostock.ub.purl_server.model.PurlHistory;
+import de.uni.rostock.ub.purl_server.model.Status;
 import de.uni.rostock.ub.purl_server.model.Type;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -87,6 +89,16 @@ public class PurlInfoController {
                 mav.addObject("purl", op.get());
                 mav.addObject("purl_url",
                     ServletUriComponentsBuilder.fromCurrentContextPath().path(path).build().toString());
+                mav.addObject("purl_created_by", op.get().getPurlHistory().stream()
+                    .filter(x -> x.getStatus() == Status.CREATED)
+                    .sorted((PurlHistory ph1, PurlHistory ph2) -> ph1.getLastmodified().compareTo(ph2.getLastmodified()))
+                    .map(x -> x.getUser())
+                    .findFirst().orElse(""));
+                mav.addObject("purl_lastmodified_by", op.get().getPurlHistory().stream()
+                    .filter(x -> x.getStatus() == Status.MODIFIED)
+                    .sorted((PurlHistory ph1, PurlHistory ph2) -> ph2.getLastmodified().compareTo(ph1.getLastmodified()))
+                    .map(x -> x.getLastmodified().toString())
+                    .findFirst().orElse(""));
                 if (op.get().getType() == Type.PARTIAL_302) {
                     mav.addObject("purl_target_suffix", path.substring(op.get().getPath().length()));
                 }

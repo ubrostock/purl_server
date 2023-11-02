@@ -90,6 +90,8 @@
         <td>
           <label th:text="#{purl_server.info.common.at}"></label>
           <span th:text="${purl.created}"></span>
+          <label class="ml-3" th:text="#{purl_server.info.common.by}"></label>
+          <span th:text="${purl_created_by}"></span>
         </td>
       </tr>
       <tr>
@@ -97,6 +99,8 @@
         <td>
           <label th:text="#{purl_server.info.common.at}"></label>
           <span th:text="${purl.lastmodified}"></span>
+          <label class="ml-3" th:text="#{purl_server.info.common.by}"></label>
+          <span th:text="${purl_lastmodified_by}"></span>
         </td>
       </tr>
       <tr>

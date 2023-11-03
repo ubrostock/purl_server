@@ -45,10 +45,20 @@
                   <input type="text" class="form-control" th:field="*{email}" readonly="readonly" />
                 </div>
               </div>
-              <div class="form-group row">
+              <div class="form-group row" th:unless="${deleted}">
                 <div class="col-sm-6 offset-sm-4">
                   <button type="submit" class="btn btn-danger" th:text="#{purl_server.user.delete.delete}">delete</button>
                   <a class="btn btn-secondary" th:href="@{/admin/manager/user/search}" th:text="#{purl_server.user.form.cancel}">Abbrechen</a>
+                </div>
+              </div>
+              <div class="form-group row" th:if="${deleted}">
+                <div class="col">
+                  <a class="btn btn-secondary" th:href="@{/admin/manager/user/modify?id=__${user.id}__}"
+                     th:text="#{purl_server.user.goto.modify}">modify</a>
+                  <a class="btn btn-secondary" th:href="@{/admin/manager/user/create}"
+                     th:text="#{purl_server.user.goto.create}">Create a new user</a>
+                  <a class="btn btn-secondary" th:href="@{/admin/manager/user/search}"
+                     th:text="#{purl_server.user.goto.search}">Search for a user</a>
                 </div>
               </div>
             </form>

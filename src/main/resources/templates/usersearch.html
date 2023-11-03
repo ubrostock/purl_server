@@ -107,6 +107,7 @@
             <col style="width: auto;"/>
             <col style="width: auto;"/>
             <col style="width: auto;"/>
+            <col style="width: auto;"/>
             <col style="width: 3em;"/>
             <col style="width: 3em;"/>
           </colgroup>
@@ -115,6 +116,7 @@
             <th th:text="#{purl_server.user.search.table.fullname}">Full name</th>
             <th th:text="#{purl_server.user.search.table.affiliation}">affiliation</th>
             <th th:text="#{purl_server.user.search.table.email}">E-mail</th>
+            <th th:text="#{purl_server.user.search.table.status}">Status</th>
             <th></th>
             <th></th>
           </tr>
@@ -123,6 +125,7 @@
             <td th:text="${u.fullname}"></td>
             <td th:text="${u.affiliation}"></td>
             <td th:text="${u.email}"></td>
+            <td th:text="${u.status}"></td>
             <td>
               <a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/manager/user/modify?id=__${u.id}__}"
                  th:title="#{purl_server.user.search.table.modify}">&#x270F;&#xFE0E;</a>

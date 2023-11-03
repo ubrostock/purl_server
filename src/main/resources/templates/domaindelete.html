@@ -26,10 +26,20 @@
                   <input type="text" class="form-control" th:field="*{path}" readonly="readonly" />
                 </div>
               </div>
-              <div class="form-group row">
+              <div class="form-group row" th:unless="${deleted}">
                 <div class="col-sm-6 offset-sm-4">
                   <button type="submit" class="btn btn-danger" th:text="#{purl_server.domain.delete.delete}">delete</button>
                   <a class="btn btn-secondary" th:href="@{/admin/manager/domain/search}" th:text="#{purl_server.domain.form.cancel}">Abbrechen</a>
+                </div>
+              </div>
+              <div class="form-group row" th:if="${deleted}">
+                <div class="col">
+                  <a class="btn btn-secondary" th:href="@{/admin/manager/domain/modify?id=__${domain.id}__}"
+                     th:text="#{purl_server.domain.goto.modify}">modify</a>
+                  <a class="btn btn-secondary" th:href="@{/admin/manager/domain/create}"
+                     th:text="#{purl_server.domain.goto.create}">Create a new domain</a>
+                  <a class="btn btn-secondary" th:href="@{/admin/manager/domain/search}"
+                     th:text="#{purl_server.domain.goto.search}">Search for a domain</a>
                 </div>
               </div>
             </form>

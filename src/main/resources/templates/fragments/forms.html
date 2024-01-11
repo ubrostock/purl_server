@@ -169,16 +169,40 @@
     </div>
   </div>
   
-  <div th:fragment="help (text)">
-    <div class="row mt-3">
-      <div class="col offset-3">
-        <button class="btn btn-outline-secondary float-right" data-toggle="collapse" data-target="#collapseHelp" aria-expanded="false" 
-                aria-controls="collapseHelp" th:text="#{purl_server.common.help}"></button>
-        <div class="collapse border p-1" style="min-height: 4em;" id="collapseHelp">
-          <span class="p-1" th:text="#{purl_server.purl.create.help}">Help...</span>
-        </div>
-      </div>
+  <div th:fragment="help (text)" class="col offset-3">
+    <button class="btn btn-outline-secondary float-right" data-toggle="collapse" data-target="#collapseHelp" aria-expanded="false" 
+      aria-controls="collapseHelp" th:text="#{purl_server.common.help}"></button>
+    <div class="collapse border p-1" style="min-height: 4em;" id="collapseHelp">
+      <span class="p-1" th:text="#{purl_server.purl.create.help}">Help...</span>
     </div>
+  </div>
+  
+<!--/* global variable purl */-->
+  <div th:fragment="nextPurlAction" class="col">
+    <a class="btn btn-secondary" th:href="@{/info/purl__*{purl.path}__}">
+      &#128712;
+      <span th:text="#{purl_server.purl.form.info}">Info</span>
+    </a>
+    <a class="btn btn-secondary" th:href="@{/admin/manager/purl/modify?id=__${purl.id}__}"
+      th:text="#{purl_server.purl.goto.modify}">modify</a>
+    <a class="btn btn-secondary" th:href="@{/admin/manager/purl/create}"
+      th:text="#{purl_server.purl.goto.create}">Create a new purl</a>
+    <a class="btn btn-secondary" th:href="@{/admin/manager/purl/search}"
+      th:text="#{purl_server.purl.goto.search}">Search for a purl</a>
+  </div>
+  
+  <!--/* global variable domain */-->
+  <div th:fragment="nextDomainAction" class="col">
+	<a class="btn btn-secondary" th:href="@{/info/domain__*{domain.path}__}">
+      &#128712;
+      <span th:text="#{purl_server.purl.form.info}">Info</span>
+    </a>
+    <a class="btn btn-secondary" th:href="@{/admin/manager/domain/modify?id=__${domain.id}__}"
+      th:text="#{purl_server.domain.goto.modify}">modify</a>
+    <a class="btn btn-secondary" th:href="@{/admin/manager/domain/create}"
+      th:text="#{purl_server.domain.goto.create}">Create a new domain</a>
+    <a class="btn btn-secondary" th:href="@{/admin/manager/domain/search}"
+       th:text="#{purl_server.domain.goto.search}">Search for a domain</a>
   </div>
 </body>
 </html>

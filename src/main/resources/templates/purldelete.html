@@ -32,20 +32,11 @@
                   <a class="btn btn-secondary" th:href="@{/admin/manager/purl/search}" th:text="#{purl_server.purl.form.cancel}">Abbrechen</a>
                 </div>
               </div>
-              <div class="form-group row" th:if="${deleted}">
-                <div class="col">
-                  <a class="btn btn-secondary" th:href="@{/admin/manager/purl/modify?id=__${purl.id}__}"
-                     th:text="#{purl_server.purl.goto.modify}">modify</a>
-                  <a class="btn btn-secondary" th:href="@{/admin/manager/purl/create}"
-                     th:text="#{purl_server.purl.goto.create}">Create a new purl</a>
-                  <a class="btn btn-secondary" th:href="@{/admin/manager/purl/search}"
-                     th:text="#{purl_server.purl.goto.search}">Search for a purl</a>
-                </div>
-              </div>
             </form>
+            <div th:insert="~{fragments/forms :: help (#{purl_server.purl.delete.help})}" class="row mt-3"></div>
+            <div th:if="${deleted}" th:insert="~{fragments/forms :: nextPurlAction}" class="row mt-3"></div>
           </div>
         </div>
-        <div th:replace="~{fragments/forms :: help (#{purl_server.purl.delete.help})}"></div>
       </div>
     </div>
     <div th:replace="~{fragments/page :: footer}"></div>

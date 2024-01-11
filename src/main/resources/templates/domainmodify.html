@@ -23,17 +23,8 @@
             </form>
           </div>
         </div>
-        <div th:replace="~{fragments/forms :: help (#{purl_server.domain.modify.help})}"></div>
-        <div class="row mt-3" th:if="${submitted}">
-          <div class="col">
-            <a class="btn btn-secondary" th:href="@{/admin/manager/domain/modify?id=__${domain.id}__}"
-              th:text="#{purl_server.domain.goto.modify}">modify</a>
-            <a class="btn btn-secondary" th:href="@{/admin/manager/domain/create}"
-              th:text="#{purl_server.domain.goto.create}">Create a new domain</a>
-            <a class="btn btn-secondary" th:href="@{/admin/manager/domain/search}"
-              th:text="#{purl_server.domain.goto.search}">Search for a domain</a>
-          </div>
-        </div>
+        <div th:insert="~{fragments/forms :: help (#{purl_server.domain.modify.help})}" class="row mt-3"></div>
+        <div th:if="${submitted}" th:insert="~{fragments/forms :: nextDomainAction}" class="row mt-3"></div>
       </div>
     </div>
     <div th:replace="~{fragments/page :: footer}"></div>

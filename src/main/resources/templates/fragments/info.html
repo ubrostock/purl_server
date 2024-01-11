@@ -35,7 +35,7 @@
       </tr>
       <tr th:if="${!#strings.isEmpty(domain.comment)}">
         <th th:text="#{purl_server.info.domain.comment}"></th>
-        <td th:text="${.domain.comment}"></td>
+        <td th:text="${domain.comment}"></td>
       </tr>
       <tr>
         <th th:text="#{purl_server.info.common.created}"></th>

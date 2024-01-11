@@ -290,7 +290,7 @@ public class AdminDomainController {
             if (purlAccess.canModifyPurl(d, u)) {
                 domainDAO.deleteDomain(domain.getPath(), u);
                 model.addAttribute(MODEL_ATTRIBUTE_DELETED, true);
-                model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domain);
+                model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, d);
             } else {
                 List<String> errorList = new ArrayList<>();
                 errorList.add(messages.getMessage("purl_server.error.domain.delete", null, Locale.getDefault()));

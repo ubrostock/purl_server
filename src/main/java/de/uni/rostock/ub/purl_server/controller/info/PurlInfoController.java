@@ -97,7 +97,7 @@ public class PurlInfoController {
                 mav.addObject("purl_lastmodified_by", op.get().getPurlHistory().stream()
                     .filter(x -> x.getStatus() == Status.MODIFIED)
                     .sorted((PurlHistory ph1, PurlHistory ph2) -> ph2.getLastmodified().compareTo(ph1.getLastmodified()))
-                    .map(x -> x.getLastmodified().toString())
+                    .map(x -> x.getUser())
                     .findFirst().orElse(""));
                 if (op.get().getType() == Type.PARTIAL_302) {
                     mav.addObject("purl_target_suffix", path.substring(op.get().getPath().length()));

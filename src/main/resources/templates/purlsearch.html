@@ -101,9 +101,9 @@
             <td th:text="${purl.type}"></td>
             <td th:text="${purl.target}"></td>
             <td>
-              <span th:text="${purl.created}"></span>
+              <span th:text="${#temporals.format(purl.created, 'yyyy-MM-dd HH:mm')}"></span>
               <br />
-              <span th:text="${purl.lastmodified}"></span>
+              <span th:text="${#temporals.format(purl.lastmodified, 'yyyy-MM-dd HH:mm')}"></span>
             </td>
             <td th:text="${purl.status}"></td>
             <td>

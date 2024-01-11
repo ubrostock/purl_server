@@ -41,14 +41,14 @@
         <th th:text="#{purl_server.info.common.created}"></th>
         <td>
           <label th:text="#{purl_server.info.common.at}"></label>
-          <span th:text="${domain.created}"></span>
+          <span th:text="${#temporals.format(domain.created, 'yyyy-MM-dd HH:mm')}"></span>
       </td>
       </tr>
       <tr>
         <th th:text="#{purl_server.info.common.modified}"></th>
         <td>
           <label th:text="#{purl_server.info.common.at}"></label>
-          <span th:text="${domain.lastmodified}"></span>
+          <span th:text="${#temporals.format(domain.lastmodified, 'yyyy-MM-dd HH:mm')}"></span>
       </td>
       </tr>
       <tr>
@@ -89,7 +89,7 @@
         <th th:text="#{purl_server.info.common.created}"></th>
         <td>
           <label th:text="#{purl_server.info.common.at}"></label>
-          <span th:text="${purl.created}"></span>
+          <span th:text="${#temporals.format(purl.created, 'yyyy-MM-dd HH:mm')}"></span>
           <label class="ml-3" th:text="#{purl_server.info.common.by}"></label>
           <span th:text="${purl_created_by}"></span>
         </td>
@@ -98,7 +98,7 @@
         <th th:text="#{purl_server.info.common.modified}"></th>
         <td>
           <label th:text="#{purl_server.info.common.at}"></label>
-          <span th:text="${purl.lastmodified}"></span>
+          <span th:text="${#temporals.format(purl.lastmodified, 'yyyy-MM-dd HH:mm')}"></span>
           <label class="ml-3" th:text="#{purl_server.info.common.by}"></label>
           <span th:text="${purl_lastmodified_by}"></span>
         </td>
@@ -143,7 +143,7 @@
                       <th th:text="#{purl_server.info.common.modified}"></th>
                       <td>
                         <label th:text="#{purl_server.info.common.at}"></label>
-                        <span th:text="${entry.lastmodified}"></span>
+                        <span th:text="${#temporals.format(entry.lastmodified, 'yyyy-MM-dd HH:mm')}"></span>
                         <label class="ml-3" th:text="#{purl_server.info.common.by}"></label>
                         <span th:text="${entry.user}"></span>
                       </td>

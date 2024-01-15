@@ -316,7 +316,7 @@ public class PurlClient {
      * @param plain
      * @return
      */
-    private static String sha1(String plainText) {
+    public static String sha1(String plainText) {
         try {
             byte[] sha1 = MessageDigest.getInstance("SHA-1").digest(plainText.getBytes());
             return String.format("%040x", new BigInteger(1, sha1));

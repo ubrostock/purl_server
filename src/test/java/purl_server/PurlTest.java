@@ -15,132 +15,169 @@
  */
 package purl_server;
 
-public class PurlTest {/*
-	private String host ="http://localhost:8080";
-	private String adminHost ="http://localhost:8080/api/purl";
-	private String purlPath = "/test/test3/";
-	
-	@Before
-	public void init() {
-		PurlServerWebApp.main(new String[] {});
-	}
-	
-	@Test
-	public void test() {
-		createPurl();
-		checkCreatedPurl();
-		modifyPurl();
-		checkModifiedPurl();
-		deletePurl();
-	}
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-	private void createPurl() {
-		int statusCode = -1;
-		try (CloseableHttpClient client = HttpClients.createDefault()) {
-			HttpPost httpPost = new HttpPost(adminHost + purlPath);
+import java.io.IOException;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
 
-			String json = "{\"type\":\"partial_302\",\"target\":\"http://matrikel.uni-rostock.de/id/\"}";
-			StringEntity entity = new StringEntity(json);
-			httpPost.setEntity(entity);
-			httpPost.setHeader("Accept", "application/json");
-			httpPost.setHeader("Content-type", "application/json");
+import org.junit.Before;
+import org.junit.Test;
 
-			UsernamePasswordCredentials creds = new UsernamePasswordCredentials("****", "****");
-			httpPost.addHeader(new BasicScheme().authenticate(creds, httpPost, null));
+import de.uni.rostock.ub.purl_server.PurlServerWebApp;
+import de.uni.rostock.ub.purl_server.client.PurlClient;
 
-			CloseableHttpResponse response = client.execute(httpPost);
-			statusCode = response.getStatusLine().getStatusCode();
+public class PurlTest {
+    private String host = "http://localhost:8080";
+    private String adminHost = "http://localhost:8080/api/purl";
+    private String purlPath = "/test/test312/";
 
-			String content = EntityUtils.toString(entity);
-			System.out.println(content);
-		} catch (Exception e) {
-			e.printStackTrace();
-			// TODO: handle exception
-		}
-		assertEquals("Statuscode must be 201!", 201, statusCode);
-	}
+    @Before
+    public void init() {
+        PurlServerWebApp.main(new String[] {});
+        prepairPurlTest();
+    }
 
-	private void checkCreatedPurl() {
-		int statusCode = -1;
-		String location = "";
-		try (CloseableHttpClient client = HttpClientBuilder.create().disableRedirectHandling().build();) {
-			
-			HttpGet httpGet = new HttpGet(host + purlPath + "123");
-			CloseableHttpResponse response = client.execute(httpGet);
-			if(response.getFirstHeader("Location") != null) {
-				location = response.getFirstHeader("Location").getValue();
-			}
-			statusCode = response.getStatusLine().getStatusCode();
-		} catch (Exception e) {
-			e.printStackTrace();
-			// TODO: handle exception
-		}
-		assertEquals("Statuscode must be 302!", 302, statusCode);
-		assertEquals("Location header must contain 'http://matrikel.uni-rostock.de/id/{path}'", "http://matrikel.uni-rostock.de/id/123", location);
-	}
-	
-	private void modifyPurl() {
-		int statusCode = -1;
-		try (CloseableHttpClient client = HttpClients.createDefault()) {
-			HttpPut httpPut = new HttpPut(adminHost + purlPath);
+    @Test
+    public void test() {
+        createPurlTest();
+        checkCreatedPurlTest();
+        modifyPurlTest();
+        checkModifyPurlTest();
+        deletePurlTest();
+    }
 
-			String json = "{\"type\":\"302\",\"target\":\"http://test333.de/\"}";
-			StringEntity entity = new StringEntity(json);
-			httpPut.setEntity(entity);
-			httpPut.setHeader("Accept", "application/json");
-			httpPut.setHeader("Content-type", "application/json");
+    private void createPurlTest() {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(adminHost + purlPath))
+                .header("Accept", "application/json")
+                .header("Content-type", "application/json")
+                .POST(HttpRequest.BodyPublishers
+                    .ofString("{\"type\":\"PARTIAL_302\",\"target\":\"http://matrikel.uni-rostock.de/id/1234674\"}"))
+                .build();
+            HttpResponse<String> response = HttpClient.newBuilder()
+                .authenticator(new Authenticator() {
+                    @Override
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication("admin", PurlClient.sha1("admin").toCharArray());
+                    }
+                }).build()
+                .send(request, BodyHandlers.ofString());
+            assertEquals("Statuscode must be 201!", 201, response.statusCode());
+        } catch (URISyntaxException | IOException | InterruptedException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
 
-			UsernamePasswordCredentials creds = new UsernamePasswordCredentials("admin", "admin");
-			httpPut.addHeader(new BasicScheme().authenticate(creds, httpPut, null));
+    private void checkCreatedPurlTest() {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(host + purlPath + "123"))
+                .GET()
+                .build();
+            HttpResponse<String> response = HttpClient.newBuilder()
+                .build()
+                .send(request, BodyHandlers.ofString());
+            assertEquals("Statuscode must be 302!", 302, response.statusCode());
+        } catch (URISyntaxException | IOException | InterruptedException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
 
-			CloseableHttpResponse response = client.execute(httpPut);
-			statusCode = response.getStatusLine().getStatusCode();
+    private void modifyPurlTest() {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(adminHost + purlPath))
+                .header("Accept", "application/json")
+                .header("Content-type", "application/json")
+                .PUT(
+                    HttpRequest.BodyPublishers.ofString("{\"type\":\"PARTIAL_302\",\"target\":\"http://test333.de/\"}"))
+                .build();
+            HttpResponse<String> response = HttpClient.newBuilder()
+                .authenticator(new Authenticator() {
+                    @Override
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication("admin", PurlClient.sha1("admin").toCharArray());
+                    }
+                }).build()
+                .send(request, BodyHandlers.ofString());
+            assertEquals("Statuscode must be 200!", 200, response.statusCode());
+        } catch (URISyntaxException | IOException | InterruptedException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
 
-			String content = EntityUtils.toString(entity);
-			System.out.println(content);
-			try (BufferedReader buffer = new BufferedReader(new InputStreamReader(response.getEntity().getContent()))) {
-				System.out.println(buffer.lines().collect(Collectors.joining("\n")));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			// TODO: handle exception
-		}
-		assertEquals("Statuscode must be 200!", 200, statusCode);
-	}
-	
-	private void checkModifiedPurl() {
-		int statusCode = -1;
-		String location = "";
-		try (CloseableHttpClient client = HttpClientBuilder.create().disableRedirectHandling().build();) {
-			
-			HttpGet httpGet = new HttpGet(host + purlPath + "123");
-			CloseableHttpResponse response = client.execute(httpGet);
-			if(response.getFirstHeader("Location") != null) {
-				location = response.getFirstHeader("Location").getValue();
-			}
-			statusCode = response.getStatusLine().getStatusCode();
-		} catch (Exception e) {
-			e.printStackTrace();
-			// TODO: handle exception
-		}
-		assertEquals("Statuscode must be 302!", 302, statusCode);
-		assertEquals("Location header must contain 'http://test333.de/{path}'", "http://test333.de/123", location);
-	}
+    private void checkModifyPurlTest() {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(host + purlPath + "123"))
+                .GET()
+                .build();
+            HttpResponse<String> response = HttpClient.newBuilder()
+                .build()
+                .send(request, BodyHandlers.ofString());
+            assertEquals("Statuscode must be 302!", 302, response.statusCode());
+            assertEquals("Location header must contain 'http://test333.de/{path}'", "http://test333.de/123",
+                response.headers().firstValue("Location").orElse(""));
+        } catch (URISyntaxException | IOException | InterruptedException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
 
-	private void deletePurl() {
-		int statusCode = -1;
-		try (CloseableHttpClient client = HttpClients.createDefault()) {
-			HttpDelete httpDelete = new HttpDelete(adminHost + purlPath);
+    private void deletePurlTest() {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(adminHost + purlPath))
+                .header("Accept", "application/json")
+                .header("Content-type", "application/json")
+                .DELETE()
+                .build();
+            HttpResponse<String> response = HttpClient.newBuilder()
+                .authenticator(new Authenticator() {
+                    @Override
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication("admin", PurlClient.sha1("admin").toCharArray());
+                    }
+                }).build()
+                .send(request, BodyHandlers.ofString());
+            assertEquals("Statuscode must be 200!", 200, response.statusCode());
+        } catch (URISyntaxException | IOException | InterruptedException e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
 
-			UsernamePasswordCredentials creds = new UsernamePasswordCredentials("admin", "admin");
-			httpDelete.addHeader(new BasicScheme().authenticate(creds, httpDelete, null));
+    private void prepairPurlTest() {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(adminHost + purlPath))
+                .header("Accept", "application/json")
+                .header("Content-type", "application/json")
+                .DELETE()
+                .build();
+            HttpClient.newBuilder()
+                .authenticator(new Authenticator() {
+                    @Override
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication("admin", PurlClient.sha1("admin").toCharArray());
+                    }
+                }).build()
+                .send(request, BodyHandlers.ofString());
 
-			CloseableHttpResponse response = client.execute(httpDelete);
-			statusCode = response.getStatusLine().getStatusCode();
-		} catch (Exception e) {
-			e.printStackTrace();
-			// TODO: handle exception
-		}
-		assertEquals("Statuscode must be 200!", 200, statusCode);
-	}*/
+        } catch (URISyntaxException | IOException | InterruptedException e) {
+            // DO NOTHING
+        }
+    }
 }

@@ -12,32 +12,32 @@
       <div class="card-body">
         <div class="row">
           <div class="col">
-            <button type="button" class="btn float-right" onclick="clearFormData()" th:title="#{purl_server.purl.search.clear}">&#9253;</button>
+            <button type="button" class="btn float-end" onclick="clearFormData()" th:title="#{purl_server.purl.search.clear}">&#9253;</button>
             <h3 class="card-title" th:text="#{purl_server.purl.search.title}">Search for a PURL</h3>
             <form th:action="@{/admin/manager/purl/search}" method="post" onsubmit="storeFormData()">
-              <div class="form-group row">
+              <div class="row mb-3">
                 <label class="col-sm-3 col-form-label" th:text="#{purl_server.purl.search.path}">Path</label>
                 <div class="col-sm-9">
                   <input type="text" class="form-control" th:value="${path}" name="path" />
                 </div>
               </div>
-              <div class="form-group row">
+              <div class="row mb-3">
                 <label class="col-sm-3 col-form-label" th:text="#{purl_server.purl.search.target}">Target URL</label>
                 <div class="col-sm-9">
                   <input type="text" class="form-control" th:value="${targetURL}" name="targetURL" />
                 </div>
               </div>
-              <div class="form-group row">
+              <div class="row mb-3">
                 <label class="col-sm-3 col-form-label"></label>
                 <div class="col-sm-9">
-                  <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" th:checked="${tombstoned}" name="tombstoned"
+                  <div class="form-check">
+                    <input type="checkbox" class="form-check-input" th:checked="${tombstoned}" name="tombstoned"
                       id="tombstoned" />
-                    <label class="custom-control-label" th:text="#{purl_server.purl.search.tombstoned}" for="tombstoned"></label>
+                    <label class="form-check-label" th:text="#{purl_server.purl.search.tombstoned}" for="tombstoned"></label>
                   </div>
                 </div>
               </div>
-              <div class="form-group row">
+              <div class="row">
                 <div class="col-sm-9 offset-sm-3">
                   <button type="submit" class="btn btn-primary" th:text="#{purl_server.purl.search.search}">Search</button>
                 </div>

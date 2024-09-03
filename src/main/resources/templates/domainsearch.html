@@ -12,39 +12,39 @@
       <div class="card-body">
         <div class="row">
           <div class="col">
-            <button type="button" class="btn float-right" onclick="clearFormData()" th:title="#{purl_server.domain.search.clear}">&#9253;</button>
+            <button type="button" class="btn float-end" onclick="clearFormData()" th:title="#{purl_server.domain.search.clear}">&#9253;</button>
             <h3 class="card-title" th:text="#{purl_server.domain.search.title}">Search for a domain</h3>
             <form th:action="@{/admin/manager/domain/search}" method="post" onsubmit="storeFormData()">
-              <div class="form-group row">
+              <div class="row mb-3">
                 <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.search.path}">Path</label>
                 <div class="col-sm-9">
                   <input type="text" class="form-control" th:value="${searchPath}" name="searchPath" />
                 </div>
               </div>
-              <div class="form-group row">
+              <div class="row mb-3">
                 <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.search.name}">Name</label>
                 <div class="col-sm-9">
                   <input type="text" class="form-control" th:value="${searchName}" name="searchName" />
                 </div>
               </div>
-              <div class="form-group row">
+              <div class="row mb-3">
                 <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.search.user}">User</label>
                 <div class="col-sm-9">
                   <input type="text" class="form-control" th:value=${searchUser} name="searchUser" />
                 </div>
               </div>
-              <div class="form-group row">
+              <div class="row mb-3">
                 <div class="col-sm-3"></div>
                 <div class="col-sm-9">
-                  <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" th:checked="${searchTombstonedDomain}"
+                  <div class="form-check">
+                    <input type="checkbox" class="form-check-input" th:checked="${searchTombstonedDomain}"
                       name="searchTombstonedDomain" id="tombstoned" />
-                    <label class="custom-control-label" th:text="#{purl_server.domain.search.tombstoned}"
+                    <label class="form-check-label" th:text="#{purl_server.domain.search.tombstoned}"
                       for="tombstoned">Tombstoned domains</label>
                   </div>
                 </div>
               </div>
-              <div class="form-group row">
+              <div class="row">
                 <div class="col-sm-9 offset-sm-3">
                   <button type="submit" class="btn btn-primary" th:text="#{purl_server.domain.search.search}">Search</button>
                 </div>

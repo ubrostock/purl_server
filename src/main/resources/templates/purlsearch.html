@@ -80,14 +80,6 @@
           th:text="#{purl_server.common.search.result.empty}"></p>
         <p class="alert alert-info" th:if="${moreResults}" th:text="#{purl_server.common.search.result.more}"></p>
         <table class="table table-striped table-sm mt-3" aria-label="PURL search results">
-          <tr>
-            <th th:text="#{purl_server.purl.search.tabel.name}">name</th>
-            <th th:text="#{purl_server.purl.search.tabel.type}">type</th>
-            <th th:text="#{purl_server.purl.search.tabel.target}">target</th>
-            <th th:text="#{purl_server.purl.search.tabel.created_lastmodified}">created</th>
-            <th th:text="#{purl_server.purl.search.tabel.status}">status</th>
-            <th></th>
-          </tr>
           <colgroup>
             <col style="width: auto;"/>
             <col style="width: auto;"/>
@@ -96,6 +88,14 @@
             <col style="width: auto;"/>
             <col style="width: 7.5em;"/>
           </colgroup>
+          <tr>
+            <th th:text="#{purl_server.purl.search.tabel.name}">name</th>
+            <th th:text="#{purl_server.purl.search.tabel.type}">type</th>
+            <th th:text="#{purl_server.purl.search.tabel.target}">target</th>
+            <th th:text="#{purl_server.purl.search.tabel.created_lastmodified}">created</th>
+            <th th:text="#{purl_server.purl.search.tabel.status}">status</th>
+            <th></th>
+          </tr>
           <tr th:each="purl : ${purls}">
             <td class="text-nowrap" th:text="${purl.path}"></td>
             <td th:text="${purl.type}"></td>

@@ -37,11 +37,11 @@
         </select>
       </div>
       <div class="col-sm-1">
-        <input type="checkbox" class="form-check-input mx-auto" style="min-height: 2rem; min-width: 2rem;" th:field="*{domainUserList[__${i}__].canCreate}"
+        <input type="checkbox" class="purl_server-checkbox form-check-input mx-auto" th:field="*{domainUserList[__${i}__].canCreate}"
           th:disabled="${submitted}" />
       </div>
       <div class="col-sm-1">
-        <input type="checkbox" class="form-check-input mx-auto" style="min-height: 2rem; min-width: 2rem;" th:field="*{domainUserList[__${i}__].canModify}"
+        <input type="checkbox" class="purl_server-checkbox form-check-input mx-auto" th:field="*{domainUserList[__${i}__].canModify}"
           th:disabled="${submitted}" />
       </div>
     </div>
@@ -87,7 +87,7 @@
     <div class="row mb-3">
       <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.admin}">Admin</label>
       <div class="col-sm-2">
-        <input type="checkbox" class="form-check-input" th:field="*{admin}" th:disabled="${submitted}" />
+        <input type="checkbox" class="purl_server-checkbox form-check-input" th:field="*{admin}" th:disabled="${submitted}" />
       </div>
     </div>
     <div class="row mb-3">

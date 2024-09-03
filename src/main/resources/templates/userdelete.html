@@ -21,31 +21,31 @@
             </div>
             <form th:action="@{/admin/manager/user/delete}" method="post" th:object="${user}">
               <input type="hidden" th:field="*{id}" />
-              <div class="row">
+              <div class="row mb-3">
                 <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.delete.username}">Username</label>
                 <div class="col-sm-6">
-                  <input type="text" class="form-control" th:field="*{login}" readonly="readonly" />
+                  <input type="text" class="form-control" th:field="*{login}" disabled />
                 </div>
               </div>
-              <div class="row">
+              <div class="row mb-3">
                 <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.delete.fullname}">Full name</label>
                 <div class="col-sm-6">
-                  <input type="text" class="form-control" th:field="*{fullname}" readonly="readonly" />
+                  <input type="text" class="form-control" th:field="*{fullname}" disabled />
                 </div>
               </div>
-              <div class="row">
+              <div class="row mb-3">
                 <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.delete.affiliation}">affiliation</label>
                 <div class="col-sm-6">
-                  <input type="text" class="form-control" th:field="*{affiliation}" readonly="readonly" />
+                  <input type="text" class="form-control" th:field="*{affiliation}" disabled />
                 </div>
               </div>
-              <div class="row">
+              <div class="row mb-3">
                 <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.delete.email}">E-Mail</label>
                 <div class="col-sm-6">
-                  <input type="text" class="form-control" th:field="*{email}" readonly="readonly" />
+                  <input type="text" class="form-control" th:field="*{email}" disabled />
                 </div>
               </div>
-              <div class="row" th:unless="${deleted}">
+              <div class="row mb-3" th:unless="${deleted}">
                 <div class="col-sm-6 offset-sm-4">
                   <button type="submit" class="btn btn-danger" th:text="#{purl_server.user.delete.delete}">delete</button>
                   <a class="btn btn-secondary" th:href="@{/admin/manager/user/search}" th:text="#{purl_server.user.form.cancel}">Abbrechen</a>

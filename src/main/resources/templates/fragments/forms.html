@@ -9,13 +9,13 @@
     <div class="row mb-3">
       <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.form.path}">Path</label>
       <div class="col-sm-9">
-        <input type="text" class="form-control" th:field="*{path}" th:readonly="*{id != -1}" th:disabled="${submitted}" />
+        <input type="text" class="form-control" th:field="*{path}" th:disabled="${submitted} or *{id != -1}" />
       </div>
     </div>
     <div class="row mb-3">
       <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.form.name}">Name</label>
       <div class="col-sm-9">
-        <input type="text" class="form-control" th:field="*{name}" th:readonly="${submitted}" />
+        <input type="text" class="form-control" th:field="*{name}" th:disabled="${submitted}" />
       </div>
     </div>
     <div class="row mb-3">
@@ -31,17 +31,17 @@
     <div class="row mb-3" th:each="i : ${#numbers.sequence(0, __*{#lists.size(domainUserList)}__)}">
       <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.form.user} + ' ' + ${i+1}"></label>
       <div class="col-sm-7">
-        <select class="form-control" th:field="*{domainUserList[__${i}__].user.login}" th:disabled="${submitted}">
+        <select class="form-select" th:field="*{domainUserList[__${i}__].user.login}" th:disabled="${submitted}">
           <option value=""></option>
           <option th:each="user : ${usersLogin}" th:text="${user.fullname}" th:value="${user.login}"></option>
         </select>
       </div>
       <div class="col-sm-1">
-        <input type="checkbox" class="form-check-input mx-auto" style="min-height: 2rem; min-width: 1.3rem;" th:field="*{domainUserList[__${i}__].canCreate}"
+        <input type="checkbox" class="form-check-input mx-auto" style="min-height: 2rem; min-width: 2rem;" th:field="*{domainUserList[__${i}__].canCreate}"
           th:disabled="${submitted}" />
       </div>
       <div class="col-sm-1">
-        <input type="checkbox" class="form-check-input mx-auto" style="min-height: 2rem; min-width: 1.3rem;" th:field="*{domainUserList[__${i}__].canModify}"
+        <input type="checkbox" class="form-check-input mx-auto" style="min-height: 2rem; min-width: 2rem;" th:field="*{domainUserList[__${i}__].canModify}"
           th:disabled="${submitted}" />
       </div>
     </div>
@@ -55,7 +55,7 @@
     <div class="row mb-3">
       <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.form.comment}">Comment</label>
       <div class="col-sm-9">
-        <textarea class="form-control" th:field="*{comment}" th:readonly="${submitted}"></textarea>
+        <textarea class="form-control" th:field="*{comment}" th:disabled="${submitted}"></textarea>
       </div>
     </div>
     <div class="row mb-3" th:unless="${submitted}">
@@ -81,7 +81,7 @@
       <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.login}">Login</label>
       <div class="col-sm-8">
         <input type="text" class="form-control" th:field="*{login}"
-          th:readonly="${submitted != null or form == 'modify'}" />
+          th:disabled="${submitted != null or form == 'modify'}" />
       </div>
     </div>
     <div class="row mb-3">
@@ -93,37 +93,37 @@
     <div class="row mb-3">
       <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.fullname}">Full name</label>
       <div class="col-sm-8">
-        <input type="text" class="form-control" th:field="*{fullname}" th:readonly="${submitted}" />
+        <input type="text" class="form-control" th:field="*{fullname}" th:disabled="${submitted}" />
       </div>
     </div>
     <div class="row mb-3">
       <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.affiliation}">Affiliation</label>
       <div class="col-sm-8">
-        <input type="text" class="form-control" th:field="*{affiliation}" th:readonly="${submitted}" />
+        <input type="text" class="form-control" th:field="*{affiliation}" th:disabled="${submitted}" />
       </div>
     </div>
     <div class="row mb-3">
       <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.email}">E-Mail address</label>
       <div class="col-sm-8">
-        <input type="text" class="form-control" th:field="*{email}" th:readonly="${submitted}" />
+        <input type="text" class="form-control" th:field="*{email}" th:disabled="${submitted}" />
       </div>
     </div>
     <div class="row mb-3" th:if="${form != 'modify'}">
       <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.password}">Password</label>
       <div class="col-sm-8">
-        <input type="password" id="password" class="form-control" th:readonly="${submitted}" />
+        <input type="password" id="password" class="form-control" th:disabled="${submitted}" />
       </div>
     </div>
     <div class="row mb-3" th:if="${form != 'modify'}">
       <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.repassword}">Re-enter password</label>
       <div class="col-sm-8">
-        <input type="password" id="repassword" class="form-control" th:readonly="${submitted}" />
+        <input type="password" id="repassword" class="form-control" th:disabled="${submitted}" />
       </div>
     </div>
     <div class="row mb-3">
       <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.comment}">Comment</label>
       <div class="col-sm-8">
-        <textarea class="form-control" th:field="*{comment}" th:readonly="${submitted}"></textarea>
+        <textarea class="form-control" th:field="*{comment}" th:disabled="${submitted}"></textarea>
       </div>
     </div>
     <div class="row mb-3" th:unless="${submitted}">
@@ -161,13 +161,13 @@
     <div class="row mb-3">
       <label class="col-sm-3 col-form-label" th:text="#{purl_server.purl.form.path}">Path</label>
       <div class="col-sm-9">
-        <input type="text" class="form-control" th:field="*{path}" th:readonly="*{id != -1}" th:disabled="${submitted}" />
+        <input type="text" class="form-control" th:field="*{path}" th:disabled="${submitted} or *{id != -1}" />
       </div>
     </div>
     <div class="row mb-3">
       <label class="col-sm-3 col-form-label" th:text="#{purl_server.purl.form.type}">Type of PURL</label>
       <div class="col-sm-9">
-        <select class="form-control" th:field="*{type}" th:disabled="${submitted}">
+        <select class="form-select" th:field="*{type}" th:disabled="${submitted}">
           <option value="REDIRECT_302" th:text="#{purl_server.purl.form.type.redirect_302}">Simple redirection to a
             target URL (302)</option>
           <option value="PARTIAL_302" th:text="#{purl_server.purl.form.type.partial_302}">Partial-redirect PURL</option>
@@ -177,7 +177,7 @@
     <div class="row mb-3">
       <label class="col-sm-3 col-form-label" th:text="#{purl_server.purl.form.target}">Target URL</label>
       <div class="col-sm-9">
-        <input type="text" class="form-control" th:field="*{target}" th:readonly="${submitted}" />
+        <input type="text" class="form-control" th:field="*{target}" th:disabled="${submitted}" />
       </div>
     </div>
     <div class="row mb-3" th:unless="${submitted}">

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="de" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Form fragments</title>
+</head>
+<body>
+  <div th:fragment="domainForm">
+    <input type="hidden" th:field="*{id}" />
+    <div class="form-group row">
+      <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.form.path}">Path</label>
+      <div class="col-sm-9">
+        <input type="text" class="form-control" th:field="*{path}" th:readonly="*{id != -1}" th:disabled="${submitted}" />
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.form.name}">Name</label>
+      <div class="col-sm-9">
+        <input type="text" class="form-control" th:field="*{name}" th:readonly="${submitted}" />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-1 offset-sm-10" style="min-height: 5em;">
+        <label class="col-form-label text-left" th:style="#{purl_server.domain.form.create.css}"
+          th:text="#{purl_server.domain.form.create}">Create</label>
+      </div>
+      <div class="col-sm-1">
+        <label class="col-form-label text-left" th:style="#{purl_server.domain.form.modify.css}"
+          th:text="#{purl_server.domain.form.modify}">Modify</label>
+      </div>
+    </div>
+    <div class="form-group row" th:each="i : ${#numbers.sequence(0, __*{#lists.size(domainUserList)}__)}">
+      <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.form.user} + ' ' + ${i+1}"></label>
+      <div class="col-sm-7">
+        <select class="form-control" th:field="*{domainUserList[__${i}__].user.login}" th:disabled="${submitted}">
+          <option value=""></option>
+          <option th:each="user : ${usersLogin}" th:text="${user.fullname}" th:value="${user.login}"></option>
+        </select>
+      </div>
+      <div class="col-sm-1">
+        <input type="checkbox" class="form-check-input mx-auto" style="min-height: 2rem; min-width: 1.3rem;" th:field="*{domainUserList[__${i}__].canCreate}"
+          th:disabled="${submitted}" />
+      </div>
+      <div class="col-sm-1">
+        <input type="checkbox" class="form-check-input mx-auto" style="min-height: 2rem; min-width: 1.3rem;" th:field="*{domainUserList[__${i}__].canModify}"
+          th:disabled="${submitted}" />
+      </div>
+    </div>
+    <div class="form-group row">
+      <div class="col-sm-3"></div>
+      <div class="col-sm-9">
+        <button type="submit" name="addUser" class="btn btn-sm btn-secondary" th:disabled=${submitted}
+          th:text="#{purl_server.domain.form.button.add_user}">Add User</button>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.form.comment}">Comment</label>
+      <div class="col-sm-9">
+        <textarea class="form-control" th:field="*{comment}" th:readonly="${submitted}"></textarea>
+      </div>
+    </div>
+    <div class="form-group row" th:unless="${submitted}">
+      <div class="col-sm-9 offset-sm-3">
+        <a th:href="@{/info/domain__*{path}__}" class="btn btn-sm btn-outline-secondary float-right mt-2"
+          th:unless="${form == 'create'}">
+          &#128712;
+          <span th:text="#{purl_server.domain.form.info}">Info</span>
+        </a>
+        <button type="submit" name="submit" class="btn btn-primary" th:text="#{purl_server.domain.__${form}__.submit}">Submit</button>
+        <a class="btn btn-secondary" th:href="@{/admin/manager/domain/search}" th:text="#{purl_server.domain.form.cancel}">Abbrechen</a>
+      </div>
+    </div>
+  </div>
+
+  <div th:fragment="userForm">
+    <input type="hidden" th:field="*{id}" />
+    <input type="hidden" id="password_sha" th:field="*{passwordSHA}" th:if="${form != 'modify'}" />
+    <div class="form-group row">
+      <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.login}">Login</label>
+      <div class="col-sm-8">
+        <input type="text" class="form-control" th:field="*{login}"
+          th:readonly="${submitted != null or form == 'modify'}" />
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.admin}">Admin</label>
+      <div class="col-sm-2">
+        <input type="checkbox" class="form-control float-left w-25" style="min-height: 2rem; min-width: 1.3rem;" th:field="*{admin}" th:disabled="${submitted}" />
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.fullname}">Full name</label>
+      <div class="col-sm-8">
+        <input type="text" class="form-control" th:field="*{fullname}" th:readonly="${submitted}" />
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.affiliation}">Affiliation</label>
+      <div class="col-sm-8">
+        <input type="text" class="form-control" th:field="*{affiliation}" th:readonly="${submitted}" />
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.email}">E-Mail address</label>
+      <div class="col-sm-8">
+        <input type="text" class="form-control" th:field="*{email}" th:readonly="${submitted}" />
+      </div>
+    </div>
+    <div class="form-group row" th:if="${form != 'modify'}">
+      <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.password}">Password</label>
+      <div class="col-sm-8">
+        <input type="password" id="password" class="form-control" th:readonly="${submitted}" />
+      </div>
+    </div>
+    <div class="form-group row" th:if="${form != 'modify'}">
+      <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.repassword}">Re-enter password</label>
+      <div class="col-sm-8">
+        <input type="password" id="repassword" class="form-control" th:readonly="${submitted}" />
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.comment}">Comment</label>
+      <div class="col-sm-8">
+        <textarea class="form-control" th:field="*{comment}" th:readonly="${submitted}"></textarea>
+      </div>
+    </div>
+    <div class="form-group row" th:unless="${submitted}">
+      <div class="col-sm-6 offset-sm-4">
+        <button type="submit" class="btn btn-primary" onclick="return encryptPassword();"
+          th:text="#{purl_server.user.__${form}__.submit}">Submit</button>
+        <a class="btn btn-secondary" th:href="@{/admin/manager/user/search}" th:text="#{purl_server.user.form.cancel}">Abbrechen</a>
+      </div>
+    </div>
+  </div>
+
+  <div th:fragment="purlForm">
+    <input type="hidden" th:field="*{id}" />
+    <div class="form-group row">
+      <label class="col-sm-3 col-form-label" th:text="#{purl_server.purl.form.path}">Path</label>
+      <div class="col-sm-9">
+        <input type="text" class="form-control" th:field="*{path}" th:readonly="*{id != -1}" th:disabled="${submitted}" />
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-3 col-form-label" th:text="#{purl_server.purl.form.type}">Type of PURL</label>
+      <div class="col-sm-9">
+        <select class="form-control" th:field="*{type}" th:disabled="${submitted}">
+          <option value="REDIRECT_302" th:text="#{purl_server.purl.form.type.redirect_302}">Simple redirection to a
+            target URL (302)</option>
+          <option value="PARTIAL_302" th:text="#{purl_server.purl.form.type.partial_302}">Partial-redirect PURL</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-3 col-form-label" th:text="#{purl_server.purl.form.target}">Target URL</label>
+      <div class="col-sm-9">
+        <input type="text" class="form-control" th:field="*{target}" th:readonly="${submitted}" />
+      </div>
+    </div>
+    <div class="form-group row" th:unless="${submitted}">
+      <div class="col-sm-9 offset-sm-3">
+        <a th:href="@{/info/purl__*{path}__}" class="btn btn-sm btn-outline-secondary float-right mt-2"
+          th:unless="${form == 'create'}">
+          &#128712;
+          <span th:text="#{purl_server.purl.form.info}">Info</span>
+        </a>
+        <button type="submit" class="btn btn-primary" th:text="#{purl_server.purl.__${form}__.submit}">Submit</button>
+        <a class="btn btn-secondary" th:href="@{/admin/manager/purl/search}" th:text="#{purl_server.purl.form.cancel}">Abbrechen</a>
+      </div>
+    </div>
+  </div>
+  
+  <div th:fragment="help (text)" class="col offset-3">
+    <button class="btn btn-outline-secondary float-right" data-toggle="collapse" data-target="#collapseHelp" aria-expanded="false" 
+      aria-controls="collapseHelp" th:text="#{purl_server.common.help}"></button>
+    <div class="collapse border p-1" style="min-height: 4em;" id="collapseHelp">
+      <span class="p-1" th:text="#{purl_server.purl.create.help}">Help...</span>
+    </div>
+  </div>
+  
+<!--/* global variable purl */-->
+  <div th:fragment="nextPurlAction" class="col">
+    <a class="btn btn-secondary" th:href="@{/info/purl__*{purl.path}__}">
+      &#128712;
+      <span th:text="#{purl_server.purl.form.info}">Info</span>
+    </a>
+    <a class="btn btn-secondary" th:href="@{/admin/manager/purl/modify?id=__${purl.id}__}"
+      th:text="#{purl_server.purl.goto.modify}">modify</a>
+    <a class="btn btn-secondary" th:href="@{/admin/manager/purl/create}"
+      th:text="#{purl_server.purl.goto.create}">Create a new purl</a>
+    <a class="btn btn-secondary" th:href="@{/admin/manager/purl/search}"
+      th:text="#{purl_server.purl.goto.search}">Search for a purl</a>
+  </div>
+  
+  <!--/* global variable domain */-->
+  <div th:fragment="nextDomainAction" class="col">
+	<a class="btn btn-secondary" th:href="@{/info/domain__*{domain.path}__}">
+      &#128712;
+      <span th:text="#{purl_server.purl.form.info}">Info</span>
+    </a>
+    <a class="btn btn-secondary" th:href="@{/admin/manager/domain/modify?id=__${domain.id}__}"
+      th:text="#{purl_server.domain.goto.modify}">modify</a>
+    <a class="btn btn-secondary" th:href="@{/admin/manager/domain/create}"
+      th:text="#{purl_server.domain.goto.create}">Create a new domain</a>
+    <a class="btn btn-secondary" th:href="@{/admin/manager/domain/search}"
+       th:text="#{purl_server.domain.goto.search}">Search for a domain</a>
+  </div>
+</body>
+</html>

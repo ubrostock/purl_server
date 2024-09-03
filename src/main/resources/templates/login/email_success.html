@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="de" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title th:text="#{purl_server.email_success.title}"></title>
+<meta th:replace="~{fragments/page :: html_header}" />
+</head>
+<body>
+  <div class="container">
+    <div th:replace="~{fragments/page :: title}"></div>
+    <div class="card">
+      <div class="card-body">
+        <h2 th:text="#{purl_server.email_success.heading}">email success</h2>
+        <div class="row mt-3">
+          <div class="col-6 offset-3">
+            <p class="alert alert-info" th:text="#{purl_server.email_success.body}">Email success!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div th:replace="~{fragments/page :: footer}"></div>
+  </div>
+  <script th:replace="~{fragments/page :: html_footer}"></script>
+</body>
+</html>

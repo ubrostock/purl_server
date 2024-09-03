@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="de" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{purl_server.title}">Purls: Purl Manager</title>
+<meta th:replace="~{fragments/page :: html_header}" />
+<script type="text/javascript" th:src="@{/static/login/sha1.js}"></script>
+</head>
+<body>
+  <div class="container">
+    <div th:replace="~{fragments/page :: title}"></div>
+    <div th:replace="~{fragments/page :: navigation}"></div>
+    <div class="card border">
+      <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <h3 class="card-title" th:text="#{purl_server.user.create.title}">Register a new user</h3>
+            <div class="alert alert-danger" role="alert" th:if="${errors}" th:each="error : ${errors}">
+              <span th:text="${error}"></span>
+            </div>
+            <div th:if="${submitted}" class="alert alert-success" th:text="#{purl_server.user.create.created}">
+              User registered!</div>
+            <div id="errorPassword" class="alert alert-danger d-none">
+              <span th:text="#{purl_server.user.create.error_password}">Password and Re-Password are not the
+                same!</span>
+            </div>
+            <form th:action="@{/admin/manager/user/create}" method="post" th:object="${user}">
+              <div th:replace="~{fragments/forms :: userForm}"></div>
+            </form>
+          </div>
+        </div>
+        <div th:insert="~{fragments/forms :: help (#{purl_server.user.create.help})}" class="row mt-3"></div>
+        <div class="row mt-3" th:if="${submitted}">
+          <div class="col">
+            <a class="btn btn-secondary" th:href="@{/admin/manager/user/modify?id=__${user.id}__}"
+              th:text="#{purl_server.user.goto.modify}">modify</a>
+            <a class="btn btn-secondary" th:href="@{/admin/manager/user/create}"
+              th:text="#{purl_server.user.goto.create}">Register a new user</a>
+            <a class="btn btn-secondary" th:href="@{/admin/manager/user/search}"
+              th:text="#{purl_server.user.goto.search}">Search for a user</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div th:replace="~{fragments/page :: footer}"></div>
+  </div>
+  <script type="text/javascript">
+			function encryptPassword() {
+				var password = $("#password").val();
+				var repassword = $("#repassword").val();
+				if (password.localeCompare(repassword) == 0) {
+					$("#errorPassword").addClass("d-none");
+					var shaObj = new jsSHA("SHA-1", "TEXT");
+					shaObj.update(document.getElementById("password").value);
+					var hash = shaObj.getHash("HEX");
+					document.getElementById("password_sha").value = hash;
+					return true;
+				} else {
+					$("#errorPassword").removeClass("d-none");
+					return false;
+				}
+			}
+		</script>
+  <script th:replace="~{fragments/page :: html_footer}"></script>
+</body>
+</html>

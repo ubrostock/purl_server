@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="de" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<title th:text="#{purl_server.title}">Home: Purl Manager</title>
+<meta th:replace="~{fragments/page :: html_header}" />
+</head>
+<body>
+  <div class="container">
+    <div th:replace="~{fragments/page :: title}"></div>
+    <div sec:authorize="isAuthenticated()" th:replace="~{fragments/page :: navigation}"></div>
+    <div class="card">
+      <div class="card-body">
+        <h2 th:text="#{purl_server.error.title}">Error</h2>
+        <table class="table table-sm" aria-label="Error information">
+          <colgroup>
+            <col style="min-width: 10em; width: 10em" />
+          </colgroup>
+          <tr>
+            <th th:text="#{purl_server.error.table.timestamp}">timestamp</th>
+            <td th:text="${timestamp}"></td>
+          </tr>
+          <tr>
+            <th th:text="#{purl_server.error.table.error}">error</th>
+            <td th:text="${error}"></td>
+          </tr>
+          <tr>
+            <th th:text="#{purl_server.error.table.message}">message</th>
+            <td th:utext="${message}"></td>
+          </tr>
+          <tr>
+            <th th:text="#{purl_server.error.table.status_code}">status code</th>
+            <td th:text="${status}"></td>
+          </tr>
+          <tr th:if="${trace}" th:unless="${exception} == org.springframework.web.server.ResponseStatusException">
+            <th th:text="#{purl_server.error.table.stack_trace}">stack trace</th>
+            <td>
+              <a class="btn btn-secondary btn-sm" data-toggle="collapse" href="#collapseTrace" role="button">...</a>
+              <div class="collapse" id="collapseTrace">
+                <textarea th:text="${trace}" class="w-100" disabled rows="20"
+                  style="white-space: pre; font-family: monospace"></textarea>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div th:replace="~{fragments/page :: footer}"></div>
+  </div>
+  <script th:replace="~{fragments/page :: html_footer}"></script>
+</body>
+</html>

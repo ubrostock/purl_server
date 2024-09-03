@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="de" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{purl_server.title}">Purls: Purl Management</title>
+<meta th:replace="~{fragments/page :: html_header}" />
+</head>
+<body>
+  <div class="container">
+    <div th:replace="~{fragments/page :: title}"></div>
+    <div th:replace="~{fragments/page :: navigation}"></div>
+    <div class="card border">
+      <div class="card-body ">
+        <div class="row">
+          <div class="col">
+            <h3 class="card-title" th:text="#{purl_server.domain.delete.title}">Delete a domain</h3>
+            <div class="alert alert-danger" role="alert" th:if="${errors}" th:each="error : ${errors}">
+              <span th:text="${error}"></span>
+            </div>
+            <div th:if="${deleted}">
+              <div class="alert alert-success" th:text="#{purl_server.domain.delete.deleted}">Domain deleted!</div>
+            </div>
+            <form th:action="@{/admin/manager/domain/delete}" method="post" th:object="${domain}">
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label" th:text="#{purl_server.domain.delete.path}">Path</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" th:field="*{path}" readonly="readonly" />
+                </div>
+              </div>
+              <div class="form-group row" th:unless="${deleted}">
+                <div class="col-sm-6 offset-sm-4">
+                  <button type="submit" class="btn btn-danger" th:text="#{purl_server.domain.delete.delete}">delete</button>
+                  <a class="btn btn-secondary" th:href="@{/admin/manager/domain/search}" th:text="#{purl_server.domain.form.cancel}">Abbrechen</a>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div th:insert="~{fragments/forms :: help (#{purl_server.domain.delete.help})}" class="row mt-3"></div>
+        <div th:if="${deleted}" th:insert="~{fragments/forms :: nextDomainAction}" class="row mt-3"></div>
+      </div>
+    </div>
+    <div th:replace="~{fragments/page :: footer}"></div>
+  </div>
+  <script th:replace="~{fragments/page :: html_footer}"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="de" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<title th:text="#{purl_server.title}">Home: Purl Manager</title>
+<meta th:replace="~{fragments/page :: html_header}" />
+</head>
+<body>
+  <div class="container">
+    <div class="row my-3">
+      <div class="col-8" th:utext="${@environment.getProperty('purl_server.web.html_fragment.title')}">
+          PURL Server
+      </div>
+      <div class="col-4">
+        <div th:replace="~{fragments/page :: switchLang}"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <div class="p-1 float-left" style="width:12em">
+              <h3 th:text="#{purl_server.info.purl.domain}"></h3>
+            </div>
+            <div class="p-1 float-left">
+              <h3 th:text="${domain.path}"></h3>
+            </div>
+            <div th:replace="~{fragments/info :: infoDomainTable (${domain})}"></div>
+            <div class="p-1" style="margin-left:12em;">
+              <a class="btn btn-sm btn-outline-secondary float-right" th:href="@{?format=json}">🗎 JSON</a>
+              <form th:action="@{/admin/manager/purl/search}" method="post" onsubmit="storeFormData()">
+                <input type="hidden" class="form-control" th:value="${domain.path + '/%'}" name="path" />
+                <button sec:authorize="isAuthenticated()" type="submit" class="btn btn-sm btn-secondary" th:text="#{purl_server.info.domain.purl_search}">Zugehörige PURLs suchen</button>
+              </form>
+            </div>
+            <script type="text/javascript">
+              function storeFormData() {
+          	    sessionStorage.setItem('purl_search_path', document.getElementsByName('path')[0].value);
+          	    sessionStorage.setItem('purl_search_target', '');
+          	    sessionStorage.setItem('purl_search_tombstoned', false);
+          	    return true;
+              }
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div th:replace="~{fragments/page :: footer}"></div>
+  </div>
+  <script th:replace="~{fragments/page :: html_footer}"></script>
+</body>
+</html>

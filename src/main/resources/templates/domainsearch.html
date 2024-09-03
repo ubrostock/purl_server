@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="de" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<title th:text="#{purl_server.title}">Purls: Domain Management</title>
+<meta th:replace="~{fragments/page :: html_header}" />
+</head>
+<body onload="loadFormData()">
+  <div class="container">
+    <div th:replace="~{fragments/page :: title}"></div>
+    <div th:replace="~{fragments/page :: navigation}"></div>
+    <div class="card border mb-3">
+      <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <button type="button" class="btn float-right" onclick="clearFormData()" th:title="#{purl_server.domain.search.clear}">&#9253;</button>
+            <h3 class="card-title" th:text="#{purl_server.domain.search.title}">Search for a domain</h3>
+            <form th:action="@{/admin/manager/domain/search}" method="post" onsubmit="storeFormData()">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.search.path}">Path</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" th:value="${searchPath}" name="searchPath" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.search.name}">Name</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" th:value="${searchName}" name="searchName" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label" th:text="#{purl_server.domain.search.user}">User</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" th:value=${searchUser} name="searchUser" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-9">
+                  <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" th:checked="${searchTombstonedDomain}"
+                      name="searchTombstonedDomain" id="tombstoned" />
+                    <label class="custom-control-label" th:text="#{purl_server.domain.search.tombstoned}"
+                      for="tombstoned">Tombstoned domains</label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-9 offset-sm-3">
+                  <button type="submit" class="btn btn-primary" th:text="#{purl_server.domain.search.search}">Search</button>
+                </div>
+              </div>
+            </form>
+            <script type="text/javascript">
+              function storeFormData() {
+                sessionStorage.setItem('domain_search_path', document.getElementsByName('searchPath')[0].value);
+                sessionStorage.setItem('domain_search_name', document.getElementsByName('searchName')[0].value);
+                sessionStorage.setItem('domain_search_user', document.getElementsByName('searchUser')[0].value);
+                sessionStorage.setItem('domain_search_tombstoned', document.getElementsByName('searchTombstonedDomain')[0].checked);
+                return true;
+              }
+              
+              function loadFormData() {
+            	  if(sessionStorage.getItem('domain_search_path') != null) {
+                      document.getElementsByName('searchPath')[0].value = sessionStorage.getItem('domain_search_path'); 
+                    }
+                    if(sessionStorage.getItem('domain_search_name') != null) {
+                      document.getElementsByName('searchName')[0].value = sessionStorage.getItem('domain_search_name'); 
+                    }
+                    if(sessionStorage.getItem('domain_search_user') != null) {
+                        document.getElementsByName('searchUser')[0].value = sessionStorage.getItem('domain_search_user'); 
+                      }
+                    if(sessionStorage.getItem('domain_search_tombstoned') != null) {
+                      document.getElementsByName('searchTombstonedDomain')[0].checked = ('true' == sessionStorage.getItem('domain_search_tombstoned')); 
+                    }  
+              }
+              
+              function clearFormData() {
+                document.getElementsByName('searchPath')[0].value = '';
+                document.getElementsByName('searchName')[0].value = '';
+                document.getElementsByName('searchUser')[0].value = '';
+                document.getElementsByName('searchTombstonedDomain')[0].checked = false;
+              }
+             </script>
+          </div>
+        </div>
+        <div th:insert="~{fragments/forms :: help (#{purl_server.domain.search.help})}" class="row mt-3"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <p class="alert alert-info" th:if="${domains != null && #lists.size(domains) == 0}"
+          th:text="#{purl_server.common.search.result.empty}"></p>
+        <p class="alert alert-info" th:if="${moreResults}" th:text="#{purl_server.common.search.result.more}"></p>
+        <table class="table table-striped table-sm mt-3" aria-label="Domain search result">
+          <colgroup>
+            <col style="width: auto;"/>
+            <col style="width: auto;"/>
+            <col style="width: auto;"/>
+            <col style="width: 7.5em;"/>
+          </colgroup>
+          <tr>
+            <th th:text="#{purl_server.domain.search.table.path}">Path</th>
+            <th th:text="#{purl_server.domain.search.table.name}">Name</th>
+            <th th:text="#{purl_server.domain.search.table.user}">User</th>
+            <th></th>
+            <th></th>
+          </tr>
+          <tr th:each="d : ${domains}">
+            <td th:text="${d.path}"></td>
+            <td th:text="${d.name}"></td>
+            <td>
+              <span th:each="du : ${d.domainUserList}">
+                <span th:text="${du.user.login}"></span>
+                <span th:if="${du.canCreate}">(c)</span>
+                <span th:if="${du.canModify}">(m)</span>
+                <br />
+              </span>
+            </td>
+            <td>
+              <a class="btn btn-sm btn-outline-secondary" style="min-width: 2.3em;"
+                 th:href="@{/info/domain__*{d.path}__}" th:title="#{purl_server.domain.search.table.info}">&#128712;</a>
+              <a class="btn btn-sm btn-outline-secondary" style="min-width: 2.3em;"
+                 th:href="@{/admin/manager/domain/modify?id=__${d.id}__}" th:title="#{purl_server.domain.search.table.modify}" sec:authorize="hasRole('ROLE_ADMIN')">&#x270F;&#xFE0E;</a>
+              <a class="btn btn-sm btn-outline-secondary" style="min-width: 2.3em;"
+                 th:href="@{/admin/manager/domain/delete?id=__${d.id}__}" th:title="#{purl_server.domain.search.table.delete}" sec:authorize="hasRole('ROLE_ADMIN')">&#x1F5D1;&#xFE0E;</a>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div th:replace="~{fragments/page :: footer}"></div>
+  </div>
+  <script th:replace="~{fragments/page :: html_footer}"></script>
+</body>
+</html>

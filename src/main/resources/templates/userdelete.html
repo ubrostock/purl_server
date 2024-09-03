@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="de" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{purl_server.title}">Purls: Purl Manager</title>
+<meta th:replace="~{fragments/page :: html_header}" />
+</head>
+<body>
+  <div class="container">
+    <div th:replace="~{fragments/page :: title}"></div>
+    <div th:replace="~{fragments/page :: navigation}"></div>
+    <div class="card border">
+      <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <h3 class="card-title" th:text="#{purl_server.user.delete.title}">Delete a user</h3>
+            <div class="alert alert-danger" role="alert" th:if="${errors}" th:each="error : ${errors}">
+              <span th:text="${error}"></span>
+            </div>
+            <div th:if="${deleted}">
+              <div class="alert alert-success" th:text="#{purl_server.user.delete.deleted}">User deleted!</div>
+            </div>
+            <form th:action="@{/admin/manager/user/delete}" method="post" th:object="${user}">
+              <input type="hidden" th:field="*{id}" />
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.delete.username}">Username</label>
+                <div class="col-sm-6">
+                  <input type="text" class="form-control" th:field="*{login}" readonly="readonly" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.delete.fullname}">Full name</label>
+                <div class="col-sm-6">
+                  <input type="text" class="form-control" th:field="*{fullname}" readonly="readonly" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.delete.affiliation}">affiliation</label>
+                <div class="col-sm-6">
+                  <input type="text" class="form-control" th:field="*{affiliation}" readonly="readonly" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.delete.email}">E-Mail</label>
+                <div class="col-sm-6">
+                  <input type="text" class="form-control" th:field="*{email}" readonly="readonly" />
+                </div>
+              </div>
+              <div class="form-group row" th:unless="${deleted}">
+                <div class="col-sm-6 offset-sm-4">
+                  <button type="submit" class="btn btn-danger" th:text="#{purl_server.user.delete.delete}">delete</button>
+                  <a class="btn btn-secondary" th:href="@{/admin/manager/user/search}" th:text="#{purl_server.user.form.cancel}">Abbrechen</a>
+                </div>
+              </div>
+              <div class="form-group row" th:if="${deleted}">
+                <div class="col">
+                  <a class="btn btn-secondary" th:href="@{/admin/manager/user/modify?id=__${user.id}__}"
+                     th:text="#{purl_server.user.goto.modify}">modify</a>
+                  <a class="btn btn-secondary" th:href="@{/admin/manager/user/create}"
+                     th:text="#{purl_server.user.goto.create}">Create a new user</a>
+                  <a class="btn btn-secondary" th:href="@{/admin/manager/user/search}"
+                     th:text="#{purl_server.user.goto.search}">Search for a user</a>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div th:insert="~{fragments/forms :: help (#{purl_server.user.delete.help})}" class="row mt-3"></div>
+      </div>
+      <div th:replace="~{fragments/page :: footer}"></div>
+    </div>
+  </div>
+  <script th:replace="~{fragments/page :: html_footer}"></script>
+</body>
+</html>

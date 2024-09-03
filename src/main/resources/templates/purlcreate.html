@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="de" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{purl_server.title}">Purls: Purl Manager</title>
+<meta th:replace="~{fragments/page :: html_header}" />
+</head>
+<body>
+  <div class="container">
+    <div th:replace="~{fragments/page :: title}"></div>
+    <div th:replace="~{fragments/page :: navigation}"></div>
+    <div class="card border">
+      <div class="card-body">
+        <div class="row">
+          <div class="col">
+            <h3 class="card-title" th:text="#{purl_server.purl.create.title}">Create a PURL</h3>
+            <div class="alert alert-danger" role="alert" th:if="${errors}" th:each="error : ${errors}">
+              <span th:text="${error}"></span>
+            </div>
+            <div th:if="${submitted}" class="alert alert-success" th:text="#{purl_server.purl.create.created}">
+              Purl created!</div>
+            <form th:action="@{/admin/manager/purl/create}" method="post" th:object="${purl}">
+              <div th:replace="~{fragments/forms :: purlForm}"></div>
+            </form>
+          </div>
+        </div>
+        <div th:insert="~{fragments/forms :: help (#{purl_server.purl.create.help})}" class="row mt-3"></div>
+        <div th:if="${submitted}" th:insert="~{fragments/forms :: nextPurlAction}" class="row mt-3"></div>
+      </div>
+    </div>
+    <div th:replace="~{fragments/page :: footer}"></div>
+  </div>
+  <script th:replace="~{fragments/page :: html_footer}"></script>
+</body>
+</html>

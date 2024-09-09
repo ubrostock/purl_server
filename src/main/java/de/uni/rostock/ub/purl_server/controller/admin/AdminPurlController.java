@@ -234,7 +234,6 @@ public class AdminPurlController {
                 if (purlAccess.canModifyPurl(d, u)) {
                     purlDAO.deletePurl(deletePurl, u);
                     model.addAttribute(MODEL_ATTRIBUTE_DELETED, true);
-                    model.addAttribute(MODEL_ATTRIBUTE_PURL, deletePurl);
                 } else {
                     List<String> errorList = new ArrayList<>();
                     errorList.add(
@@ -245,6 +244,7 @@ public class AdminPurlController {
             });
         });
         // TODO Was passiert im Fehlerfall, Domain not present.
+        model.addAttribute(MODEL_ATTRIBUTE_PURL, purlDAO.retrievePurl(purl.getId()).get());
         return "purldelete";
     }
 }

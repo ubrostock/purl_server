@@ -248,8 +248,9 @@ public class AdminUserController {
     public String deleteUser(@ModelAttribute User user, HttpServletRequest request, Model model) {
         User loginUser = purlAccess.retrieveCurrentUser();
         userDAO.deleteUser(user, loginUser);
+        User dbUser = userDAO.retrieveUser(user.getId()).get();
         model.addAttribute(MODEL_ATTRIBUTE_DELETED, true);
-        model.addAttribute(MODEL_ATTRIBUTE_USER, user);
+        model.addAttribute(MODEL_ATTRIBUTE_USER, dbUser);
         return "userdelete";
     }
 

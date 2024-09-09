@@ -132,6 +132,7 @@
             </td>
             <td>
               <a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/manager/user/delete?id=__${u.id}__}"
+                 th:classappend="${#strings.toString(u.status) == 'DELETED'} ? 'disabled'"
                  th:title="#{purl_server.user.search.table.delete}">&#x1F5D1;&#xFE0E;</a>
             </td>
           </tr>

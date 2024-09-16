@@ -80,7 +80,7 @@
     <div class="row mb-3">
       <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.form.login}">Login</label>
       <div class="col-sm-8">
-        <input type="text" class="form-control" th:field="*{login}" th:disabled="${submitted}" th:readonly="${form == 'modify'}" />
+        <input type="text" class="form-control" th:field="*{login}" th:disabled="${submitted} or ${form == 'modify'}" />
       </div>
     </div>
     <div class="row mb-3">

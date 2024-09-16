@@ -107,25 +107,25 @@ public class UserDAO {
 
     /**
      * Create a user
-     * @param userObject
+     * @param user
      */
-    public void createUser(User userObject, User u) {
+    public void createUser(User user) {
         jdbcTemplate.update(
             "INSERT INTO user (login, password_sha, admin, fullname, affiliation, email, comment, created, lastmodified, status) VALUES (?,?,?,?,   ?,?,?,NOW(3), NOW(3),   ?)",
-            userObject.getLogin(), userObject.getPasswordSHA(), userObject.isAdmin(), userObject.getFullname(),
-            userObject.getAffiliation(), userObject.getEmail(),
-            userObject.getComment(), Status.CREATED.name());
+            user.getLogin(), user.getPasswordSHA(), user.isAdmin(), user.getFullname(),
+            user.getAffiliation(), user.getEmail(),
+            user.getComment(), Status.CREATED.name());
     }
 
     /**
      * Modify a user
-     * @param userObject
+     * @param user
      */
-    public void modifyUser(User userObject, User u) {
+    public void modifyUser(User user) {
         jdbcTemplate.update(
-            "UPDATE user SET login = ?, fullname = ?, affiliation = ?, email = ?, comment = ?, lastmodified = NOW(3), status = ? WHERE id = ?;",
-            userObject.getLogin(), userObject.getFullname(), userObject.getAffiliation(), userObject.getEmail(),
-            userObject.getComment(), Status.MODIFIED.name(), userObject.getId());
+            "UPDATE user SET fullname = ?, affiliation = ?, email = ?, comment = ?, lastmodified = NOW(3), status = ? WHERE id = ?;",
+            user.getFullname(), user.getAffiliation(), user.getEmail(),
+            user.getComment(), Status.MODIFIED.name(), user.getId());
     }
 
     /**
@@ -133,8 +133,8 @@ public class UserDAO {
      * 
      * @param id
      */
-    public void deleteUser(User userObject, User u) {
+    public void deleteUser(User user) {
         jdbcTemplate.update("UPDATE user SET lastmodified = NOW(3), status = ? WHERE id = ?;", Status.DELETED.name(),
-            userObject.getId());
+            user.getId());
     }
 }

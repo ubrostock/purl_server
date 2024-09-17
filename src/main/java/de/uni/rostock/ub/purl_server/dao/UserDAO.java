@@ -119,6 +119,8 @@ public class UserDAO {
 
     /**
      * Modify a user
+     * Does not update login, because the user form does not submit disabled inputs.
+     * Login can not be modified.
      * @param user
      */
     public void modifyUser(User user) {

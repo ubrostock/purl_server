@@ -43,7 +43,6 @@ import de.uni.rostock.ub.purl_server.model.Domain;
 import de.uni.rostock.ub.purl_server.model.DomainUser;
 import de.uni.rostock.ub.purl_server.model.Purl;
 import de.uni.rostock.ub.purl_server.model.Status;
-import de.uni.rostock.ub.purl_server.model.User;
 
 @Service
 public class DomainDAO {
@@ -172,7 +171,7 @@ public class DomainDAO {
      * Create a domain
      * @param domain
      */
-    public Optional<Domain> createDomain(Domain domain, User u) {
+    public Optional<Domain> createDomain(Domain domain) {
         KeyHolder domainHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(new PreparedStatementCreator() {
             @Override
@@ -211,12 +210,13 @@ public class DomainDAO {
 
     /**
      * Modify a domain
+     * Does not update path, because the domain form does not submit disabled inputs.
+     * Path can not be modified.
      * @param domain
      */
-    public Optional<Domain> modifyDomain(Domain domain, User u) {
+    public Optional<Domain> modifyDomain(Domain domain) {
         jdbcTemplate.update(
-            "UPDATE domain SET path = ?, name = ?, comment = ?, lastmodified = NOW(3), status = 2 WHERE id = ?;",
-            domain.getPath(),
+            "UPDATE domain SET name = ?, comment = ?, lastmodified = NOW(3), status = 2 WHERE id = ?;",
             domain.getName(), domain.getComment(), domain.getId());
         jdbcTemplate.update("DELETE FROM domainuser WHERE domain_id = ?", domain.getId());
         for (DomainUser du : domain.getDomainUserList()) {
@@ -235,8 +235,8 @@ public class DomainDAO {
      * Delete a domain
      * @param domain
      */
-    public void deleteDomain(String path, User u) {
-        jdbcTemplate.update("UPDATE domain SET lastmodified = NOW(3), status = ? WHERE path = ?", Status.DELETED.name(),
-            path);
+    public void deleteDomain(Domain domain) {
+        jdbcTemplate.update("UPDATE domain SET lastmodified = NOW(3), status = ? WHERE id = ?", Status.DELETED.name(),
+            domain.getId());
     }
 }

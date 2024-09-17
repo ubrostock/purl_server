@@ -129,10 +129,9 @@ public class AdminDomainController {
     public String createDomain(@ModelAttribute Domain domain, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, MODEL_VALUE_FORM_CREATE);
         cleanUpDomain(domain);
-        User u = purlAccess.retrieveCurrentUser();
-        List<String> errorList = domainValidateService.validateCreateDomain(domain, u, locale);
+        List<String> errorList = domainValidateService.validateCreateDomain(domain, locale);
         if (errorList.isEmpty()) {
-            Optional<Domain> newDomain = domainDAO.createDomain(domain, u);
+            Optional<Domain> newDomain = domainDAO.createDomain(domain);
             if (newDomain.isPresent()) {
                 model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, newDomain.get());
             } else {
@@ -191,16 +190,15 @@ public class AdminDomainController {
     public String modifyDomain(@ModelAttribute Domain domain, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, MODEL_VALUE_FORM_MODIFY);
         cleanUpDomain(domain);
-        User u = purlAccess.retrieveCurrentUser();
-        List<String> errorList = domainValidateService.validateModifyDomain(domain, u, locale);
+        List<String> errorList = domainValidateService.validateModifyDomain(domain, locale);
         if (errorList.isEmpty()) {
-            domainDAO.modifyDomain(domain, u);
+            domainDAO.modifyDomain(domain);
             model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, true);
         } else {
             model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
             model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, false);
         }
-        model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domain);
+        model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domainDAO.retrieveDomainWithUser(domain.getId()).get());
         model.addAttribute(MODEL_ATTRIBUTE_USERS_LOGIN, userDAO.retrieveActiveUsers());
         return MODEL_VIEW_DOMAINMODIFY;
     }
@@ -286,11 +284,10 @@ public class AdminDomainController {
     @PostMapping(path = "/admin/manager/domain/delete")
     public String deleteDomain(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
         User u = purlAccess.retrieveCurrentUser();
-        domainDAO.retrieveDomain(domain.getPath()).ifPresent(d -> {
+        domainDAO.retrieveDomain(domain.getId()).ifPresent(d -> {
             if (purlAccess.canModifyPurl(d, u)) {
-                domainDAO.deleteDomain(domain.getPath(), u);
+                domainDAO.deleteDomain(domain);
                 model.addAttribute(MODEL_ATTRIBUTE_DELETED, true);
-               
             } else {
                 List<String> errorList = new ArrayList<>();
                 errorList.add(messages.getMessage("purl_server.error.domain.delete", null, Locale.getDefault()));

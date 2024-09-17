@@ -266,6 +266,7 @@ public class AdminDomainController {
      * 
      * @return the domain delete page
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(path = "/admin/manager/domain/delete")
     public String showDomainDelete(@RequestParam("id") int id, Model model) {
         domainDAO.retrieveDomain(id).ifPresent(d -> {
@@ -281,6 +282,7 @@ public class AdminDomainController {
      * @param model
      * @return the domain delete page
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(path = "/admin/manager/domain/delete")
     public String deleteDomain(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
         User u = purlAccess.retrieveCurrentUser();

@@ -58,44 +58,42 @@ public class PurlValidateService {
      * @return the error list
      */
     public List<String> validateCreatePurl(Purl purl, User u, Locale locale) {
-        List<String> errorList = new ArrayList<>();
         if (!StringUtils.hasText(purl.getPath())) {
-            errorList.add(
+            return List.of(
                 messages.getMessage("purl_server.error.validate.purl.create.path.empty", null, locale));
         }
-        if (errorList.isEmpty()) {
-            errorList.addAll(validatePurl(purl, locale));
+        List<String> l = validatePurl(purl, locale);
+        if (!l.isEmpty()) {
+            return l;
         }
-        if (errorList.isEmpty()) {
-            Optional<Domain> d = domainDAO.retrieveDomain(purl);
-            if (d.isPresent()) {
-                if (d.get().getStatus() == Status.DELETED) {
-                    errorList.add(messages.getMessage("purl_server.error.validate.domain.deleted",
-                        new Object[] { d.get().getPath() }, locale));
-                } else if (!purlAccess.canCreatePurl(d.get(), u)) {
-                    errorList.add(messages.getMessage("purl_server.error.validate.domain.unauthorized",
-                        new Object[] { d.get().getPath() }, locale));
+
+        Optional<Domain> d = domainDAO.retrieveDomain(purl);
+        if (d.isPresent()) {
+            if (d.get().getStatus() == Status.DELETED) {
+                return List.of(messages.getMessage("purl_server.error.validate.domain.deleted",
+                    new Object[] { d.get().getPath() }, locale));
+            } else if (!purlAccess.canCreatePurl(d.get(), u)) {
+                return List.of(messages.getMessage("purl_server.error.validate.domain.unauthorized",
+                    new Object[] { d.get().getPath() }, locale));
+            }
+        } else {
+            return List.of(messages.getMessage("purl_server.error.validate.domain.exist",
+                new Object[] { purl.getDomainPath() }, locale));
+        }
+
+        Optional<Purl> currentPurl = purlDAO.retrievePurl(purl.getPath());
+        if (!currentPurl.isEmpty() && currentPurl.get().getStatus() != Status.DELETED) {
+            if (currentPurl.get().getType() == Type.PARTIAL_302) {
+                if (purl.getPath().length() == currentPurl.get().getPath().length()) {
+                    return List.of(messages.getMessage("purl_server.error.validate.purl.path.exist", null,
+                        locale));
                 }
             } else {
-                errorList.add(messages.getMessage("purl_server.error.validate.domain.exist",
-                    new Object[] { purl.getDomainPath() }, locale));
+                return List.of(
+                    messages.getMessage("purl_server.error.validate.purl.path.exist", null, locale));
             }
         }
-        if (errorList.isEmpty()) {
-            Optional<Purl> currentPurl = purlDAO.retrievePurl(purl.getPath());
-            if (!currentPurl.isEmpty() && currentPurl.get().getStatus() != Status.DELETED) {
-                if (currentPurl.get().getType() == Type.PARTIAL_302) {
-                    if (purl.getPath().length() == currentPurl.get().getPath().length()) {
-                        errorList.add(messages.getMessage("purl_server.error.validate.purl.path.exist", null,
-                            locale));
-                    }
-                } else {
-                    errorList.add(
-                        messages.getMessage("purl_server.error.validate.purl.path.exist", null, locale));
-                }
-            }
-        }
-        return errorList;
+        return List.of();
     }
 
     /**

@@ -157,7 +157,7 @@ public class AdminPurlController {
             model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
             model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, false);
         }
-        model.addAttribute(MODEL_ATTRIBUTE_PURL, purl);
+        model.addAttribute(MODEL_ATTRIBUTE_PURL, purlDAO.retrievePurl(purl.getId()).get());
         return "purlmodify";
     }
 
@@ -229,7 +229,7 @@ public class AdminPurlController {
     @PostMapping(path = "/admin/manager/purl/delete")
     public String deletePurl(@ModelAttribute Purl purl, HttpServletRequest request, Model model) {
         User u = purlAccess.retrieveCurrentUser();
-        purlDAO.retrievePurl(purl.getPath()).ifPresent(deletePurl -> {
+        purlDAO.retrievePurl(purl.getId()).ifPresent(deletePurl -> {
             domainDAO.retrieveDomain(deletePurl).ifPresent(d -> {
                 if (purlAccess.canModifyPurl(d, u)) {
                     purlDAO.deletePurl(deletePurl, u);

@@ -86,12 +86,12 @@ public class PurlValidateService {
             if (!currentPurl.isEmpty() && currentPurl.get().getStatus() != Status.DELETED) {
                 if (currentPurl.get().getType() == Type.PARTIAL_302) {
                     if (purl.getPath().length() == currentPurl.get().getPath().length()) {
-                        errorList.add(messages.getMessage("purl_server.error.validate.purl.create.exist", null,
+                        errorList.add(messages.getMessage("purl_server.error.validate.purl.path.exist", null,
                             locale));
                     }
                 } else {
                     errorList.add(
-                        messages.getMessage("purl_server.error.validate.purl.create.exist", null, locale));
+                        messages.getMessage("purl_server.error.validate.purl.path.exist", null, locale));
                 }
             }
         }
@@ -118,11 +118,12 @@ public class PurlValidateService {
                     errorList.add(messages.getMessage("purl_server.error.validate.domain.exist",
                         new Object[] { purl.getDomainPath() }, locale));
                 });
-
-            if (purl.getStatus() == Status.DELETED) {
-                errorList.add(messages.getMessage("purl_server.error.validate.user.modify.deleted.purl.unauthorized",
-                    null, locale));
-            }
+            purlDAO.retrievePurl(purl.getPath()).ifPresent(
+                p -> {
+                    if (purl.getId() != -1 && purl.getId() != p.getId()) {
+                        errorList.add(messages.getMessage("purl_server.error.validate.purl.path.exist", null, locale));
+                    }
+                });
         }
         return errorList;
     }

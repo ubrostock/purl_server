@@ -160,7 +160,7 @@
     <div class="row mb-3">
       <label class="col-sm-3 col-form-label" th:text="#{purl_server.purl.form.path}">Path</label>
       <div class="col-sm-9">
-        <input type="text" class="form-control" th:field="*{path}" th:disabled="${submitted} or *{id != -1}" />
+        <input type="text" class="form-control" th:field="*{path}" th:disabled="${submitted}" />
       </div>
     </div>
     <div class="row mb-3">

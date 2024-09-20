@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS `domain` (
 	`created` TIMESTAMP(3) NOT NULL,
 	`lastmodified` TIMESTAMP(3) NOT NULL,
 	`status` ENUM('CREATED','MODIFIED','DELETED') NOT NULL,
-	PRIMARY KEY (`id`) USING BTREE,
-	INDEX `key_path` (`path`) USING BTREE
+	PRIMARY KEY (`id`),
+	INDEX `domain__key_path` (`path`) USING BTREE
 );
 
 CREATE TABLE IF NOT EXISTS `user` (
@@ -23,8 +23,8 @@ CREATE TABLE IF NOT EXISTS `user` (
 	`created` TIMESTAMP(3) NOT NULL,
 	`lastmodified` TIMESTAMP(3) NOT NULL,
 	`status` ENUM('CREATED','MODIFIED','DELETED') NOT NULL,
-	PRIMARY KEY (`id`) USING BTREE,
-	UNIQUE INDEX `idx_login` (`login`) USING BTREE
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX `user__idx_login` (`login`) USING BTREE
 );
 
 CREATE TABLE IF NOT EXISTS `domainuser` (
@@ -33,9 +33,9 @@ CREATE TABLE IF NOT EXISTS `domainuser` (
 	`user_id` INT(10) NOT NULL,
 	`can_create` BOOLEAN NOT NULL,
 	`can_modify` BOOLEAN NOT NULL,
-	PRIMARY KEY (`id`) USING BTREE,
-	INDEX `key_domain_id` (`domain_id`) USING BTREE,
-	INDEX `key_user_id` (`user_id`) USING BTREE
+	PRIMARY KEY (`id`),
+	INDEX `domainuser__key_domain_id` (`domain_id`) USING BTREE,
+	INDEX `domainuser__key_user_id` (`user_id`) USING BTREE
 );
 
 CREATE TABLE IF NOT EXISTS `purl` (
@@ -47,8 +47,8 @@ CREATE TABLE IF NOT EXISTS `purl` (
 	`created` TIMESTAMP(3) NOT NULL,
 	`lastmodified` TIMESTAMP(3) NOT NULL,
 	`status` ENUM('CREATED','MODIFIED','DELETED') NOT NULL,
-	PRIMARY KEY (`id`) USING BTREE,
-	INDEX `key_path` (`path`) USING BTREE
+	PRIMARY KEY (`id`),
+	INDEX `purl__key_path` (`path`) USING BTREE
 );
 
 CREATE TABLE IF NOT EXISTS `purlhistory` (
@@ -59,5 +59,5 @@ CREATE TABLE IF NOT EXISTS `purlhistory` (
 	`target` VARCHAR(2048) NOT NULL,
 	`modified` TIMESTAMP(3) NOT NULL,
 	`status` ENUM('CREATED','MODIFIED','DELETED') NOT NULL,
-	PRIMARY KEY (`id`) USING BTREE
+	PRIMARY KEY (`id`)
 );

@@ -15,8 +15,8 @@
  */
 package purl_server;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.net.Authenticator;
@@ -28,19 +28,23 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import de.uni.rostock.ub.purl_server.PurlServerWebApp;
 import de.uni.rostock.ub.purl_server.client.PurlClient;
 
-public class PurlTest {
-    private String host = "http://localhost:8080";
-    private String adminHost = "http://localhost:8080/api/purl";
-    private String purlPath = "/test/test312/";
 
-    @Before
-    public void init() {
+//TODO Migrate to Test with H2-InMemory-Database
+@Disabled
+public class PurlClientTest {
+    private static String host = "http://localhost:8080";
+    private static String adminHost = "http://localhost:8080/api/purl";
+    private static String purlPath = "/test/test312/";
+
+    @BeforeAll
+    public static void init() {
         PurlServerWebApp.main(new String[] {});
         prepairPurlTest();
     }
@@ -71,7 +75,7 @@ public class PurlTest {
                     }
                 }).build()
                 .send(request, BodyHandlers.ofString());
-            assertEquals("Statuscode must be 201!", 201, response.statusCode());
+            assertEquals(201, response.statusCode(), "Statuscode must be 201!");
         } catch (URISyntaxException | IOException | InterruptedException e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -87,7 +91,7 @@ public class PurlTest {
             HttpResponse<String> response = HttpClient.newBuilder()
                 .build()
                 .send(request, BodyHandlers.ofString());
-            assertEquals("Statuscode must be 302!", 302, response.statusCode());
+            assertEquals(302, response.statusCode(), "Statuscode must be 302!");
         } catch (URISyntaxException | IOException | InterruptedException e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -111,7 +115,7 @@ public class PurlTest {
                     }
                 }).build()
                 .send(request, BodyHandlers.ofString());
-            assertEquals("Statuscode must be 200!", 200, response.statusCode());
+            assertEquals(200, response.statusCode(), "Statuscode must be 200!");
         } catch (URISyntaxException | IOException | InterruptedException e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -127,9 +131,9 @@ public class PurlTest {
             HttpResponse<String> response = HttpClient.newBuilder()
                 .build()
                 .send(request, BodyHandlers.ofString());
-            assertEquals("Statuscode must be 302!", 302, response.statusCode());
-            assertEquals("Location header must contain 'http://test333.de/{path}'", "http://test333.de/123",
-                response.headers().firstValue("Location").orElse(""));
+            assertEquals(302, response.statusCode(), "Statuscode must be 302!");
+            assertEquals("http://test333.de/123", response.headers().firstValue("Location").orElse(""),
+                "Location header must contain 'http://test333.de/{path}'");
         } catch (URISyntaxException | IOException | InterruptedException e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -152,14 +156,14 @@ public class PurlTest {
                     }
                 }).build()
                 .send(request, BodyHandlers.ofString());
-            assertEquals("Statuscode must be 200!", 200, response.statusCode());
+            assertEquals(200, response.statusCode(), "Statuscode must be 200!");
         } catch (URISyntaxException | IOException | InterruptedException e) {
             e.printStackTrace();
             fail(e.getMessage());
         }
     }
 
-    private void prepairPurlTest() {
+    private static void prepairPurlTest() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI(adminHost + purlPath))

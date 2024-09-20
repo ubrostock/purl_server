@@ -15,7 +15,8 @@ PURL-Server Tests
   https://www.baeldung.com/spring-boot-testing
 - Medium: "Setting Up H2 Database for Integration Testing in a Spring Boot Application"
   https://medium.com/@__aditya45__/setting-up-h2-database-for-integration-testing-in-a-spring-boot-application-f3612a4e01ed  
-  
+- Medium: "How to Test JavaMailSender... Using GreenMail"
+  https://medium.com/@erica35225/how-to-test-javamailsender-send-functionality-using-greenmail-f4384a38ee91
   
 ### Kurzprotokoll
 - Update Spring-Boot-Test-Dependency

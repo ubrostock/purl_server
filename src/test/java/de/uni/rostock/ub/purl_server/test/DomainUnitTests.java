@@ -19,22 +19,22 @@ import de.uni.rostock.ub.purl_server.validate.DomainValidateService;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @ActiveProfiles("test")
-public class DomainUnitTests extends PURLServerBaseTest {
+class DomainUnitTests extends PURLServerBaseTest {
     @Autowired
     DomainValidateService domainValidateService;
 
     @Autowired
     DomainDAO domainDAO;
-    
+
     @Test
-    public void testDomainValidate() throws Exception {
+    void testDomainValidate() {
         Domain domain = new Domain();
         domain.setName("Test Domain 1");
         domain.setPath("/test1");
         List<String> errorList = null;
         errorList = domainValidateService.validateCreateDomain(domain, Locale.GERMAN);
         assertTrue(errorList.isEmpty(), "Domain invalid: " + String.join(", ", errorList));
-        
+
         domain.setPath("/test 1");
         errorList = domainValidateService.validateCreateDomain(domain, Locale.GERMAN);
         assertFalse(errorList.isEmpty(), "Domain error not detected - given path is invalid");
@@ -45,7 +45,7 @@ public class DomainUnitTests extends PURLServerBaseTest {
     }
 
     @Test
-    public void testDomainDAOCreate() throws Exception {
+    void testDomainDAOCreate() {
         Domain domain = new Domain();
         domain.setName("Test Domain 1");
         domain.setPath("/test1");

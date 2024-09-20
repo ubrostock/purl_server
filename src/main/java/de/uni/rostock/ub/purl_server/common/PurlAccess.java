@@ -107,36 +107,25 @@ public class PurlAccess {
      * @param request
      * @return user from request
      */
-    public User retrieveUserFromRequest(HttpServletRequest request) {
-        String authorization = request.getHeader("Authorization");
-        if (authorization != null && authorization.startsWith("Basic")) {
-            authorization = authorization.substring(6).trim();
-            authorization = new String(Base64.getDecoder().decode(authorization));
-            if (authorization.contains(":")) {
-                String userName = authorization.substring(0, authorization.indexOf(":"));
-                Optional<User> ou = userDAO.retrieveUser(userName);
-                if (ou.isPresent()) {
-                    return ou.get();
-                }
-            }
+    public Optional<User> retrieveUserFromRequest(HttpServletRequest request) {
+        String user = request.getUserPrincipal() == null ? null : request.getUserPrincipal().getName();
+        if (user != null) {
+            return userDAO.retrieveUser(user);
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
      * retrieves the current logged in user from SecurityContext
      * Use this in other Controllers (e.g. when processing html forms)
      */
-    public User retrieveCurrentUser() {
+    public Optional<User> retrieveCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             String userName = auth.getName(); //get logged in username
-            Optional<User> ou = userDAO.retrieveUser(userName);
-            if (ou.isPresent()) {
-                return ou.get();
-            }
+            return userDAO.retrieveUser(userName);
         }
-        return null;
+        return Optional.empty();
     }
 
 }

@@ -43,7 +43,7 @@ public class UserDAO {
      */
     public Optional<User> retrieveUser(String login) {
         try {
-            User u = jdbcTemplate.queryForObject("SELECT * FROM user WHERE login = ?;", new UserRowMapper(), login);
+            User u = jdbcTemplate.queryForObject("SELECT * FROM `user` WHERE login = ?;", new UserRowMapper(), login);
             return Optional.of(u);
         } catch (DataAccessException e) {
             return Optional.empty();
@@ -57,7 +57,7 @@ public class UserDAO {
      */
     public Optional<User> retrieveUser(int id) {
         try {
-            User u = jdbcTemplate.queryForObject("SELECT * FROM user WHERE id = ?;", new UserRowMapper(), id);
+            User u = jdbcTemplate.queryForObject("SELECT * FROM `user` WHERE id = ?;", new UserRowMapper(), id);
             return Optional.of(u);
         } catch (DataAccessException e) {
             return Optional.empty();
@@ -69,7 +69,7 @@ public class UserDAO {
      * @return a list of all logins
      */
     public List<String> retrieveLogins() {
-        return jdbcTemplate.queryForList("SELECT login FROM user ORDER BY login;", String.class);
+        return jdbcTemplate.queryForList("SELECT login FROM `user` ORDER BY login;", String.class);
     }
 
     /**
@@ -90,7 +90,7 @@ public class UserDAO {
         String paramStatus = isTombstoned ? "CREATED,MODIFIED,DELETED" : "CREATED,MODIFIED";
 
         return jdbcTemplate.query(
-            "SELECT * FROM user WHERE (login LIKE ?) AND (fullname LIKE ?) AND (affiliation LIKE ?) AND (email LIKE ?)"
+            "SELECT * FROM `user` WHERE (login LIKE ?) AND (fullname LIKE ?) AND (affiliation LIKE ?) AND (email LIKE ?)"
                 + " AND INSTR(?, status) > 0"
                 + " ORDER BY login LIMIT ?;",
             new UserRowMapper(), paramLogin, paramFullName, paramAffiliation, paramEmail, paramStatus, limit);
@@ -101,7 +101,7 @@ public class UserDAO {
      * @return list of users
      */
     public List<User> retrieveActiveUsers() {
-        return jdbcTemplate.query("SELECT * FROM user WHERE INSTR('CREATED,MODIFIED', status) ORDER BY login;",
+        return jdbcTemplate.query("SELECT * FROM `user` WHERE INSTR('CREATED,MODIFIED', status) ORDER BY login;",
             new UserRowMapper());
     }
 

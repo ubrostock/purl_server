@@ -58,7 +58,7 @@ public class LoginController {
 
     private static final String SQL_UPDATE_RESET_TOKEN = "UPDATE user SET password_reset_token = ? WHERE login = ?;";
 
-    private static final String SQL_SELECT_FOR_EMAIL = "SELECT login, email, fullname, password_reset_token FROM user WHERE login = ?;";
+    private static final String SQL_SELECT_FOR_EMAIL = "SELECT login, email, fullname, password_reset_token FROM `user` WHERE login = ?;";
 
     private static final String SQL_UPATE_PASSWORD = "UPDATE user SET password_sha = ?, password_reset_token=null WHERE password_reset_token = ?;";
 
@@ -152,7 +152,7 @@ public class LoginController {
     }
 
     private boolean validateToken(String token, ModelAndView mav) {
-        Integer x = jdbcTemplate.queryForObject("SELECT COUNT(*) from user WHERE password_reset_token = ?",
+        Integer x = jdbcTemplate.queryForObject("SELECT COUNT(*) from `user` WHERE password_reset_token = ?",
             Integer.class, token);
         if (x != null && x == 1 && token.contains("_")) {
             String timeString = token.substring(0, token.indexOf("_"));

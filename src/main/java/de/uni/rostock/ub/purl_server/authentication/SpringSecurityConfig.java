@@ -83,8 +83,9 @@ public class SpringSecurityConfig {
     public UserDetailsManager users(DataSource dataSource) {
         JdbcUserDetailsManager users = new JdbcUserDetailsManager(dataSource);
         users.setUsersByUsernameQuery(
-            "SELECT login,password_sha, (status = 'CREATED' OR status = 'MODIFIED') FROM user WHERE login = ?;");
-        users.setAuthoritiesByUsernameQuery("SELECT * FROM (SELECT login, 'ROLE_USER' FROM user UNION SELECT login, 'ROLE_ADMIN' FROM user WHERE admin = true) AS x WHERE x.login = ?;");
+            "SELECT login,password_sha, (status = 'CREATED' OR status = 'MODIFIED') FROM `user` WHERE login = ?;");
+        users.setAuthoritiesByUsernameQuery("SELECT * FROM (SELECT login, 'ROLE_USER' FROM `user` "
+            + " UNION SELECT login, 'ROLE_ADMIN' FROM `user` WHERE admin = true) AS x WHERE x.login = ?;");
         return users;
     }
     

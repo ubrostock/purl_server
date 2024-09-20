@@ -50,7 +50,7 @@ public class DomainDAO {
 
     private static final String SQL_SELECT_DOMAIN_BY_PATH = "SELECT * FROM domain WHERE path = ?;";
 
-    private static final String SQL_SELECT_DOMAIN_WITH_USER_BY_ID = "SELECT u.*, du.* FROM user u JOIN domainuser du ON u.id = du.user_id WHERE du.domain_id = ?;";
+    private static final String SQL_SELECT_DOMAIN_WITH_USER_BY_ID = "SELECT u.*, du.* FROM `user` u JOIN domainuser du ON u.id = du.user_id WHERE du.domain_id = ?;";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -197,7 +197,7 @@ public class DomainDAO {
 
         jdbcTemplate.update("DELETE FROM domainuser WHERE domain_id = ?", domain.getId());
         for (DomainUser du : domain.getDomainUserList()) {
-            Integer userId = jdbcTemplate.queryForObject("SELECT id FROM user WHERE login = ?;", Integer.class,
+            Integer userId = jdbcTemplate.queryForObject("SELECT id FROM `user` WHERE login = ?;", Integer.class,
                 du.getUser().getLogin());
             if (userId != null) {
                 jdbcTemplate.update(
@@ -220,7 +220,7 @@ public class DomainDAO {
             domain.getName(), domain.getComment(), domain.getId());
         jdbcTemplate.update("DELETE FROM domainuser WHERE domain_id = ?", domain.getId());
         for (DomainUser du : domain.getDomainUserList()) {
-            Integer userId = jdbcTemplate.queryForObject("SELECT id FROM user WHERE login = ?;", Integer.class,
+            Integer userId = jdbcTemplate.queryForObject("SELECT id FROM `user` WHERE login = ?;", Integer.class,
                 du.getUser().getLogin());
             if (userId != null) {
                 jdbcTemplate.update(

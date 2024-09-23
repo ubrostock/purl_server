@@ -127,6 +127,27 @@ public class PurlValidateService {
     }
 
     /**
+     * Validate a purl which want to be deleted
+     * @param purl
+     * @param u
+     * @return the error list
+     */
+    public List<String> validateDeletePurl(Purl purl, User u, Locale locale) {
+        List<String> errorList = new ArrayList<>();
+        purlDAO.retrievePurl(purl.getId()).ifPresent(deletePurl -> {
+            domainDAO.retrieveDomain(deletePurl).ifPresent(d -> {
+                if (!purlAccess.canModifyPurl(d, u)) {
+                    errorList.add(
+                        messages.getMessage("purl_server.error.purl.delete.unauthorized", new Object[] { u.getLogin() },
+                            Locale.getDefault()));
+                }
+            });
+        });
+
+        return errorList;
+    }
+
+    /**
      * Validate a purl
      * @param purl
      * @return return a error list

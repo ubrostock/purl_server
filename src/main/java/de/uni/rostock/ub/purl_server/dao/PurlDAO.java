@@ -139,7 +139,7 @@ public class PurlDAO {
         Optional<Purl> p = retrievePurl(path);
         p.ifPresent(x -> {
             List<PurlHistory> purlHistoryList = jdbcTemplate.query(
-                "SELECT ph.*, u.login FROM purlhistory ph JOIN user u ON ph.user_id = u.id WHERE ph.purl_id = ? ORDER BY modified DESC;",
+                "SELECT ph.*, u.login FROM purlhistory ph JOIN `user` u ON ph.user_id = u.id WHERE ph.purl_id = ? ORDER BY modified DESC;",
                 new PurlHistoryRowMapper(), x.getId());
             x.setPurlHistory(purlHistoryList);
         });

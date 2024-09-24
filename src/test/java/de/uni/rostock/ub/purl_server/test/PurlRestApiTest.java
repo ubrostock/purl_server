@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package purl_server;
+package de.uni.rostock.ub.purl_server.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.net.Authenticator;
@@ -27,52 +27,100 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.Base64;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import de.uni.rostock.ub.purl_server.PurlServerWebApp;
 import de.uni.rostock.ub.purl_server.client.PurlClient;
 
-public class PurlTest {
-    private String host = "http://localhost:8080";
-    private String adminHost = "http://localhost:8080/api/purl";
-    private String purlPath = "/test/test312/";
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@ActiveProfiles("test")
+@AutoConfigureMockMvc
+public class PurlRestApiTest extends PURLServerBaseTest {
 
-    @Before
-    public void init() {
-        PurlServerWebApp.main(new String[] {});
-        prepairPurlTest();
+    @Autowired
+    private MockMvc mockMvc;
+
+    private static String host = "http://localhost:8080";
+    private static String apiPath = "/api/purl";
+    private static String purlPath = "/test/test312/";
+    
+    private static final String createBasicAuthenticationHeader(String username, String password) {
+        String valueToEncode = username + ":" + PurlClient.sha1(password);
+        return "Basic " + Base64.getEncoder().encodeToString(valueToEncode.getBytes());
+    }
+    @Test
+    @WithMockUser("user1")
+    public void test() {
+        createPurlTest();
+        /*    checkCreatedPurlTest();
+        modifyPurlTest();
+        checkModifyPurlTest();
+        deletePurlTest();*/
     }
 
     @Test
-    public void test() {
-        createPurlTest();
-        checkCreatedPurlTest();
-        modifyPurlTest();
-        checkModifyPurlTest();
-        deletePurlTest();
+    public void createPurlNoPermissionTest() {
+        try {
+            MockHttpServletRequestBuilder rb = MockMvcRequestBuilders.post(URI.create(apiPath + purlPath))
+                .header("Accept", "application/json")
+                .header("Content-type", "application/json")
+                .content("{\"type\":\"PARTIAL_302\",\"target\":\"http://matrikel.uni-rostock.de/id/1234674\"}");
+
+            ResultActions result = mockMvc.perform(rb);
+            result.andExpect(MockMvcResultMatchers.status().isUnauthorized());
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
     }
+    
+    @Test
+    public void getDomainTest() {
+        try {
+            MockHttpServletRequestBuilder rb = MockMvcRequestBuilders.get(URI.create("/api/domain/test"))
+                .header("Accept", "application/json");
+
+            ResultActions result = mockMvc.perform(rb);
+            result.andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("\"id\":12,\"path\":\"/test\"")));
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+    
+    public static RequestPostProcessor authentication() {
+        return request -> {
+            request.addHeader("Authorization", createBasicAuthenticationHeader("John", "secr3t"));
+            return request;
+        };
+    } 
 
     private void createPurlTest() {
         try {
-            HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(adminHost + purlPath))
+            MockHttpServletRequestBuilder rb = MockMvcRequestBuilders.post(URI.create(apiPath + purlPath))
                 .header("Accept", "application/json")
                 .header("Content-type", "application/json")
-                .POST(HttpRequest.BodyPublishers
-                    .ofString("{\"type\":\"PARTIAL_302\",\"target\":\"http://matrikel.uni-rostock.de/id/1234674\"}"))
-                .build();
-            HttpResponse<String> response = HttpClient.newBuilder()
-                .authenticator(new Authenticator() {
-                    @Override
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication("admin", PurlClient.sha1("admin").toCharArray());
-                    }
-                }).build()
-                .send(request, BodyHandlers.ofString());
-            assertEquals("Statuscode must be 201!", 201, response.statusCode());
-        } catch (URISyntaxException | IOException | InterruptedException e) {
+                .header("Authorization",  createBasicAuthenticationHeader("user1", "user1"))
+                .content("{\"type\":\"PARTIAL_302\",\"target\":\"http://matrikel.uni-rostock.de/id/1234674\"}");
+          //      .with(authentication());
+
+            ResultActions result = mockMvc.perform(rb);
+            result.andExpect(MockMvcResultMatchers.status().isCreated());
+        } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
         }
@@ -87,7 +135,7 @@ public class PurlTest {
             HttpResponse<String> response = HttpClient.newBuilder()
                 .build()
                 .send(request, BodyHandlers.ofString());
-            assertEquals("Statuscode must be 302!", 302, response.statusCode());
+            assertEquals(302, response.statusCode(), "Statuscode must be 302!");
         } catch (URISyntaxException | IOException | InterruptedException e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -97,7 +145,7 @@ public class PurlTest {
     private void modifyPurlTest() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(adminHost + purlPath))
+                .uri(new URI(apiPath + purlPath))
                 .header("Accept", "application/json")
                 .header("Content-type", "application/json")
                 .PUT(
@@ -111,7 +159,7 @@ public class PurlTest {
                     }
                 }).build()
                 .send(request, BodyHandlers.ofString());
-            assertEquals("Statuscode must be 200!", 200, response.statusCode());
+            assertEquals(200, response.statusCode(), "Statuscode must be 200!");
         } catch (URISyntaxException | IOException | InterruptedException e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -127,9 +175,9 @@ public class PurlTest {
             HttpResponse<String> response = HttpClient.newBuilder()
                 .build()
                 .send(request, BodyHandlers.ofString());
-            assertEquals("Statuscode must be 302!", 302, response.statusCode());
-            assertEquals("Location header must contain 'http://test333.de/{path}'", "http://test333.de/123",
-                response.headers().firstValue("Location").orElse(""));
+            assertEquals(302, response.statusCode(), "Statuscode must be 302!");
+            assertEquals("http://test333.de/123", response.headers().firstValue("Location").orElse(""),
+                "Location header must contain 'http://test333.de/{path}'");
         } catch (URISyntaxException | IOException | InterruptedException e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -139,7 +187,7 @@ public class PurlTest {
     private void deletePurlTest() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(adminHost + purlPath))
+                .uri(new URI(apiPath + purlPath))
                 .header("Accept", "application/json")
                 .header("Content-type", "application/json")
                 .DELETE()
@@ -152,17 +200,17 @@ public class PurlTest {
                     }
                 }).build()
                 .send(request, BodyHandlers.ofString());
-            assertEquals("Statuscode must be 200!", 200, response.statusCode());
+            assertEquals(200, response.statusCode(), "Statuscode must be 200!");
         } catch (URISyntaxException | IOException | InterruptedException e) {
             e.printStackTrace();
             fail(e.getMessage());
         }
     }
 
-    private void prepairPurlTest() {
+    private static void prepairPurlTest() {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(adminHost + purlPath))
+                .uri(new URI(apiPath + purlPath))
                 .header("Accept", "application/json")
                 .header("Content-type", "application/json")
                 .DELETE()

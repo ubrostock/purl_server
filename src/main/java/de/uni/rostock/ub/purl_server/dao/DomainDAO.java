@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -46,11 +48,14 @@ import de.uni.rostock.ub.purl_server.model.Status;
 
 @Service
 public class DomainDAO {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DomainDAO.class);
+    
     private static final String SQL_SELECT_DOMAIN_BY_ID = "SELECT * FROM domain WHERE id = ?;";
 
     private static final String SQL_SELECT_DOMAIN_BY_PATH = "SELECT * FROM domain WHERE path = ?;";
 
-    private static final String SQL_SELECT_DOMAIN_WITH_USER_BY_ID = "SELECT u.*, du.* FROM user u JOIN domainuser du ON u.id = du.user_id WHERE du.domain_id = ?;";
+    private static final String SQL_SELECT_DOMAIN_WITH_USER_BY_ID = "SELECT `user`.*, domainuser.* FROM `user` JOIN domainuser "
+        + " ON `user`.id = domainuser.user_id WHERE domainuser.domain_id = ?;";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -85,7 +90,7 @@ public class DomainDAO {
                 return Optional.of(d);
             }
         } catch (DataAccessException e) {
-            //do nothing
+            LOGGER.error("SQL Problem", e);
         }
         return Optional.empty();
     }
@@ -124,7 +129,7 @@ public class DomainDAO {
                 return Optional.of(d);
             }
         } catch (DataAccessException e) {
-            //do nothing
+            LOGGER.error("SQL Problem", e);
         }
         return Optional.empty();
     }
@@ -197,7 +202,7 @@ public class DomainDAO {
 
         jdbcTemplate.update("DELETE FROM domainuser WHERE domain_id = ?", domain.getId());
         for (DomainUser du : domain.getDomainUserList()) {
-            Integer userId = jdbcTemplate.queryForObject("SELECT id FROM user WHERE login = ?;", Integer.class,
+            Integer userId = jdbcTemplate.queryForObject("SELECT id FROM `user` WHERE login = ?;", Integer.class,
                 du.getUser().getLogin());
             if (userId != null) {
                 jdbcTemplate.update(
@@ -220,7 +225,7 @@ public class DomainDAO {
             domain.getName(), domain.getComment(), domain.getId());
         jdbcTemplate.update("DELETE FROM domainuser WHERE domain_id = ?", domain.getId());
         for (DomainUser du : domain.getDomainUserList()) {
-            Integer userId = jdbcTemplate.queryForObject("SELECT id FROM user WHERE login = ?;", Integer.class,
+            Integer userId = jdbcTemplate.queryForObject("SELECT id FROM `user` WHERE login = ?;", Integer.class,
                 du.getUser().getLogin());
             if (userId != null) {
                 jdbcTemplate.update(

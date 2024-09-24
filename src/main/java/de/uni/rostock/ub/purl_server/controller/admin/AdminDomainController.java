@@ -285,10 +285,18 @@ public class AdminDomainController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(path = "/admin/manager/domain/delete")
     public String deleteDomain(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
-        domainDAO.retrieveDomain(domain.getId()).ifPresent(d -> {
-            domainDAO.deleteDomain(domain);
-            model.addAttribute(MODEL_ATTRIBUTE_DELETED, true);
-        });
+        Optional<User> u = purlAccess.retrieveCurrentUser();
+        Optional<Domain> d = domainDAO.retrieveDomain(domain.getId());
+        if (u.isPresent() && d.isPresent()) {
+            if (purlAccess.canModifyPurl(d.get(), u.get())) {
+                domainDAO.deleteDomain(domain);
+                model.addAttribute(MODEL_ATTRIBUTE_DELETED, true);
+            } else {
+                List<String> errorList = new ArrayList<>();
+                errorList.add(messages.getMessage("purl_server.error.domain.delete", null, Locale.getDefault()));
+                model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
+            }
+        }
         model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domainDAO.retrieveDomain(domain.getId()).get());
         return MODEL_VIEW_DOMAINDELETE;
     }

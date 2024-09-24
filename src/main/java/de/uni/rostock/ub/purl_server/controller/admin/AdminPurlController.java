@@ -104,11 +104,12 @@ public class AdminPurlController {
     @PostMapping(path = "/admin/manager/purl/create")
     public String createPurl(@ModelAttribute Purl purl, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "create");
-        User u = purlAccess.retrieveCurrentUser();
+        Optional<User> u = purlAccess.retrieveCurrentUser();
+        if(u.isPresent()) {
         purl.setPath(purl.getPath().trim());
-        List<String> errorList = purlValidateService.validateCreatePurl(purl, u, locale);
+        List<String> errorList = purlValidateService.validateCreatePurl(purl, u.get(), locale);
         if (errorList.isEmpty()) {
-            Optional<Purl> newPurl = purlDAO.createPurl(purl, u);
+            Optional<Purl> newPurl = purlDAO.createPurl(purl, u.get());
             if (newPurl.isPresent()) {
                 model.addAttribute(MODEL_ATTRIBUTE_PURL, newPurl.get());
             } else {
@@ -119,6 +120,7 @@ public class AdminPurlController {
             model.addAttribute(MODEL_ATTRIBUTE_PURL, purl);
             model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
             model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, false);
+        }
         }
         return "purlcreate";
     }
@@ -149,16 +151,18 @@ public class AdminPurlController {
     @PostMapping(path = "/admin/manager/purl/modify")
     public String modifyPurl(@ModelAttribute Purl purl, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "modify");
-        User u = purlAccess.retrieveCurrentUser();
-        List<String> errorList = purlValidateService.validateModifyPurl(purl, u, locale);
+        Optional<User> u = purlAccess.retrieveCurrentUser();
+        if(u.isPresent()) {
+        List<String> errorList = purlValidateService.validateModifyPurl(purl, u.get(), locale);
         if (errorList.isEmpty()) {
-            purlDAO.modifyPurl(purl, u);
+            purlDAO.modifyPurl(purl, u.get());
             model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, true);
         } else {
             model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
             model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, false);
         }
         model.addAttribute(MODEL_ATTRIBUTE_PURL, purlDAO.retrievePurl(purl.getId()).get());
+        }
         return "purlmodify";
     }
 
@@ -229,18 +233,25 @@ public class AdminPurlController {
      */
     @PostMapping(path = "/admin/manager/purl/delete")
     public String deletePurl(@ModelAttribute Purl purl, HttpServletRequest request, Model model) {
-        User u = purlAccess.retrieveCurrentUser();
-        List<String> errorList = purlValidateService.validateDeletePurl(purl, u, Locale.getDefault());
-        if (errorList.isEmpty()) {
-            purlDAO.deletePurl(purl, u);
-            model.addAttribute(MODEL_ATTRIBUTE_DELETED, true);
-        } else {
-            model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
-            model.addAttribute(MODEL_ATTRIBUTE_DELETED, false);
-        }
-
+        Optional<User> u = purlAccess.retrieveCurrentUser();
+        if(u.isPresent()) {
+        purlDAO.retrievePurl(purl.getId()).ifPresent(deletePurl -> {
+            domainDAO.retrieveDomain(deletePurl).ifPresent(d -> {
+                if (purlAccess.canModifyPurl(d, u.get())) {
+                    purlDAO.deletePurl(deletePurl, u.get());
+                    model.addAttribute(MODEL_ATTRIBUTE_DELETED, true);
+                } else {
+                    List<String> errorList = new ArrayList<>();
+                    errorList.add(
+                        messages.getMessage("purl_server.error.user.delete.purl.unauthorized", null,
+                            Locale.getDefault()));
+                    model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
+                }
+            });
+        });
         // TODO Was passiert im Fehlerfall, Domain not present.
         model.addAttribute(MODEL_ATTRIBUTE_PURL, purlDAO.retrievePurl(purl.getId()).get());
+        }
         return "purldelete";
     }
 }

@@ -33,22 +33,22 @@ public class DomainUserRowMapper implements RowMapper<DomainUser> {
         DomainUser du = new DomainUser();
         
         User u = new User();
-        u.setId(rs3.getInt("u.id"));
-        u.setAdmin(rs3.getBoolean("u.admin"));
-        u.setFullname(rs3.getString("u.fullname"));
-        u.setAffiliation(rs3.getString("u.affiliation"));
-        u.setEmail(rs3.getString("u.email"));
-        u.setLogin(rs3.getString("u.login"));
-        u.setPasswordSHA(rs3.getString("u.password_sha"));
-        u.setComment(rs3.getString("u.comment"));
-        u.setCreated(rs3.getTimestamp("u.created").toInstant());
-        u.setLastmodified(rs3.getTimestamp("u.lastmodified").toInstant());
-        u.setStatus(Status.valueOf(rs3.getString("u.status")));
+        u.setId(rs3.getInt("user.id"));
+        u.setAdmin(rs3.getBoolean("user.admin"));
+        u.setFullname(rs3.getString("user.fullname"));
+        u.setAffiliation(rs3.getString("user.affiliation"));
+        u.setEmail(rs3.getString("user.email"));
+        u.setLogin(rs3.getString("user.login"));
+        u.setPasswordSHA(rs3.getString("user.password_sha"));
+        u.setComment(rs3.getString("user.comment"));
+        u.setCreated(rs3.getTimestamp("user.created").toInstant());
+        u.setLastmodified(rs3.getTimestamp("user.lastmodified").toInstant());
+        u.setStatus(Status.valueOf(rs3.getString("user.status")));
         
         du.setUser(u);
-        du.setId(rs3.getInt("du.id"));
-        du.setCanCreate(rs3.getBoolean("du.can_create"));
-        du.setCanModify(rs3.getBoolean("du.can_modify"));
+        du.setId(rs3.getInt("domainuser.id"));
+        du.setCanCreate(rs3.getBoolean("domainuser.can_create"));
+        du.setCanModify(rs3.getBoolean("domainuser.can_modify"));
 
         return du;
     }

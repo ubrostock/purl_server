@@ -19,6 +19,7 @@
 package de.uni.rostock.ub.purl_server.controller.admin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -157,7 +158,7 @@ public class AdminPurlController {
             model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
             model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, false);
         }
-        model.addAttribute(MODEL_ATTRIBUTE_PURL, purl);
+        model.addAttribute(MODEL_ATTRIBUTE_PURL, purlDAO.retrievePurl(purl.getId()).get());
         return "purlmodify";
     }
 
@@ -229,22 +230,17 @@ public class AdminPurlController {
     @PostMapping(path = "/admin/manager/purl/delete")
     public String deletePurl(@ModelAttribute Purl purl, HttpServletRequest request, Model model) {
         User u = purlAccess.retrieveCurrentUser();
-        purlDAO.retrievePurl(purl.getPath()).ifPresent(deletePurl -> {
-            domainDAO.retrieveDomain(deletePurl).ifPresent(d -> {
-                if (purlAccess.canModifyPurl(d, u)) {
-                    purlDAO.deletePurl(deletePurl, u);
-                    model.addAttribute(MODEL_ATTRIBUTE_DELETED, true);
-                    model.addAttribute(MODEL_ATTRIBUTE_PURL, deletePurl);
-                } else {
-                    List<String> errorList = new ArrayList<>();
-                    errorList.add(
-                        messages.getMessage("purl_server.error.user.delete.purl.unauthorized", null,
-                            Locale.getDefault()));
-                    model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
-                }
-            });
-        });
+        List<String> errorList = purlValidateService.validateDeletePurl(purl, u, Locale.getDefault());
+        if (errorList.isEmpty()) {
+            purlDAO.deletePurl(purl, u);
+            model.addAttribute(MODEL_ATTRIBUTE_DELETED, true);
+        } else {
+            model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
+            model.addAttribute(MODEL_ATTRIBUTE_DELETED, false);
+        }
+
         // TODO Was passiert im Fehlerfall, Domain not present.
+        model.addAttribute(MODEL_ATTRIBUTE_PURL, purlDAO.retrievePurl(purl.getId()).get());
         return "purldelete";
     }
 }

@@ -15,7 +15,7 @@
       </tr>
       <tr>
         <th th:text="#{purl_server.info.domain.domainuserlist}"></th>
-        <td class="pr-0">
+        <td class="pe-0">
           <table class="table table-sm" aria-label="Domain user information">
             <colgroup>
               <col style="min-width: 12em; width: 12em" />
@@ -69,10 +69,10 @@
       </tr>
       <tr id="accordionDomain">
         <th class="h5" th:text="#{purl_server.info.purl.domain}"></th>
-        <td class="pr-0"><span class="h5" th:text="${purl.domain.path}"></span> 
-          <a class="btn btn-sm btn-outline-secondary px-1 py-0 ml-3" data-toggle="collapse" data-target="#collapseDomain"
+        <td class="pe-0"><span class="h5" th:text="${purl.domain.path}"></span> 
+          <a class="btn btn-sm btn-outline-secondary px-1 py-0 ms-3" data-bs-toggle="collapse" data-bs-target="#collapseDomain"
              th:title="#{purl_server.info.more}" aria-expanded="true" aria-controlls="collapseDomain">▼</a>
-          <div id="collapseDomain" class="collapse" data-parent="#accordionDomain">
+          <div id="collapseDomain" class="collapse" data-bs-parent="#accordionDomain">
             <div th:replace="~{fragments/info :: infoDomainTable (${purl.domain})}"></div>
           </div></td>
       </tr>
@@ -82,7 +82,7 @@
       </tr>
       <tr>
         <th th:text="#{purl_server.info.purl.target}"></th>
-        <td><span th:text="${purl.target}"></span><span class="font-italic" th:if="${purl_target_suffix}"
+        <td><span th:text="${purl.target}"></span><span class="fst-italic" th:if="${purl_target_suffix}"
           th:text="${purl_target_suffix}"></span></td>
       </tr>
       <tr>
@@ -90,7 +90,7 @@
         <td>
           <label th:text="#{purl_server.info.common.at}"></label>
           <span th:text="${#temporals.format(purl.created, 'yyyy-MM-dd HH:mm')}"></span>
-          <label class="ml-3" th:text="#{purl_server.info.common.by}"></label>
+          <label class="ms-3" th:text="#{purl_server.info.common.by}"></label>
           <span th:text="${purl_created_by}"></span>
         </td>
       </tr>
@@ -99,7 +99,7 @@
         <td>
           <label th:text="#{purl_server.info.common.at}"></label>
           <span th:text="${#temporals.format(purl.lastmodified, 'yyyy-MM-dd HH:mm')}"></span>
-          <label class="ml-3" th:text="#{purl_server.info.common.by}"></label>
+          <label class="ms-3" th:text="#{purl_server.info.common.by}"></label>
           <span th:text="${purl_lastmodified_by}"></span>
         </td>
       </tr>
@@ -109,20 +109,20 @@
       </tr>
       <tr id="accordionPurlHistory" th:if="${purl.purlHistory.size > 1}">
         <th th:text="#{purl_server.info.purl.purlhistory}"></th>
-        <td class="pr-0"><span th:text="${purl.purlHistory.size-1}"></span> <span
+        <td class="pe-0"><span th:text="${purl.purlHistory.size-1}"></span> <span
           th:text="#{purl_server.info.purl.purlhistory.entry}"></span> <a
-          class="btn btn-sm btn-outline-secondary px-1 py-0 ml-3" data-toggle="collapse"
-          data-target="#collapsePurlHistory" aria-expanded="true" aria-controlls="collapsePurlHistory">▼</a>
-          <div id="collapsePurlHistory" class="collapse" data-parent="#accordionPurlHistory">
+          class="btn btn-sm btn-outline-secondary px-1 py-0 ms-3" data-bs-toggle="collapse"
+          data-bs-target="#collapsePurlHistory" aria-expanded="true" aria-controlls="collapsePurlHistory">▼</a>
+          <div id="collapsePurlHistory" class="collapse" data-bs-parent="#accordionPurlHistory">
             <table class="table table-sm mb-0" aria-label="PURL history information" th:each="entry, iterStat : ${purl.purlHistory}">
               <colgroup>
                 <col style="width: 3em" />
               </colgroup>
               <tr th:if="${!iterStat.first}">
                 <th th:classappend="${iterStat.index == 1} ? 'border-top-0'">
-                  <div class="font-weight-bold pt-1" th:text="${iterStat.index}"></div>
+                  <div class="fw-bold pt-1" th:text="${iterStat.index}"></div>
                 </th>
-                <td class="pr-0" th:classappend="${iterStat.index == 1} ? 'border-top-0'">
+                <td class="pe-0" th:classappend="${iterStat.index == 1} ? 'border-top-0'">
                   <table class="table table-sm mb-0" aria-label="PURL history entry information">
                     <colgroup>
                       <col style="width: 9em" />
@@ -144,7 +144,7 @@
                       <td>
                         <label th:text="#{purl_server.info.common.at}"></label>
                         <span th:text="${#temporals.format(entry.lastmodified, 'yyyy-MM-dd HH:mm')}"></span>
-                        <label class="ml-3" th:text="#{purl_server.info.common.by}"></label>
+                        <label class="ms-3" th:text="#{purl_server.info.common.by}"></label>
                         <span th:text="${entry.user}"></span>
                       </td>
                     </tr>

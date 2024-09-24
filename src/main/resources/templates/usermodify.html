@@ -19,10 +19,6 @@
             </div>
             <div th:if="${submitted}" class="alert alert-success" th:text="#{purl_server.user.modify.modified}">
               User modified!</div>
-            <div id="errorPassword" class="alert alert-danger d-none">
-              <span th:text="#{purl_server.user.modify.error_password}">Password and Re-Password are not the
-                same!</span>
-            </div>
             <form th:action="@{/admin/manager/user/modify}" method="post" th:object="${user}">
               <div th:replace="~{fragments/forms :: userForm}"></div>
             </form>
@@ -43,27 +39,6 @@
     </div>
     <div th:replace="~{fragments/page :: footer}"></div>
   </div>
-  <script type="text/javascript">
-	function encryptPassword() {
- 		var password = $("#password").val();
-		var repassword = $("#repassword").val();
-		if (password != null) {
-			if (password.localeCompare(repassword) == 0) {
-			   $("#errorPassword").addClass("d-none");
-			   if (password != "") {
-				   var shaObj = new jsSHA("SHA-1", "TEXT");
-				   shaObj.update(document.getElementById("password").value);
-				   var hash = shaObj.getHash("HEX");
-				   document.getElementById("password_sha").value = hash;
-				}
-			} else {
-				$("#errorPassword").removeClass("d-none");
-				return false;
-			}
-		}
-		return true;
-	}
-  </script>
   <script th:replace="~{fragments/page :: html_footer}"></script>
 </body>
 </html>

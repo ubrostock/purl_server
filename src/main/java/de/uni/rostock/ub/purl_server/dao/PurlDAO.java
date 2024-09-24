@@ -174,7 +174,9 @@ public class PurlDAO {
                     return ps;
                 }
             }, purlId);
-            Number key = purlId.getKey();
+            // TODO 2 Schlüssel werden generiert
+            // ALT: Number key = (Number) purlId.getKey();
+            Number key = (Number) purlId.getKeyList().get(0).get("GENERATED_KEY");
             if (key != null) {
                 jdbcTemplate.update(SQL_INSERT_PURLHISTORY,
                     key.intValue(), u.getId(), p.getType().name(), p.getTarget(), Status.CREATED.name());
@@ -199,7 +201,7 @@ public class PurlDAO {
             SQL_INSERT_PURLHISTORY,
             p.getId(), u.getId(), p.getType().name(),
             p.getTarget(), Status.MODIFIED.name());
-        return retrievePurl(p.getPath());
+        return retrievePurl(p.getId());
     }
 
     /**
@@ -208,8 +210,8 @@ public class PurlDAO {
      * @param path
      */
     public void deletePurl(Purl p, User u) {
-        jdbcTemplate.update("UPDATE purl SET lastmodified = NOW(3), status = ?, type = ? WHERE path = ?",
-            Status.DELETED.name(), Type.GONE_410.name(), p.getPath());
+        jdbcTemplate.update("UPDATE purl SET lastmodified = NOW(3), status = ?, type = ? WHERE id = ?",
+            Status.DELETED.name(), Type.GONE_410.name(), p.getId());
         p.setType(Type.GONE_410);
         jdbcTemplate.update(
             SQL_INSERT_PURLHISTORY,

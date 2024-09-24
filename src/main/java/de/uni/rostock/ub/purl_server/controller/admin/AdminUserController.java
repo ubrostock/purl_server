@@ -106,13 +106,12 @@ public class AdminUserController {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "create");
         if (userDAO.retrieveUser(user.getLogin()).isPresent()) {
             model.addAttribute(MODEL_ATTRIBUTE_ERRORS,
-                Arrays.asList(messages.getMessage("purl_server.error.validate.user.exists",
+                Arrays.asList(messages.getMessage("purl_server.error.validate.user.create.exists",
                     new Object[] { user.getLogin() }, Locale.getDefault())));
         } else {
             List<String> errorList = userValidateService.validateUser(user, locale);
             if (errorList.isEmpty()) {
-                User loginUser = purlAccess.retrieveCurrentUser();
-                userDAO.createUser(user, loginUser);
+                userDAO.createUser(user);
                 model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, true);
 
             } else {
@@ -151,17 +150,10 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(path = "/admin/manager/user/modify")
     public String modifyUser(@ModelAttribute User user, HttpServletRequest request, Locale locale, Model model) {
+        userDAO.modifyUser(user);
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "modify");
-        User loginUser = purlAccess.retrieveCurrentUser();
-        List<String> errorList = userValidateService.validateUser(user, locale);
-        if (errorList.isEmpty()) {
-            userDAO.modifyUser(user, loginUser);
-            model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, true);
-        } else {
-            model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
-            model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, false);
-        }
-        model.addAttribute(MODEL_ATTRIBUTE_USER, user);
+        model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, true);
+        model.addAttribute(MODEL_ATTRIBUTE_USER, userDAO.retrieveUser(user.getId()).get());
         return "usermodify";
     }
 
@@ -246,10 +238,10 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(path = "/admin/manager/user/delete")
     public String deleteUser(@ModelAttribute User user, HttpServletRequest request, Model model) {
-        User loginUser = purlAccess.retrieveCurrentUser();
-        userDAO.deleteUser(user, loginUser);
+        userDAO.deleteUser(user);
+        User dbUser = userDAO.retrieveUser(user.getId()).get();
         model.addAttribute(MODEL_ATTRIBUTE_DELETED, true);
-        model.addAttribute(MODEL_ATTRIBUTE_USER, user);
+        model.addAttribute(MODEL_ATTRIBUTE_USER, dbUser);
         return "userdelete";
     }
 

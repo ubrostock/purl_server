@@ -58,6 +58,8 @@ public class PurlValidateService {
      * @return the error list
      */
     public List<String> validateCreatePurl(Purl purl, User u, Locale locale) {
+        List<String> errorList = new ArrayList<>();
+        cleanUp(purl);
         if (!StringUtils.hasText(purl.getPath())) {
             return List.of(
                 messages.getMessage("purl_server.error.validate.purl.create.path.empty", null, locale));
@@ -70,14 +72,14 @@ public class PurlValidateService {
         Optional<Domain> d = domainDAO.retrieveDomain(purl);
         if (d.isPresent()) {
             if (d.get().getStatus() == Status.DELETED) {
-                return List.of(messages.getMessage("purl_server.error.validate.domain.deleted",
+                return List.of(messages.getMessage("purl_server.error.validate.domain.create.deleted",
                     new Object[] { d.get().getPath() }, locale));
             } else if (!purlAccess.canCreatePurl(d.get(), u)) {
-                return List.of(messages.getMessage("purl_server.error.validate.domain.unauthorized",
+                return List.of(messages.getMessage("purl_server.error.validate.domain.create.unauthorized",
                     new Object[] { d.get().getPath() }, locale));
             }
         } else {
-            return List.of(messages.getMessage("purl_server.error.validate.domain.exist",
+            return List.of(messages.getMessage("purl_server.error.validate.domain.modify.exist",
                 new Object[] { purl.getDomainPath() }, locale));
         }
 
@@ -85,12 +87,12 @@ public class PurlValidateService {
         if (!currentPurl.isEmpty() && currentPurl.get().getStatus() != Status.DELETED) {
             if (currentPurl.get().getType() == Type.PARTIAL_302) {
                 if (purl.getPath().length() == currentPurl.get().getPath().length()) {
-                    return List.of(messages.getMessage("purl_server.error.validate.purl.path.exist", null,
+                    return List.of(messages.getMessage("purl_server.error.validate.purl.create_modify.path.exist", null,
                         locale));
                 }
             } else {
                 return List.of(
-                    messages.getMessage("purl_server.error.validate.purl.path.exist", null, locale));
+                    messages.getMessage("purl_server.error.validate.purl.create_modify.path.exist", null, locale));
             }
         }
         return List.of();
@@ -104,6 +106,7 @@ public class PurlValidateService {
      */
     public List<String> validateModifyPurl(Purl purl, User u, Locale locale) {
         List<String> errorList = new ArrayList<>();
+        cleanUp(purl);
         errorList.addAll(validatePurl(purl, locale));
         if (errorList.isEmpty()) {
             domainDAO.retrieveDomain(purl).ifPresentOrElse(
@@ -113,16 +116,37 @@ public class PurlValidateService {
                             null, locale));
                     }
                 }, () -> {
-                    errorList.add(messages.getMessage("purl_server.error.validate.domain.exist",
+                    errorList.add(messages.getMessage("purl_server.error.validate.domain.modify.exist",
                         new Object[] { purl.getDomainPath() }, locale));
                 });
             purlDAO.retrievePurl(purl.getPath()).ifPresent(
                 p -> {
                     if (purl.getId() != -1 && purl.getId() != p.getId()) {
-                        errorList.add(messages.getMessage("purl_server.error.validate.purl.path.exist", null, locale));
+                        errorList.add(messages.getMessage("purl_server.error.validate.purl.create_modify.path.exist", null, locale));
                     }
                 });
         }
+        return errorList;
+    }
+
+    /**
+     * Validate a purl which want to be deleted
+     * @param purl
+     * @param u
+     * @return the error list
+     */
+    public List<String> validateDeletePurl(Purl purl, User u, Locale locale) {
+        List<String> errorList = new ArrayList<>();
+        purlDAO.retrievePurl(purl.getId()).ifPresent(deletePurl -> {
+            domainDAO.retrieveDomain(deletePurl).ifPresent(d -> {
+                if (!purlAccess.canModifyPurl(d, u)) {
+                    errorList.add(
+                        messages.getMessage("purl_server.error.purl.delete.unauthorized", new Object[] { u.getLogin() },
+                            Locale.getDefault()));
+                }
+            });
+        });
+
         return errorList;
     }
 
@@ -134,30 +158,36 @@ public class PurlValidateService {
     private List<String> validatePurl(Purl purl, Locale locale) {
         List<String> errorList = new ArrayList<>();
         if (!StringUtils.hasText(purl.getPath())) {
-            errorList.add(messages.getMessage("purl_server.error.validate.purl.path.empty", null, locale));
+            errorList.add(messages.getMessage("purl_server.error.validate.purl.create_modify.path.empty", null, locale));
         } else {
             if (!purl.getPath().startsWith("/")) {
                 errorList
-                    .add(messages.getMessage("purl_server.error.validate.purl.path.start", null, locale));
+                    .add(messages.getMessage("purl_server.error.validate.purl.create_modify.path.start", null, locale));
             }
             if (!purl.getPath().matches("[a-zA-Z0-9_\\-\\/]*")) {
                 errorList
-                    .add(messages.getMessage("purl_server.error.validate.purl.path.match", null, locale));
+                    .add(messages.getMessage("purl_server.error.validate.purl.create_modify.path.match", null, locale));
             }
         }
         if (!StringUtils.hasText(purl.getTarget())) {
             errorList
-                .add(messages.getMessage("purl_server.error.validate.purl.target.empty", null, locale));
+                .add(messages.getMessage("purl_server.error.validate.purl.create_modify.target.empty", null, locale));
         } else {
             if (!purl.getTarget().startsWith("https://") && !purl.getTarget().startsWith("http://")) {
                 errorList.add(
-                    messages.getMessage("purl_server.error.validate.purl.target.start", null, locale));
+                    messages.getMessage("purl_server.error.validate.purl.create_modify.target.start", null, locale));
             }
         }
         if (ObjectUtils.isEmpty(purl.getType())) {
             errorList.add(
-                messages.getMessage("purl_server.error.validate.purl.type.target.empty", null, locale));
+                messages.getMessage("purl_server.error.validate.purl.create_modify.type.target.empty", null, locale));
         }
         return errorList;
     }
+    
+    private void cleanUp(Purl p) {
+        p.setPath(p.getPath() == null ? null : p.getPath().strip());
+        p.setTarget(p.getTarget() == null ? null : p.getTarget().strip());
+    }
+    
 }

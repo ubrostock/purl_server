@@ -45,14 +45,24 @@ public class UserValidateService {
      */
     public List<String> validateUser(User user, Locale locale) {
         List<String> errorList = new ArrayList<>();
+        cleanUp(user);
         if (SHA_EMPTY_STRING.equals(user.getPasswordSHA())) {
             errorList
-                .add(messages.getMessage("purl_server.error.validate.user.password.empty", null, locale));
+                .add(messages.getMessage("purl_server.error.validate.user.create.password.empty", null, locale));
         }
         if (!StringUtils.hasText(user.getLogin())) {
             errorList
-                .add(messages.getMessage("purl_server.error.validate.user.username.empty", null, locale));
+                .add(messages.getMessage("purl_server.error.validate.user.create.username.empty", null, locale));
         }
         return errorList;
     }
+    
+    private void cleanUp(User u) {
+        u.setAffiliation(u.getAffiliation() == null ? null : u.getAffiliation().strip());
+        u.setComment(u.getComment() == null ? null : u.getComment().strip());
+        u.setEmail(u.getEmail() == null ? null : u.getEmail().strip());
+        u.setFullname(u.getFullname() == null ? null : u.getFullname().strip());
+        u.setLogin(u.getLogin() == null ? null : u.getLogin().strip());
+    }
+    
 }

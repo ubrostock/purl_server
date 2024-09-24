@@ -216,7 +216,7 @@ public class APIPurlController {
           if(!purlAccess.canCreatePurl(d.get(), u.orElse(null))) {
             PurlServerError e = new PurlServerError(HttpStatus.UNAUTHORIZED,
                 msgErrorPurlCreate,
-                List.of(messages.getMessage("purl_server.error.user.create.unauthorized",
+                List.of(messages.getMessage("purl_server.error.purl.create.unauthorized",
                     new Object[] { u.get().getFullname() }, locale)));
             return new ResponseEntity<PurlServerError>(e, HttpStatus.UNAUTHORIZED);
           }
@@ -307,8 +307,8 @@ public class APIPurlController {
                 if (!purlAccess.canModifyPurl(d.get(), u.get())) {
                     PurlServerError e = new PurlServerError(HttpStatus.UNAUTHORIZED,
                         msgErrorPurlUpdate,
-                        List.of(messages.getMessage("purl_server.error.user.create.unauthorized",
-                            new Object[] { u.get().getFullname() }, locale)));
+                        List.of(messages.getMessage("purl_server.error.purl.modify.unauthorized",
+                            new Object[] { u.getFullname() }, locale)));
                     return new ResponseEntity<PurlServerError>(e, HttpStatus.UNAUTHORIZED);
                 }
                 purlDAO.modifyPurl(p, u.get());
@@ -369,7 +369,7 @@ public class APIPurlController {
                 if (!purlAccess.canModifyPurl(d.get(), u.get())) {
                     PurlServerError e = new PurlServerError(HttpStatus.UNAUTHORIZED,
                         msgErrorPurlDelete,
-                        List.of(messages.getMessage("purl_server.error.user.delete.unauthorized",
+                        List.of(messages.getMessage("purl_server.error.purl.delete.unauthorized",
                             new Object[] { u.get().getFullname() }, locale)));
                     return new ResponseEntity<PurlServerError>(e, HttpStatus.UNAUTHORIZED);
                 }

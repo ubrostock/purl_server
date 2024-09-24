@@ -46,6 +46,7 @@ public class DomainValidateService {
 
     public List<String> validateCreateDomain(Domain d, Locale locale) {
         List<String> errorList = new ArrayList<>();
+        cleanUp(d);
         domainDAO.retrieveDomain(d.getPath()).ifPresentOrElse(dd -> {
             errorList.add(messages.getMessage("purl_server.error.validate.domain.create.already.exist",
                 new Object[] { dd.getPath() }, locale));
@@ -58,7 +59,8 @@ public class DomainValidateService {
 
     public List<String> validateModifyDomain(Domain d, Locale locale) {
         List<String> errorList = new ArrayList<>();
-        domainDAO.retrieveDomain(d.getId()).ifPresentOrElse(dd -> {
+        cleanUp(d);
+        domainDAO.retrieveDomain(d.getPath()).ifPresentOrElse(dd -> {
             errorList.addAll(validateDomain(d, locale));
         }, () -> {
             errorList.add(messages.getMessage("purl_server.error.validate.domain.modify.exist", new Object[] { d.getPath() },
@@ -111,5 +113,10 @@ public class DomainValidateService {
         }
         return errorList;
     }
-
+    
+    private void cleanUp(Domain domain ) {
+        domain.setComment(domain.getComment() == null ? null : domain.getComment().strip());
+        domain.setName(domain.getName() == null ? null : domain.getName().strip());
+        domain.setPath(domain.getPath() == null ? null : domain.getPath().strip());
+    }
 }

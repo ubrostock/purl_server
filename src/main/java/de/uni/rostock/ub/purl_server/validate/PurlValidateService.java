@@ -58,6 +58,8 @@ public class PurlValidateService {
      * @return the error list
      */
     public List<String> validateCreatePurl(Purl purl, User u, Locale locale) {
+        List<String> errorList = new ArrayList<>();
+        cleanUp(purl);
         if (!StringUtils.hasText(purl.getPath())) {
             return List.of(
                 messages.getMessage("purl_server.error.validate.purl.create.path.empty", null, locale));
@@ -104,6 +106,7 @@ public class PurlValidateService {
      */
     public List<String> validateModifyPurl(Purl purl, User u, Locale locale) {
         List<String> errorList = new ArrayList<>();
+        cleanUp(purl);
         errorList.addAll(validatePurl(purl, locale));
         if (errorList.isEmpty()) {
             domainDAO.retrieveDomain(purl).ifPresentOrElse(
@@ -181,4 +184,10 @@ public class PurlValidateService {
         }
         return errorList;
     }
+    
+    private void cleanUp(Purl p) {
+        p.setPath(p.getPath() == null ? null : p.getPath().strip());
+        p.setTarget(p.getTarget() == null ? null : p.getTarget().strip());
+    }
+    
 }

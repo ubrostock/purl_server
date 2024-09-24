@@ -47,7 +47,7 @@ public class DomainValidateService {
     public List<String> validateCreateDomain(Domain d, Locale locale) {
         List<String> errorList = new ArrayList<>();
         domainDAO.retrieveDomain(d.getPath()).ifPresentOrElse(dd -> {
-            errorList.add(messages.getMessage("purl_server.error.validate.domain.already.exist",
+            errorList.add(messages.getMessage("purl_server.error.validate.domain.create.already.exist",
                 new Object[] { dd.getPath() }, locale));
         }, () -> {
             errorList.addAll(validatePath(d, locale));
@@ -61,7 +61,7 @@ public class DomainValidateService {
         domainDAO.retrieveDomain(d.getId()).ifPresentOrElse(dd -> {
             errorList.addAll(validateDomain(d, locale));
         }, () -> {
-            errorList.add(messages.getMessage("purl_server.error.validate.domain.exist", new Object[] { d.getPath() },
+            errorList.add(messages.getMessage("purl_server.error.validate.domain.modify.exist", new Object[] { d.getPath() },
                 locale));
         });
         return errorList;
@@ -69,23 +69,23 @@ public class DomainValidateService {
 
     private List<String> validatePath(Domain domain, Locale locale) {
         if (!StringUtils.hasText(domain.getPath())) {
-            return List.of(messages.getMessage("purl_server.error.validate.domain.path.empty", null, locale));
+            return List.of(messages.getMessage("purl_server.error.validate.domain.create.path.empty", null, locale));
         }
 
         List<String> errorList = new ArrayList<>();
         if (domain.getPath().startsWith("/admin")) {
-            errorList.add(messages.getMessage("purl_server.error.validate.domain.path.start.admin", null, locale));
+            errorList.add(messages.getMessage("purl_server.error.validate.domain.create.path.start.admin", null, locale));
         } else if (!domain.getPath().matches("/" + Domain.REGEX_VALID_DOMAINS)) {
             errorList.add(
-                messages.getMessage("purl_server.error.validate.domain.path.reserved", null, locale));
+                messages.getMessage("purl_server.error.validate.domain.create.path.reserved", null, locale));
         }
         if (!domain.getPath().startsWith("/")) {
             errorList.add(
-                messages.getMessage("purl_server.error.validate.domain.path.start", null, locale));
+                messages.getMessage("purl_server.error.validate.domain.create.path.start", null, locale));
         }
         if (!domain.getPath().matches("/[-_a-zA-Z0-9]+")) {
             errorList.add(
-                messages.getMessage("purl_server.error.validate.domain.path.match", null, locale));
+                messages.getMessage("purl_server.error.validate.domain.create.path.match", null, locale));
         }
         return errorList;
     }
@@ -100,12 +100,12 @@ public class DomainValidateService {
         List<String> errorList = new ArrayList<>();
         if (!StringUtils.hasText(domain.getName())) {
             errorList
-                .add(messages.getMessage("purl_server.error.validate.domain.name.empty", null, locale));
+                .add(messages.getMessage("purl_server.error.validate.domain.create_modify.name.empty", null, locale));
         }
         List<String> logins = userDAO.retrieveLogins();
         for (DomainUser du : domain.getDomainUserList()) {
             if (!logins.contains(du.getUser().getLogin())) {
-                errorList.add(messages.getMessage("purl_server.error.validate.domain.user",
+                errorList.add(messages.getMessage("purl_server.error.validate.domain.create_modify.user",
                     new Object[] { du.getUser().getLogin() }, locale));
             }
         }

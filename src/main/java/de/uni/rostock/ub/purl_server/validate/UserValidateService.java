@@ -47,11 +47,11 @@ public class UserValidateService {
         List<String> errorList = new ArrayList<>();
         if (SHA_EMPTY_STRING.equals(user.getPasswordSHA())) {
             errorList
-                .add(messages.getMessage("purl_server.error.validate.user.password.empty", null, locale));
+                .add(messages.getMessage("purl_server.error.validate.user.create.password.empty", null, locale));
         }
         if (!StringUtils.hasText(user.getLogin())) {
             errorList
-                .add(messages.getMessage("purl_server.error.validate.user.username.empty", null, locale));
+                .add(messages.getMessage("purl_server.error.validate.user.create.username.empty", null, locale));
         }
         return errorList;
     }

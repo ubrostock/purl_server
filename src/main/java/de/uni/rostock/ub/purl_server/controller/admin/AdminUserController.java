@@ -106,7 +106,7 @@ public class AdminUserController {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "create");
         if (userDAO.retrieveUser(user.getLogin()).isPresent()) {
             model.addAttribute(MODEL_ATTRIBUTE_ERRORS,
-                Arrays.asList(messages.getMessage("purl_server.error.validate.user.exists",
+                Arrays.asList(messages.getMessage("purl_server.error.validate.user.create.exists",
                     new Object[] { user.getLogin() }, Locale.getDefault())));
         } else {
             List<String> errorList = userValidateService.validateUser(user, locale);

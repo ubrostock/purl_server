@@ -88,7 +88,7 @@ public class DomainInfoController {
                 mav.addObject("domain", op.get());
             } else {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                    messages.getMessage("purl_server.error.domain.notfound", null, "Domain not found!",
+                    messages.getMessage("purl_server.error.api.domain.notfound", null, "Domain not found!",
                         Locale.getDefault()));
             }
             return mav;

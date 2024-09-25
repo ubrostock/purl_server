@@ -104,7 +104,7 @@ public class PurlInfoController {
                 }
             } else {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                    messages.getMessage("purl_server.error.purl.notfound", null, "Not found!", Locale.getDefault()));
+                    messages.getMessage("purl_server.error.api.purl.notfound", null, "Not found!", Locale.getDefault()));
             }
             return mav;
         }

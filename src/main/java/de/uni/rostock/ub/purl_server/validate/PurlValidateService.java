@@ -141,7 +141,7 @@ public class PurlValidateService {
             domainDAO.retrieveDomain(deletePurl).ifPresent(d -> {
                 if (!purlAccess.canModifyPurl(d, u)) {
                     errorList.add(
-                        messages.getMessage("purl_server.error.purl.delete.unauthorized", new Object[] { u.getLogin() },
+                        messages.getMessage("purl_server.error.api.purl.delete.unauthorized", new Object[] { u.getLogin() },
                             Locale.getDefault()));
                 }
             });

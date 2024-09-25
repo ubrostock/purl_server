@@ -79,13 +79,13 @@ public class PurlController {
                 case GONE_410:
                     throw new ResponseStatusException(HttpStatus.GONE,
                         messages.getMessage(
-                            "purl_server.error.purl_deleted", new Object[] { ServletUriComponentsBuilder
+                            "purl_server.error.purl.gone", new Object[] { ServletUriComponentsBuilder
                                 .fromCurrentContextPath().path("/info/purl" + path).build().toString() },
                             Locale.getDefault()));
             }
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                messages.getMessage("purl_server.error.purl.notfound", null, Locale.getDefault()));
+                messages.getMessage("purl_server.error.api.purl.notfound", null, Locale.getDefault()));
         }
         return null;
     }

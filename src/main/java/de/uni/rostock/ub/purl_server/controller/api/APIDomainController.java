@@ -72,7 +72,7 @@ public class APIDomainController {
         Optional<Domain> oDomain = domainDAO.retrieveDomain(StringUtils.prependIfMissing(path, "/"));
         if (oDomain.isEmpty()) {
             PurlServerError e = new PurlServerError(HttpStatus.NOT_FOUND,
-                messages.getMessage("purl_server.error.domain.notfound", null, locale),
+                messages.getMessage("purl_server.error.api.domain.notfound", null, locale),
                 List.of());
             return new ResponseEntity<PurlServerError>(e, HttpStatus.NOT_FOUND);
         }

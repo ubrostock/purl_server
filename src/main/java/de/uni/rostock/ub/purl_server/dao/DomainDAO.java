@@ -49,13 +49,14 @@ import de.uni.rostock.ub.purl_server.model.Status;
 @Service
 public class DomainDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(DomainDAO.class);
-    
+
     private static final String SQL_SELECT_DOMAIN_BY_ID = "SELECT * FROM domain WHERE id = ?;";
 
     private static final String SQL_SELECT_DOMAIN_BY_PATH = "SELECT * FROM domain WHERE path = ?;";
 
-    private static final String SQL_SELECT_DOMAIN_WITH_USER_BY_ID = "SELECT `user`.*, domainuser.* FROM `user` JOIN domainuser "
-        + " ON `user`.id = domainuser.user_id WHERE domainuser.domain_id = ?;";
+    private static final String SQL_SELECT_DOMAIN_WITH_USER_BY_ID
+        = "SELECT `user`.*, domainuser.* FROM `user` JOIN domainuser "
+            + " ON `user`.id = domainuser.user_id WHERE domainuser.domain_id = ?;";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -121,17 +122,14 @@ public class DomainDAO {
     public Optional<Domain> retrieveDomainWithUser(int id) {
         try {
             Domain d = jdbcTemplate.queryForObject(SQL_SELECT_DOMAIN_BY_ID, new DomainRowMapper(), id);
-            if (d != null) {
-                List<DomainUser> list = jdbcTemplate.query(
-                    SQL_SELECT_DOMAIN_WITH_USER_BY_ID,
-                    new DomainUserRowMapper(), d.getId());
-                d.getDomainUserList().addAll(list);
-                return Optional.of(d);
-            }
+            List<DomainUser> list = jdbcTemplate.query(
+                SQL_SELECT_DOMAIN_WITH_USER_BY_ID,
+                new DomainUserRowMapper(), d.getId());
+            d.getDomainUserList().addAll(list);
+            return Optional.of(d);
         } catch (DataAccessException e) {
-            LOGGER.error("SQL Problem", e);
+            return Optional.empty();
         }
-        return Optional.empty();
     }
 
     /**

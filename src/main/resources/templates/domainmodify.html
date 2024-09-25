@@ -18,7 +18,7 @@
             </div>
             <div th:if="${submitted}" class="alert alert-success" th:text="#{purl_server.domain.modify.modified}">
               Domain modified!</div>
-            <form th:action="@{/admin/manager/domain/modify}" method="post" th:object="${domain}">
+            <form th:action="@{/admin/manager/domain/modify}" method="post" th:object="${domain}" th:if="${domain}">
               <div th:replace="~{fragments/forms :: domainForm}"></div>
             </form>
           </div>

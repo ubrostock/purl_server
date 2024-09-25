@@ -19,7 +19,7 @@
             <div th:if="${deleted}">
               <div class="alert alert-success" th:text="#{purl_server.domain.delete.deleted}">Domain deleted!</div>
             </div>
-            <form th:action="@{/admin/manager/domain/delete}" method="post" th:object="${domain}">
+            <form th:action="@{/admin/manager/domain/delete}" method="post" th:object="${domain}" th:if="${domain}">
               <input type="hidden" th:field="*{id}" />
               <div class="row mb-3">
                 <label class="col-sm-4 col-form-label" th:text="#{purl_server.domain.delete.path}">Path</label>

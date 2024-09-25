@@ -68,6 +68,16 @@ public class DomainValidateService {
         });
         return errorList;
     }
+    
+    public List<String> validateDeleteDomain(Domain d, Locale locale) {
+        List<String> errorList = new ArrayList<>();
+        domainDAO.retrieveDomain(d.getId()).ifPresentOrElse(dd -> {
+        }, () -> {
+            errorList.add(messages.getMessage("purl_server.error.validate.domain.modify.exist", new Object[] { d.getPath() },
+                locale));
+        });
+        return errorList;
+    }
 
     private List<String> validatePath(Domain domain, Locale locale) {
         if (!StringUtils.hasText(domain.getPath())) {

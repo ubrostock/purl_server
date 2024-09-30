@@ -18,7 +18,7 @@
             </div>
             <div th:if="${submitted}" class="alert alert-success" th:text="#{purl_server.purl.modify.modified}">
               Purl modified!</div>
-            <form th:action="@{/admin/manager/purl/modify}" method="post" th:object="${purl}">
+            <form th:action="@{/admin/manager/purl/modify}" method="post" th:object="${purl}" th:if="${purl}">
               <div th:replace="~{fragments/forms :: purlForm}"></div>
             </form>
           </div>

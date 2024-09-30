@@ -19,7 +19,7 @@
             <div th:if="${deleted}">
               <div class="alert alert-success" th:text="#{purl_server.user.delete.deleted}">User deleted!</div>
             </div>
-            <form th:action="@{/admin/manager/user/delete}" method="post" th:object="${user}">
+            <form th:action="@{/admin/manager/user/delete}" method="post" th:object="${user}" th:if="${user}">
               <input type="hidden" th:field="*{id}" />
               <div class="row mb-3">
                 <label class="col-sm-4 col-form-label" th:text="#{purl_server.user.delete.username}">Username</label>

@@ -132,10 +132,14 @@ public class AdminUserController {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(path = "/admin/manager/user/modify")
-    public String showUserModify(@RequestParam("id") int id, Model model) {
+    public String showUserModify(@RequestParam("id") int id, Locale locale, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "modify");
-        userDAO.retrieveUser(id).ifPresent(u -> {
+        userDAO.retrieveUser(id).ifPresentOrElse(u -> {
             model.addAttribute(MODEL_ATTRIBUTE_USER, u);
+        }, () -> {
+            model.addAttribute(MODEL_ATTRIBUTE_ERRORS, List.of(
+                messages.getMessage("purl_server.error.validate.domain.create_modify.user",
+                    new Object[] { String.valueOf(id) }, locale)));
         });
         return "usermodify";
     }
@@ -221,9 +225,13 @@ public class AdminUserController {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(path = "/admin/manager/user/delete")
-    public String showUserDelete(@RequestParam("id") int id, Model model) {
-        userDAO.retrieveUser(id).ifPresent(u -> {
+    public String showUserDelete(@RequestParam("id") int id, Locale locale, Model model) {
+        userDAO.retrieveUser(id).ifPresentOrElse(u -> {
             model.addAttribute(MODEL_ATTRIBUTE_USER, u);
+        }, () -> {
+            model.addAttribute(MODEL_ATTRIBUTE_ERRORS, List.of(
+                messages.getMessage("purl_server.error.validate.domain.create_modify.user",
+                    new Object[] { String.valueOf(id) }, locale)));
         });
         return "userdelete";
     }

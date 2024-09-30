@@ -19,7 +19,7 @@
             </div>
             <div th:if="${submitted}" class="alert alert-success" th:text="#{purl_server.user.modify.modified}">
               User modified!</div>
-            <form th:action="@{/admin/manager/user/modify}" method="post" th:object="${user}">
+            <form th:action="@{/admin/manager/user/modify}" method="post" th:object="${user}" th:if="${user}">
               <div th:replace="~{fragments/forms :: userForm}"></div>
             </form>
           </div>

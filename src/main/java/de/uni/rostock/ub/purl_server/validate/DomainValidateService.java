@@ -24,6 +24,7 @@ import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -31,6 +32,7 @@ import de.uni.rostock.ub.purl_server.dao.DomainDAO;
 import de.uni.rostock.ub.purl_server.dao.UserDAO;
 import de.uni.rostock.ub.purl_server.model.Domain;
 import de.uni.rostock.ub.purl_server.model.DomainUser;
+import de.uni.rostock.ub.purl_server.model.PurlServerError;
 
 @Service
 public class DomainValidateService {
@@ -44,17 +46,22 @@ public class DomainValidateService {
     @Autowired
     MessageSource messages;
 
-    public List<String> validateCreateDomain(Domain d, Locale locale) {
-        List<String> errorList = new ArrayList<>();
+    public PurlServerError validateCreateDomain(Domain d, Locale locale) {
+        PurlServerError pse = new PurlServerError(HttpStatus.OK, messages.getMessage("purl_server.error.api.domain.create", null, locale), null);
         cleanUp(d);
         domainDAO.retrieveDomain(d.getPath()).ifPresentOrElse(dd -> {
-            errorList.add(messages.getMessage("purl_server.error.validate.domain.create.already.exist",
+            pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.create.already.exist",
                 new Object[] { dd.getPath() }, locale));
+            
         }, () -> {
-            errorList.addAll(validatePath(d, locale));
-            errorList.addAll(validateDomain(d, locale));
+            pse.getDetails().addAll(validatePath(d, locale));
+            pse.getDetails().addAll(validateDomain(d, locale));
         });
-        return errorList;
+        
+        if(!pse.getDetails().isEmpty()) {
+            pse.setStatus(HttpStatus.CONFLICT);
+        }
+        return pse;
     }
 
     public List<String> validateModifyDomain(Domain d, Locale locale) {
@@ -81,7 +88,7 @@ public class DomainValidateService {
 
     private List<String> validatePath(Domain domain, Locale locale) {
         if (!StringUtils.hasText(domain.getPath())) {
-            return List.of(messages.getMessage("purl_server.error.validate.domain.path.empty", null, locale));
+            return List.of(messages.getMessage("purl_server.error.validate.domain.create.path.empty", null, locale));
         }
 
         List<String> errorList = new ArrayList<>();

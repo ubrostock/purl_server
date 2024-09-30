@@ -18,16 +18,14 @@
  */
 package de.uni.rostock.ub.purl_server.controller.admin;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,8 +40,10 @@ import de.uni.rostock.ub.purl_server.dao.DomainDAO;
 import de.uni.rostock.ub.purl_server.dao.UserDAO;
 import de.uni.rostock.ub.purl_server.model.Domain;
 import de.uni.rostock.ub.purl_server.model.DomainUser;
+import de.uni.rostock.ub.purl_server.model.PurlServerError;
 import de.uni.rostock.ub.purl_server.model.User;
 import de.uni.rostock.ub.purl_server.validate.DomainValidateService;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class AdminDomainController {
@@ -57,7 +57,7 @@ public class AdminDomainController {
 
     private static final String MODEL_ATTRIBUTE_DOMAINS = "domains";
 
-    private static final String MODEL_ATTRIBUTE_ERRORS = "errors";
+    private static final String MODEL_ATTRIBUTE_ERROR = "error";
 
     private static final String MODEL_ATTRIBUTE_FORM = "form";
 
@@ -111,6 +111,7 @@ public class AdminDomainController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(path = "/admin/manager/domain/create")
     public String showDomainCreate(Model model) {
+        model.addAttribute(MODEL_ATTRIBUTE_ERROR, PurlServerError.createErrorOk());
         model.addAttribute(MODEL_ATTRIBUTE_FORM, MODEL_VALUE_FORM_CREATE);
         model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, new Domain());
         model.addAttribute(MODEL_ATTRIBUTE_USERS_LOGIN, userDAO.retrieveActiveUsers());
@@ -129,8 +130,8 @@ public class AdminDomainController {
     public String createDomain(@ModelAttribute Domain domain, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, MODEL_VALUE_FORM_CREATE);
         cleanUpDomain(domain);
-        List<String> errorList = domainValidateService.validateCreateDomain(domain, locale);
-        if (errorList.isEmpty()) {
+        PurlServerError pse = domainValidateService.validateCreateDomain(domain, locale);
+        if (pse.isOk()) {
             Optional<Domain> newDomain = domainDAO.createDomain(domain);
             if (newDomain.isPresent()) {
                 model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, newDomain.get());
@@ -141,7 +142,7 @@ public class AdminDomainController {
             model.addAttribute(MODEL_ATTRIBUTE_CREATED, true);
         } else {
             model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domain);
-            model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
+            model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
             model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, false);
         }
         model.addAttribute(MODEL_ATTRIBUTE_USERS_LOGIN, userDAO.retrieveActiveUsers());
@@ -173,7 +174,7 @@ public class AdminDomainController {
         domainDAO.retrieveDomainWithUser(id).ifPresentOrElse(d -> {
             model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, d);
         }, () -> {
-            model.addAttribute(MODEL_ATTRIBUTE_ERRORS, List.of(
+            model.addAttribute(MODEL_ATTRIBUTE_ERROR, List.of(
                 messages.getMessage("purl_server.error.validate.domain.modify.exist", new Object[] { String.valueOf(id) }, locale)));
         });
         model.addAttribute(MODEL_ATTRIBUTE_USERS_LOGIN, userDAO.retrieveActiveUsers());
@@ -197,7 +198,7 @@ public class AdminDomainController {
             domainDAO.modifyDomain(domain);
             model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, true);
         } else {
-            model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
+            model.addAttribute(MODEL_ATTRIBUTE_ERROR, errorList);
             model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, false);
         }
         model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domainDAO.retrieveDomainWithUser(domain.getId()).get());
@@ -274,7 +275,7 @@ public class AdminDomainController {
         domainDAO.retrieveDomain(id).ifPresentOrElse(d -> {
             model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, d);
         }, () -> {
-            model.addAttribute(MODEL_ATTRIBUTE_ERRORS, List.of(
+            model.addAttribute(MODEL_ATTRIBUTE_ERROR, List.of(
                 messages.getMessage("purl_server.error.validate.domain.modify.exist", new Object[] { String.valueOf(id) }, locale)));
         });
         return MODEL_VIEW_DOMAINDELETE;
@@ -295,7 +296,7 @@ public class AdminDomainController {
             domainDAO.deleteDomain(domain);
             model.addAttribute(MODEL_ATTRIBUTE_DELETED, true);
         } else {
-            model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
+            model.addAttribute(MODEL_ATTRIBUTE_ERROR, errorList);
             model.addAttribute(MODEL_ATTRIBUTE_DELETED, false);
         }
         model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domainDAO.retrieveDomain(domain.getId()).get());

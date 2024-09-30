@@ -34,9 +34,15 @@ public class PurlServerError implements PurlServerResponse {
         super();
         this.status = status;
         this.message = message;
-        this.details = details;
+        if(details != null) {
+            this.details.addAll(details);
+        }
     }
 
+    public static PurlServerError createErrorOk() {
+        return new PurlServerError(HttpStatus.OK, "", null);
+    }
+    
     public HttpStatus getStatus() {
         return status;
     }
@@ -55,5 +61,9 @@ public class PurlServerError implements PurlServerResponse {
 
     public List<String> getDetails() {
         return details;
+    }
+    
+    public boolean isOk() {
+        return this.status == HttpStatus.OK;
     }
 }

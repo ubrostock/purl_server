@@ -1,0 +1,35 @@
+Test
+DomainDAO:
+retrieveDomain(String): Prüfen welchen Zeichen erlaubt sind
+retrieveDomainWithUser(String):…
+retrieveDomain(Purl): Testen ob Purl einen Domain Path besitzt
+retrieveDomain(int): Testen ob die ID existiert
+retrieveDomainWithUser(int): …
+createDomain(Domain): Testen ob der Status Created ist
+modifyDomain(Domain): Testen ob der Status Modified ist
+deleteDomain(Domain: Testen ob der Status Deleted ist
+
+APIDomainController:
+/api/domain/{path}
+Path testen 200 oder 404
+PurlDAO:
+retrievePurl(String): Prüfen welche Zeichen erlaubt sind
+retrievePurl(int): Testen ob die ID existiert
+createPurl(Purl, User): Testen ob der Status Created ist. 
+modifyPurl(Purl, User): Testen ob der Status Modified ist
+deletePurl(Purl, User): Testen ob der Status Deleted ist
+
+APIPurlController:
+/api/purl/{*path}
+Path testen
+
+UserDAO:
+retrieveUser(String): Prüfen welche Zeichen erlaub sind
+retrieveUster(int): Testen ob die ID existiert
+createUser(User): Testen ob der Status Created ist. 
+modifyUser(User): Testen ob der Status Modified ist
+deleteUser(User): Testen ob der Status Deleted ist
+
+APIUserController:
+/api/user/{login}
+Login testen

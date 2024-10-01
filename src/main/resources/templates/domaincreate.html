@@ -13,12 +13,7 @@
         <div class="row">
           <div class="col">
             <h3 class="card-title" th:text="#{purl_server.domain.create.title}">Create a new domain</h3>
-            <div class="alert alert-danger" role="alert" th:unless="${error.ok}">
-              <h4 th:text="${error.message}"></h4>
-              <ul th:each="err : ${error.details}">
-                <li th:text="${err}"></li>
-			  </ul>
-            </div>
+            <div th:replace="~{fragments/page :: errorView (${error})}"></div>
             <div th:if="${submitted}" class="alert alert-success" th:text="#{purl_server.domain.create.created}">
               Domain created!</div>
             <form th:action="@{/admin/manager/domain/create}" method="post" th:object="${domain}">

@@ -117,6 +117,13 @@
     </div>
   </div>
   
+  <div class="alert alert-danger" role="alert" th:fragment="errorView (error)" th:unless="${error.ok}">
+    <h4 th:text="${error.message}"></h4>
+    <ul th:each="err : ${error.details}">
+      <li th:text="${err}"></li>
+    </ul>
+  </div>
+  
   <div th:fragment="footer">
     <div class="row my-3">
       <div class="col" th:utext="${@environment.getProperty('purl_server.web.html_fragment.footer')}">

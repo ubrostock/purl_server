@@ -64,16 +64,19 @@ public class DomainValidateService {
         return pse;
     }
 
-    public List<String> validateModifyDomain(Domain d, Locale locale) {
-        List<String> errorList = new ArrayList<>();
+    public PurlServerError validateModifyDomain(Domain d, Locale locale) {
+        PurlServerError pse = new PurlServerError(HttpStatus.OK, messages.getMessage("purl_server.error.api.domain.modify", null, locale), null);
         cleanUp(d);
         domainDAO.retrieveDomain(d.getId()).ifPresentOrElse(dd -> {
-            errorList.addAll(validateDomain(d, locale));
+            pse.getDetails().addAll(validateDomain(d, locale));
         }, () -> {
-            errorList.add(messages.getMessage("purl_server.error.validate.domain.modify.exist", new Object[] { d.getPath() },
+            pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.modify.exist", new Object[] { d.getPath() },
                 locale));
         });
-        return errorList;
+        if(!pse.getDetails().isEmpty()) {
+            pse.setStatus(HttpStatus.CONFLICT);
+        }
+        return pse;
     }
     
     public List<String> validateDeleteDomain(Domain d, Locale locale) {

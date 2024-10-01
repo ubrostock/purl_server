@@ -152,6 +152,7 @@ public class AdminDomainController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(path = "/admin/manager/domain/create", params = "addUser")
     public String createDomainAddUser(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
+        model.addAttribute(MODEL_ATTRIBUTE_ERROR, PurlServerError.createErrorOk());
         model.addAttribute(MODEL_ATTRIBUTE_FORM, MODEL_VALUE_FORM_CREATE);
         model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domain);
         List<User> list = userDAO.retrieveActiveUsers();
@@ -170,13 +171,14 @@ public class AdminDomainController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(path = "/admin/manager/domain/modify")
     public String showDomainModify(@RequestParam("id") int id, Locale locale, Model model) {
+        PurlServerError pse = PurlServerError.createErrorOk();
         model.addAttribute(MODEL_ATTRIBUTE_FORM, MODEL_VALUE_FORM_MODIFY);
         domainDAO.retrieveDomainWithUser(id).ifPresentOrElse(d -> {
             model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, d);
         }, () -> {
-            model.addAttribute(MODEL_ATTRIBUTE_ERROR, List.of(
-                messages.getMessage("purl_server.error.validate.domain.modify.exist", new Object[] { String.valueOf(id) }, locale)));
+            pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.modify.exist", new Object[] { String.valueOf(id) }, locale));
         });
+        model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
         model.addAttribute(MODEL_ATTRIBUTE_USERS_LOGIN, userDAO.retrieveActiveUsers());
         return MODEL_VIEW_DOMAINMODIFY;
     }
@@ -193,14 +195,14 @@ public class AdminDomainController {
     public String modifyDomain(@ModelAttribute Domain domain, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, MODEL_VALUE_FORM_MODIFY);
         cleanUpDomain(domain);
-        List<String> errorList = domainValidateService.validateModifyDomain(domain, locale);
-        if (errorList.isEmpty()) {
+        PurlServerError pse = domainValidateService.validateModifyDomain(domain, locale);
+        if (pse.isOk()) {
             domainDAO.modifyDomain(domain);
             model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, true);
         } else {
-            model.addAttribute(MODEL_ATTRIBUTE_ERROR, errorList);
             model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, false);
         }
+        model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
         model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domainDAO.retrieveDomainWithUser(domain.getId()).get());
         model.addAttribute(MODEL_ATTRIBUTE_USERS_LOGIN, userDAO.retrieveActiveUsers());
         return MODEL_VIEW_DOMAINMODIFY;
@@ -209,6 +211,7 @@ public class AdminDomainController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(path = "/admin/manager/domain/modify", params = "addUser")
     public String modifyDomainAddUser(@ModelAttribute Domain domain, HttpServletRequest request, Model model) {
+        model.addAttribute(MODEL_ATTRIBUTE_ERROR, PurlServerError.createErrorOk());
         model.addAttribute(MODEL_ATTRIBUTE_FORM, MODEL_VALUE_FORM_MODIFY);
         model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domain);
         List<User> list = userDAO.retrieveActiveUsers();

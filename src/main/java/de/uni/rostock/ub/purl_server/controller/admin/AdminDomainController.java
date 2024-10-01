@@ -275,12 +275,15 @@ public class AdminDomainController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(path = "/admin/manager/domain/delete")
     public String showDomainDelete(@RequestParam("id") int id, Locale locale, Model model) {
+        PurlServerError pse = PurlServerError.createErrorOk();
         domainDAO.retrieveDomain(id).ifPresentOrElse(d -> {
             model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, d);
         }, () -> {
-            model.addAttribute(MODEL_ATTRIBUTE_ERROR, List.of(
-                messages.getMessage("purl_server.error.validate.domain.modify.exist", new Object[] { String.valueOf(id) }, locale)));
+            pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.modify.exist", new Object[] { String.valueOf(id) }, locale));
+            pse.setStatus(HttpStatus.CONFLICT);
+            pse.setMessage(messages.getMessage("purl_server.error.api.domain.delete", null, locale));
         });
+        model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
         return MODEL_VIEW_DOMAINDELETE;
     }
 
@@ -294,14 +297,14 @@ public class AdminDomainController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(path = "/admin/manager/domain/delete")
     public String deleteDomain(@ModelAttribute Domain domain, HttpServletRequest request, Locale locale, Model model) {
-        List<String> errorList = domainValidateService.validateDeleteDomain(domain, locale);
-        if (errorList.isEmpty()) {
+        PurlServerError pse = domainValidateService.validateDeleteDomain(domain, locale);
+        if (pse.isOk()) {
             domainDAO.deleteDomain(domain);
             model.addAttribute(MODEL_ATTRIBUTE_DELETED, true);
         } else {
-            model.addAttribute(MODEL_ATTRIBUTE_ERROR, errorList);
             model.addAttribute(MODEL_ATTRIBUTE_DELETED, false);
         }
+        model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
         model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, domainDAO.retrieveDomain(domain.getId()).get());
         return MODEL_VIEW_DOMAINDELETE;
     }

@@ -177,6 +177,8 @@ public class AdminDomainController {
             model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, d);
         }, () -> {
             pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.modify.exist", new Object[] { String.valueOf(id) }, locale));
+            pse.setStatus(HttpStatus.CONFLICT);
+            pse.setMessage(messages.getMessage("purl_server.error.api.domain.modify", null, locale));
         });
         model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
         model.addAttribute(MODEL_ATTRIBUTE_USERS_LOGIN, userDAO.retrieveActiveUsers());

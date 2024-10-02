@@ -18,14 +18,12 @@
  */
 package de.uni.rostock.ub.purl_server.controller.admin;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,8 +34,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import de.uni.rostock.ub.purl_server.common.PurlAccess;
 import de.uni.rostock.ub.purl_server.dao.UserDAO;
+import de.uni.rostock.ub.purl_server.model.PurlServerError;
 import de.uni.rostock.ub.purl_server.model.User;
 import de.uni.rostock.ub.purl_server.validate.UserValidateService;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class AdminUserController {
@@ -59,7 +59,7 @@ public class AdminUserController {
 
     private static final String MODEL_ATTRIBUTE_SUBMITTED = "submitted";
 
-    private static final String MODEL_ATTRIBUTE_ERRORS = "errors";
+    private static final String MODEL_ATTRIBUTE_ERROR = "error";
 
     private static final String MODEL_ATTRIBUTE_USER = "user";
 
@@ -88,6 +88,7 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(path = "/admin/manager/user/create")
     public String showUserCreate(Model model) {
+        model.addAttribute(MODEL_ATTRIBUTE_ERROR, PurlServerError.createErrorOk());
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "create");
         model.addAttribute(MODEL_ATTRIBUTE_USER, new User());
         return "usercreate";
@@ -104,21 +105,15 @@ public class AdminUserController {
     @PostMapping(path = "/admin/manager/user/create")
     public String createUser(@ModelAttribute User user, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "create");
-        if (userDAO.retrieveUser(user.getLogin()).isPresent()) {
-            model.addAttribute(MODEL_ATTRIBUTE_ERRORS,
-                Arrays.asList(messages.getMessage("purl_server.error.validate.user.create.exists",
-                    new Object[] { user.getLogin() }, Locale.getDefault())));
-        } else {
-            List<String> errorList = userValidateService.validateUser(user, locale);
-            if (errorList.isEmpty()) {
-                userDAO.createUser(user);
-                model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, true);
+        PurlServerError pse = userValidateService.validateUser(user, locale);
+        if (pse.isOk()) {
+            userDAO.createUser(user);
+            model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, true);
 
-            } else {
-                model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
-                model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, null);
-            }
+        } else {
+            model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, false);
         }
+        model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
         model.addAttribute(MODEL_ATTRIBUTE_USER, user);
         return "usercreate";
     }
@@ -133,14 +128,17 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(path = "/admin/manager/user/modify")
     public String showUserModify(@RequestParam("id") int id, Locale locale, Model model) {
+        PurlServerError pse = PurlServerError.createErrorOk();
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "modify");
         userDAO.retrieveUser(id).ifPresentOrElse(u -> {
             model.addAttribute(MODEL_ATTRIBUTE_USER, u);
         }, () -> {
-            model.addAttribute(MODEL_ATTRIBUTE_ERRORS, List.of(
-                messages.getMessage("purl_server.error.validate.domain.create_modify.user",
-                    new Object[] { String.valueOf(id) }, locale)));
+            pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.create_modify.user",
+                new Object[] { String.valueOf(id) }, locale));
+            pse.setStatus(HttpStatus.CONFLICT);
+            pse.setMessage(messages.getMessage("purl_server.error.api.user.modify", null, locale));
         });
+        model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
         return "usermodify";
     }
 
@@ -154,9 +152,15 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(path = "/admin/manager/user/modify")
     public String modifyUser(@ModelAttribute User user, HttpServletRequest request, Locale locale, Model model) {
-        userDAO.modifyUser(user);
+        PurlServerError pse = userValidateService.validateModifyUser(user, locale);
+        if (pse.isOk()) {
+            userDAO.modifyUser(user);
+            model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, true);
+        } else {
+            model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, false);
+        }
+        model.addAttribute(MODEL_ATTRIBUTE_ERROR, PurlServerError.createErrorOk());
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "modify");
-        model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, true);
         model.addAttribute(MODEL_ATTRIBUTE_USER, userDAO.retrieveUser(user.getId()).get());
         return "usermodify";
     }
@@ -226,13 +230,16 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(path = "/admin/manager/user/delete")
     public String showUserDelete(@RequestParam("id") int id, Locale locale, Model model) {
+        PurlServerError pse = PurlServerError.createErrorOk();
         userDAO.retrieveUser(id).ifPresentOrElse(u -> {
             model.addAttribute(MODEL_ATTRIBUTE_USER, u);
         }, () -> {
-            model.addAttribute(MODEL_ATTRIBUTE_ERRORS, List.of(
-                messages.getMessage("purl_server.error.validate.domain.create_modify.user",
-                    new Object[] { String.valueOf(id) }, locale)));
+            pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.create_modify.user",
+                new Object[] { String.valueOf(id) }, locale));
+            pse.setStatus(HttpStatus.CONFLICT);
+            pse.setMessage(messages.getMessage("purl_server.error.api.user.delete", null, locale));
         });
+        model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
         return "userdelete";
     }
 
@@ -246,10 +253,12 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(path = "/admin/manager/user/delete")
     public String deleteUser(@ModelAttribute User user, HttpServletRequest request, Model model) {
+        PurlServerError pse = PurlServerError.createErrorOk();
         userDAO.deleteUser(user);
         User dbUser = userDAO.retrieveUser(user.getId()).get();
         model.addAttribute(MODEL_ATTRIBUTE_DELETED, true);
         model.addAttribute(MODEL_ATTRIBUTE_USER, dbUser);
+        model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
         return "userdelete";
     }
 

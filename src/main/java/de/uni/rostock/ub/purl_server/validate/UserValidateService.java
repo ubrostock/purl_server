@@ -18,21 +18,27 @@
  */
 package de.uni.rostock.ub.purl_server.validate;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import de.uni.rostock.ub.purl_server.dao.UserDAO;
+import de.uni.rostock.ub.purl_server.model.PurlServerError;
 import de.uni.rostock.ub.purl_server.model.User;
 
 @Service
 public class UserValidateService {
 
     private static final String SHA_EMPTY_STRING = "da39a3ee5e6b4b0d3255bfef95601890afd80709";
+
+    @Autowired
+    UserDAO userDAO;
 
     @Autowired
     MessageSource messages;
@@ -43,20 +49,46 @@ public class UserValidateService {
      * @param user
      * @return the error list
      */
-    public List<String> validateUser(User user, Locale locale) {
-        List<String> errorList = new ArrayList<>();
+    public PurlServerError validateUser(User user, Locale locale) {
+        PurlServerError pse = new PurlServerError(HttpStatus.OK,
+            messages.getMessage("purl_server.error.api.user.create", null, locale), null);
         cleanUp(user);
+        if (userDAO.retrieveUser(user.getLogin()).isPresent()) {
+            pse.getDetails().add(messages.getMessage("purl_server.error.validate.user.create.exists",
+                new Object[] { user.getLogin() }, Locale.getDefault()));
+        }
         if (SHA_EMPTY_STRING.equals(user.getPasswordSHA())) {
-            errorList
+            pse.getDetails()
                 .add(messages.getMessage("purl_server.error.validate.user.create.password.empty", null, locale));
         }
         if (!StringUtils.hasText(user.getLogin())) {
-            errorList
+            pse.getDetails()
                 .add(messages.getMessage("purl_server.error.validate.user.create.username.empty", null, locale));
         }
-        return errorList;
+
+        if (!pse.getDetails().isEmpty()) {
+            pse.setStatus(HttpStatus.CONFLICT);
+        }
+        return pse;
     }
-    
+
+    public PurlServerError validateModifyUser(User u, Locale locale) {
+        PurlServerError pse = new PurlServerError(HttpStatus.OK,
+            messages.getMessage("purl_server.error.api.user.modify", null, locale), null);
+        cleanUp(u);
+
+        userDAO.retrieveUser(u.getId()).ifPresentOrElse(uu -> {
+        }, () -> {
+            pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.create_modify.user",
+                new Object[] { String.valueOf(u.getId()) }, locale));
+        });
+
+        if (!pse.getDetails().isEmpty()) {
+            pse.setStatus(HttpStatus.CONFLICT);
+        }
+        return pse;
+    }
+
     private void cleanUp(User u) {
         u.setAffiliation(u.getAffiliation() == null ? null : u.getAffiliation().strip());
         u.setComment(u.getComment() == null ? null : u.getComment().strip());
@@ -64,5 +96,5 @@ public class UserValidateService {
         u.setFullname(u.getFullname() == null ? null : u.getFullname().strip());
         u.setLogin(u.getLogin() == null ? null : u.getLogin().strip());
     }
-    
+
 }

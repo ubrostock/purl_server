@@ -119,8 +119,8 @@
   
   <div class="alert alert-danger" role="alert" th:fragment="errorView (error)" th:unless="${error.ok}">
     <h4 th:text="${error.message}"></h4>
-    <ul th:each="err : ${error.details}">
-      <li th:text="${err}"></li>
+    <ul>
+      <li th:each="err : ${error.details}" th:text="${err}"></li>
     </ul>
   </div>
   

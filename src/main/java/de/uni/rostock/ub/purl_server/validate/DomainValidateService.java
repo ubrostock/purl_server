@@ -18,7 +18,6 @@
  */
 package de.uni.rostock.ub.purl_server.validate;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -47,72 +46,77 @@ public class DomainValidateService {
     MessageSource messages;
 
     public PurlServerError validateCreateDomain(Domain d, Locale locale) {
-        PurlServerError pse = new PurlServerError(HttpStatus.OK, messages.getMessage("purl_server.error.api.domain.create", null, locale), null);
+        PurlServerError pse = new PurlServerError(HttpStatus.OK,
+            messages.getMessage("purl_server.error.api.domain.create", null, locale), null);
         cleanUp(d);
         domainDAO.retrieveDomain(d.getPath()).ifPresentOrElse(dd -> {
             pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.create.already.exist",
                 new Object[] { dd.getPath() }, locale));
-            
         }, () -> {
-            pse.getDetails().addAll(validatePath(d, locale));
-            pse.getDetails().addAll(validateDomain(d, locale));
+            validatePath(pse, d, locale);
+            validateDomain(pse, d, locale);
         });
-        
-        if(!pse.getDetails().isEmpty()) {
+
+        if (!pse.getDetails().isEmpty()) {
             pse.setStatus(HttpStatus.CONFLICT);
         }
         return pse;
     }
 
     public PurlServerError validateModifyDomain(Domain d, Locale locale) {
-        PurlServerError pse = new PurlServerError(HttpStatus.OK, messages.getMessage("purl_server.error.api.domain.modify", null, locale), null);
+        PurlServerError pse = new PurlServerError(HttpStatus.OK,
+            messages.getMessage("purl_server.error.api.domain.modify", null, locale), null);
         cleanUp(d);
         domainDAO.retrieveDomain(d.getId()).ifPresentOrElse(dd -> {
-            pse.getDetails().addAll(validateDomain(d, locale));
+            validateDomain(pse, d, locale);
         }, () -> {
-            pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.modify.exist", new Object[] { d.getPath() },
-                locale));
+            pse.getDetails()
+                .add(messages.getMessage("purl_server.error.validate.domain.modify.exist", new Object[] { d.getPath() },
+                    locale));
         });
-        if(!pse.getDetails().isEmpty()) {
+        if (!pse.getDetails().isEmpty()) {
             pse.setStatus(HttpStatus.CONFLICT);
         }
         return pse;
     }
-    
+
     public PurlServerError validateDeleteDomain(Domain d, Locale locale) {
-        PurlServerError pse = new PurlServerError(HttpStatus.OK, messages.getMessage("purl_server.error.api.domain.delete", null, locale), null);
+        PurlServerError pse = new PurlServerError(HttpStatus.OK,
+            messages.getMessage("purl_server.error.api.domain.delete", null, locale), null);
         domainDAO.retrieveDomain(d.getId()).ifPresentOrElse(dd -> {
         }, () -> {
-            pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.modify.exist", new Object[] { d.getPath() },
-                locale));
+            pse.getDetails()
+                .add(messages.getMessage("purl_server.error.validate.domain.modify.exist", new Object[] { d.getPath() },
+                    locale));
         });
-        if(!pse.getDetails().isEmpty()) {
+        if (!pse.getDetails().isEmpty()) {
             pse.setStatus(HttpStatus.CONFLICT);
         }
         return pse;
     }
 
-    private List<String> validatePath(Domain domain, Locale locale) {
+    private void validatePath(PurlServerError pse, Domain domain, Locale locale) {
         if (!StringUtils.hasText(domain.getPath())) {
-            return List.of(messages.getMessage("purl_server.error.validate.domain.create.path.empty", null, locale));
+            pse.getDetails()
+                .add(messages.getMessage("purl_server.error.validate.domain.create.path.empty", null, locale));
+            return;
         }
 
-        List<String> errorList = new ArrayList<>();
         if (domain.getPath().startsWith("/admin")) {
-            errorList.add(messages.getMessage("purl_server.error.validate.domain.create.path.start.admin", null, locale));
+            pse.getDetails()
+                .add(messages.getMessage("purl_server.error.validate.domain.create.path.start.admin", null, locale));
         } else if (!domain.getPath().matches("/" + Domain.REGEX_VALID_DOMAINS)) {
-            errorList.add(
+            pse.getDetails().add(
                 messages.getMessage("purl_server.error.validate.domain.create.path.reserved", null, locale));
         }
         if (!domain.getPath().startsWith("/")) {
-            errorList.add(
+            pse.getDetails().add(
                 messages.getMessage("purl_server.error.validate.domain.create.path.start", null, locale));
         }
         if (!domain.getPath().matches("/[-_a-zA-Z0-9]+")) {
-            errorList.add(
+            pse.getDetails().add(
                 messages.getMessage("purl_server.error.validate.domain.create.path.match", null, locale));
         }
-        return errorList;
     }
 
     /**
@@ -121,23 +125,21 @@ public class DomainValidateService {
      * @param domain
      * @return the error list
      */
-    private List<String> validateDomain(Domain domain, Locale locale) {
-        List<String> errorList = new ArrayList<>();
+    private void validateDomain(PurlServerError pse, Domain domain, Locale locale) {
         if (!StringUtils.hasText(domain.getName())) {
-            errorList
+            pse.getDetails()
                 .add(messages.getMessage("purl_server.error.validate.domain.create_modify.name.empty", null, locale));
         }
         List<String> logins = userDAO.retrieveLogins();
         for (DomainUser du : domain.getDomainUserList()) {
             if (!logins.contains(du.getUser().getLogin())) {
-                errorList.add(messages.getMessage("purl_server.error.validate.domain.create_modify.user",
+                pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.create_modify.user",
                     new Object[] { du.getUser().getLogin() }, locale));
             }
         }
-        return errorList;
     }
-   
-    private void cleanUp(Domain domain ) {
+
+    private void cleanUp(Domain domain) {
         domain.setComment(domain.getComment() == null ? null : domain.getComment().strip());
         domain.setName(domain.getName() == null ? null : domain.getName().strip());
         domain.setPath(domain.getPath() == null ? null : domain.getPath().strip());

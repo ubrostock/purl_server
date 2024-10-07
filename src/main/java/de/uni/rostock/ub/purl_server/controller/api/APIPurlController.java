@@ -202,7 +202,7 @@ public class APIPurlController {
         inputPurl.setPath(path);
         Optional<User> u = purlAccess.retrieveUserFromRequest(request);
         if(u.isPresent()) {
-        PurlServerError pse = purlValidateService.validateCreatePurl(inputPurl, u.get(), locale);
+        PurlServerError pse = purlValidateService.validateCreatePurl(inputPurl, u, locale);
         if (!pse.isOk()) {
             // TODO Fehlerliste ausgeben als JSON
             return new ResponseEntity<PurlServerError>(pse, pse.getStatus());
@@ -262,7 +262,7 @@ public class APIPurlController {
         }
         inputPurl.setPath(path);
         Optional<User> u = purlAccess.retrieveUserFromRequest(request);
-        PurlServerError pse = purlValidateService.validateModifyPurl(inputPurl, u.orElse(null), locale);
+        PurlServerError pse = purlValidateService.validateModifyPurl(inputPurl, u, locale);
         if (!pse.isOk()) {
             return new ResponseEntity<PurlServerError>(pse, pse.getStatus());
         }

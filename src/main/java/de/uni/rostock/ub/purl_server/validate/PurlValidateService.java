@@ -57,9 +57,17 @@ public class PurlValidateService {
      * @param purl
      * @return the error list
      */
-    public PurlServerError validateCreatePurl(Purl purl, User u, Locale locale) {
+    public PurlServerError validateCreatePurl(Purl purl, Optional<User> u, Locale locale) {
         PurlServerError pse = new PurlServerError(HttpStatus.OK,
             messages.getMessage("purl_server.error.api.purl.create", null, locale), null);
+        if (u.isEmpty()) {
+            pse.getDetails()
+                .add(messages.getMessage("purl_server.error.validate.purl.create_modify.user.unknown",
+                    null, locale));
+            pse.setStatus(HttpStatus.CONFLICT);
+            return pse;
+        }
+
         cleanUp(purl);
         if (!StringUtils.hasText(purl.getPath())) {
             pse.getDetails()
@@ -78,7 +86,7 @@ public class PurlValidateService {
                     new Object[] { d.get().getPath() }, locale));
                 pse.setStatus(HttpStatus.CONFLICT);
                 return pse;
-            } else if (!purlAccess.canCreatePurl(d.get(), u)) {
+            } else if (!purlAccess.canCreatePurl(d.get(), u.get())) {
                 pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.create.unauthorized",
                     new Object[] { d.get().getPath() }, locale));
                 pse.setStatus(HttpStatus.CONFLICT);
@@ -121,18 +129,26 @@ public class PurlValidateService {
      * @param u
      * @return the error list
      */
-    public PurlServerError validateModifyPurl(Purl purl, User u, Locale locale) {
+    public PurlServerError validateModifyPurl(Purl purl, Optional<User> u, Locale locale) {
         PurlServerError pse = new PurlServerError(HttpStatus.OK,
             messages.getMessage("purl_server.error.api.purl.modify", null, locale), null);
+        if (u.isEmpty()) {
+            pse.getDetails()
+                .add(messages.getMessage("purl_server.error.validate.purl.create_modify.user.unknown",
+                    null, locale));
+            pse.setStatus(HttpStatus.CONFLICT);
+            return pse;
+        }
         cleanUp(purl);
         validatePurl(pse, purl, locale);
+
         if (pse.getDetails().isEmpty()) {
             domainDAO.retrieveDomain(purl).ifPresentOrElse(
                 d -> {
-                    if (!purlAccess.canModifyPurl(d, u)) {
+                    if (!purlAccess.canModifyPurl(d, u.get())) {
                         pse.getDetails()
-                            .add(messages.getMessage("purl_server.error.validate.user.modify.purl.unauthorized",
-                                null, locale));
+                            .add(messages.getMessage("purl_server.error.validate.purl.modify.unauthorized",
+                                new Object[] {u.get().getLogin()}, locale));
                     }
                 }, () -> {
                     pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.modify.exist",
@@ -160,15 +176,24 @@ public class PurlValidateService {
      * @param u
      * @return the error list
      */
-    public PurlServerError validateDeletePurl(Purl purl, User u, Locale locale) {
+    public PurlServerError validateDeletePurl(Purl purl, Optional<User> u, Locale locale) {
         PurlServerError pse = new PurlServerError(HttpStatus.OK,
             messages.getMessage("purl_server.error.api.purl.delete", null, locale), null);
+
+        if (u.isEmpty()) {
+            pse.getDetails()
+                .add(messages.getMessage("purl_server.error.validate.purl.create_modify.user.unknown",
+                    null, locale));
+            pse.setStatus(HttpStatus.CONFLICT);
+            return pse;
+        }
+
         purlDAO.retrievePurl(purl.getId()).ifPresent(deletePurl -> {
             domainDAO.retrieveDomain(deletePurl).ifPresent(d -> {
-                if (!purlAccess.canModifyPurl(d, u)) {
+                if (!purlAccess.canModifyPurl(d, u.get())) {
                     pse.getDetails().add(
                         messages.getMessage("purl_server.error.api.purl.delete.unauthorized",
-                            new Object[] { u.getLogin() },
+                            new Object[] { u.get().getLogin() },
                             Locale.getDefault()));
                 }
             });

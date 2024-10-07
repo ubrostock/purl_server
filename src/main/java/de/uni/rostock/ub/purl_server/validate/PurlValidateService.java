@@ -151,7 +151,7 @@ public class PurlValidateService {
                                 new Object[] { u.get().getLogin() }, locale));
                     }
                 }, () -> {
-                    pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.modify.exist",
+                    pse.getDetails().add(messages.getMessage("purl_server.error.validate.purl.modify.domain.exist",
                         new Object[] { purl.getDomainPath() }, locale));
                 });
             purlDAO.retrievePurl(purl.getPath()).ifPresent(

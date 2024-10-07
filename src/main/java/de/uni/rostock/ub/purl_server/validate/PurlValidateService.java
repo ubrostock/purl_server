@@ -67,7 +67,12 @@ public class PurlValidateService {
             pse.setStatus(HttpStatus.CONFLICT);
             return pse;
         }
-
+        if (purl == null) {
+            pse.getDetails()
+                .add(messages.getMessage("purl_server.error.api.purl.input.empty", null, locale));
+            pse.setStatus(HttpStatus.NOT_FOUND);
+            return pse;
+        }
         cleanUp(purl);
         if (!StringUtils.hasText(purl.getPath())) {
             pse.getDetails()
@@ -89,7 +94,7 @@ public class PurlValidateService {
             } else if (!purlAccess.canCreatePurl(d.get(), u.get())) {
                 pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.create.unauthorized",
                     new Object[] { d.get().getPath() }, locale));
-                pse.setStatus(HttpStatus.CONFLICT);
+                pse.setStatus(HttpStatus.UNAUTHORIZED);
                 return pse;
             }
         } else {
@@ -139,6 +144,14 @@ public class PurlValidateService {
             pse.setStatus(HttpStatus.CONFLICT);
             return pse;
         }
+        if (purl == null) {
+            pse.getDetails()
+                .add(messages.getMessage("purl_server.error.api.purl.input.empty", null, locale));
+            pse.setStatus(HttpStatus.NOT_FOUND);
+            return pse;
+        }
+        
+        
         cleanUp(purl);
         validatePurl(pse, purl, locale);
 

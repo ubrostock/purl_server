@@ -192,42 +192,22 @@ public class APIPurlController {
     public ResponseEntity<? extends PurlServerResponse> createPurl(@PathVariable("path") String path,
         @RequestBody Purl inputPurl, Locale locale,
         HttpServletRequest request) {
-        String msgErrorPurlCreate = messages.getMessage("purl_server.error.api.purl.create", null, locale);
-        if (inputPurl == null) {
-            PurlServerError e = new PurlServerError(HttpStatus.NOT_FOUND,
-                msgErrorPurlCreate,
-                List.of(messages.getMessage("purl_server.error.api.purl.input.empty", null, locale)));
-            return new ResponseEntity<PurlServerError>(e, HttpStatus.NOT_FOUND);
+        if (inputPurl != null) {
+            inputPurl.setPath(path);
         }
-        inputPurl.setPath(path);
         Optional<User> u = purlAccess.retrieveUserFromRequest(request);
-        if(u.isPresent()) {
         PurlServerError pse = purlValidateService.validateCreatePurl(inputPurl, u, locale);
         if (!pse.isOk()) {
             // TODO Fehlerliste ausgeben als JSON
             return new ResponseEntity<PurlServerError>(pse, pse.getStatus());
         }
-        }
-
-        Optional<Domain> d = domainDAO.retrieveDomain(inputPurl);
-        if (d.isPresent() && u.isPresent()) {
-          if(!purlAccess.canCreatePurl(d.get(), u.orElse(null))) {
-            PurlServerError e = new PurlServerError(HttpStatus.UNAUTHORIZED,
-                msgErrorPurlCreate,
-                List.of(messages.getMessage("purl_server.error.api.purl.create.unauthorized",
-                    new Object[] { u.get().getFullname() }, locale)));
-            return new ResponseEntity<PurlServerError>(e, HttpStatus.UNAUTHORIZED);
-          }
-          inputPurl.setPath(path);
-          purlDAO.createPurl(inputPurl, u.get());
-        }
-
+        purlDAO.createPurl(inputPurl, u.get());
         Optional<Purl> oPurl = purlDAO.retrievePurlWithHistory(inputPurl.getPath());
         if (oPurl.isPresent()) {
             return new ResponseEntity<Purl>(oPurl.get(), HttpStatus.CREATED);
         } else {
             PurlServerError e = new PurlServerError(HttpStatus.CONFLICT,
-                msgErrorPurlCreate, List.of());
+                messages.getMessage("purl_server.error.api.purl.create", null, locale), List.of());
             return new ResponseEntity<PurlServerError>(e, HttpStatus.CONFLICT);
         }
     }
@@ -254,13 +234,9 @@ public class APIPurlController {
         @RequestBody Purl inputPurl, Locale locale,
         HttpServletRequest request) {
         String msgErrorPurlUpdate = messages.getMessage("purl_server.error.api.purl.modify", null, locale);
-        if (inputPurl == null) {
-            PurlServerError e = new PurlServerError(HttpStatus.CONFLICT,
-                msgErrorPurlUpdate,
-                List.of(messages.getMessage("purl_server.error.api.purl.input.empty", null, locale)));
-            return new ResponseEntity<PurlServerError>(e, HttpStatus.CONFLICT);
+        if (inputPurl != null) {
+            inputPurl.setPath(path);
         }
-        inputPurl.setPath(path);
         Optional<User> u = purlAccess.retrieveUserFromRequest(request);
         PurlServerError pse = purlValidateService.validateModifyPurl(inputPurl, u, locale);
         if (!pse.isOk()) {

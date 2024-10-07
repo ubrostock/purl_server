@@ -58,13 +58,15 @@ public class LoginController {
 
     private static final String SQL_UPDATE_RESET_TOKEN = "UPDATE user SET password_reset_token = ? WHERE login = ?;";
 
-    private static final String SQL_SELECT_FOR_EMAIL = "SELECT login, email, fullname, password_reset_token FROM `user` WHERE login = ?;";
+    private static final String SQL_SELECT_FOR_EMAIL
+        = "SELECT login, email, fullname, password_reset_token FROM `user` WHERE login = ?;";
 
-    private static final String SQL_UPATE_PASSWORD = "UPDATE user SET password_sha = ?, password_reset_token=null WHERE password_reset_token = ?;";
+    private static final String SQL_UPATE_PASSWORD
+        = "UPDATE user SET password_sha = ?, password_reset_token=null WHERE password_reset_token = ?;";
 
     @Autowired
     PasswordEncoder passwordEncoder;
-    
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -118,9 +120,9 @@ public class LoginController {
 
     @PostMapping(value = "/admin/login/password", params = "do_set_password")
     public ModelAndView resetPassword(@RequestParam(value = "password_reset_token", required = true) String token,
-        @RequestParam(value = "password_sha1", required = true) String passwordSha1) {
+        @RequestParam(value = "password_sha1", required = true) String passwordSha1, Locale locale) {
         ModelAndView mav = new ModelAndView();
-        if (validateToken(token, mav)) {
+        if (validateToken(token, mav, locale)) {
             jdbcTemplate.update(SQL_UPATE_PASSWORD, passwordEncoder.encode(passwordSha1), token);
             mav.setViewName("login/password_success");
         } else {
@@ -130,14 +132,14 @@ public class LoginController {
     }
 
     @PostMapping(value = "/admin/login/password", params = "do_password_reset")
-    public ModelAndView passwordReset(@RequestParam(value = "login", required = true) String userid) {
+    public ModelAndView passwordReset(@RequestParam(value = "login", required = true) String userid, Locale locale) {
         createToken(userid);
         final AtomicBoolean found = new AtomicBoolean(false);
         jdbcTemplate.query(SQL_SELECT_FOR_EMAIL, new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet rs) throws SQLException {
                 sendEmail(rs.getString("login"), rs.getString("fullname"), rs.getString("email"),
-                    rs.getString("password_reset_token"));
+                    rs.getString("password_reset_token"), locale);
                 found.set(true);
             }
         }, userid);
@@ -146,12 +148,12 @@ public class LoginController {
         } else {
             ModelAndView mav = new ModelAndView("login/password_request");
             mav.addObject(MODEL_ATTRIBUTE_ERROR_MESSAGE,
-                context.getMessage("purl_server.login.error_message.unknown_user", null, Locale.getDefault()));
+                context.getMessage("purl_server.login.error_message.unknown_user", null, locale));
             return mav;
         }
     }
 
-    private boolean validateToken(String token, ModelAndView mav) {
+    private boolean validateToken(String token, ModelAndView mav, Locale locale) {
         Integer x = jdbcTemplate.queryForObject("SELECT COUNT(*) from `user` WHERE password_reset_token = ?",
             Integer.class, token);
         if (x != null && x == 1 && token.contains("_")) {
@@ -159,19 +161,19 @@ public class LoginController {
             long time = Long.parseLong(timeString);
             if (time < System.currentTimeMillis()) {
                 mav.addObject(MODEL_ATTRIBUTE_ERROR_MESSAGE,
-                    context.getMessage("purl_server.password.error_message.invalid_time", null, Locale.getDefault()));
+                    context.getMessage("purl_server.password.error_message.invalid_time", null, locale));
                 return false;
             } else {
                 return true;
             }
         } else {
             mav.addObject(MODEL_ATTRIBUTE_ERROR_MESSAGE,
-                context.getMessage("purl_server.password.error_message.invalid_token", null, Locale.getDefault()));
+                context.getMessage("purl_server.password.error_message.invalid_token", null, locale));
             return false;
         }
     }
 
-    private void sendEmail(String login, String name, String email, String token) {
+    private void sendEmail(String login, String name, String email, String token, Locale locale) {
         try {
             UriComponents uriComponents = MvcUriComponentsBuilder.fromMethodName(LoginController.class, "password")
                 .queryParam("login", login)
@@ -181,12 +183,12 @@ public class LoginController {
             mailHelper.setFrom(mailFrom);
             mailHelper.setTo(email);
             mailHelper
-                .setSubject(context.getMessage("purl_server.email.password_reset.subject", null, Locale.getDefault()));
-            mailHelper.setText(context.getMessage("purl_server.email.password_reset.body", null, Locale.getDefault())
+                .setSubject(context.getMessage("purl_server.email.password_reset.subject", null, locale));
+            mailHelper.setText(context.getMessage("purl_server.email.password_reset.body", null, locale)
                 + "\n" + uri.toString());
             mailSender.send(mailHelper.getMimeMessage());
         } catch (MessagingException e) {
-            LOGGER.error(messages.getMessage("purl_server.error.login.email", null, Locale.getDefault()), e);
+            LOGGER.error(messages.getMessage("purl_server.error.login.email", null, locale), e);
         }
     }
 

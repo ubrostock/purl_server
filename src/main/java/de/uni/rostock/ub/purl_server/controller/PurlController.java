@@ -65,7 +65,7 @@ public class PurlController {
      */
     @GetMapping(path = "/{domain:" + Domain.REGEX_VALID_DOMAINS + "}/{*path}")
     public String resolvePurl(@PathVariable String domain, @PathVariable("path") String path,
-        HttpServletRequest request) {
+        HttpServletRequest request, Locale locale) {
         String purl = "/" + domain + path;
         Optional<Purl> op = purlDAO.retrievePurl(purl);
         if (op.isPresent()) {
@@ -81,11 +81,11 @@ public class PurlController {
                         messages.getMessage(
                             "purl_server.error.purl.gone", new Object[] { ServletUriComponentsBuilder
                                 .fromCurrentContextPath().path("/info/purl" + path).build().toString() },
-                            Locale.getDefault()));
+                            locale));
             }
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                messages.getMessage("purl_server.error.api.purl.notfound", null, Locale.getDefault()));
+                messages.getMessage("purl_server.error.api.purl.notfound", null, locale));
         }
         return null;
     }

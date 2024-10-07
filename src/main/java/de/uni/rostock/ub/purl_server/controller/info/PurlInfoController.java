@@ -74,7 +74,8 @@ public class PurlInfoController {
     })
     public Object retrieveInfoPurl(@PathVariable("path") String path,
         @RequestParam(defaultValue = "") String format,
-        @RequestHeader(name = HttpHeaders.ACCEPT, defaultValue = "") @Parameter(hidden = true) String accept) {
+        @RequestHeader(name = HttpHeaders.ACCEPT, defaultValue = "") @Parameter(hidden = true) String accept,
+        Locale locale) {
         Optional<Purl> op = purlDAO.retrievePurlWithHistory(path);
         if ("json".equals(format) || (accept.toLowerCase().contains("json"))) {
             if (op.isEmpty()) {
@@ -104,7 +105,7 @@ public class PurlInfoController {
                 }
             } else {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                    messages.getMessage("purl_server.error.api.purl.notfound", null, "Not found!", Locale.getDefault()));
+                    messages.getMessage("purl_server.error.api.purl.notfound", null, "Not found!", locale));
             }
             return mav;
         }

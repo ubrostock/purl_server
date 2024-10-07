@@ -53,7 +53,7 @@ public class UserValidateService {
         cleanUp(user);
         if (userDAO.retrieveUser(user.getLogin()).isPresent()) {
             pse.getDetails().add(messages.getMessage("purl_server.error.validate.user.create.exists",
-                new Object[] { user.getLogin() }, Locale.getDefault()));
+                new Object[] { user.getLogin() }, locale));
         }
         if (SHA_EMPTY_STRING.equals(user.getPasswordSHA())) {
             pse.getDetails()

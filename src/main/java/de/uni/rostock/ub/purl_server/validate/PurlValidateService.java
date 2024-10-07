@@ -148,7 +148,7 @@ public class PurlValidateService {
                     if (!purlAccess.canModifyPurl(d, u.get())) {
                         pse.getDetails()
                             .add(messages.getMessage("purl_server.error.validate.purl.modify.unauthorized",
-                                new Object[] {u.get().getLogin()}, locale));
+                                new Object[] { u.get().getLogin() }, locale));
                     }
                 }, () -> {
                     pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.modify.exist",
@@ -193,8 +193,7 @@ public class PurlValidateService {
                 if (!purlAccess.canModifyPurl(d, u.get())) {
                     pse.getDetails().add(
                         messages.getMessage("purl_server.error.api.purl.delete.unauthorized",
-                            new Object[] { u.get().getLogin() },
-                            Locale.getDefault()));
+                            new Object[] { u.get().getLogin() }, locale));
                 }
             });
         });

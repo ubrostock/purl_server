@@ -171,16 +171,17 @@ public class AdminDomainController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(path = "/admin/manager/domain/modify")
     public String showDomainModify(@RequestParam("id") int id, Locale locale, Model model) {
-        PurlServerError pse = PurlServerError.createErrorOk();
         model.addAttribute(MODEL_ATTRIBUTE_FORM, MODEL_VALUE_FORM_MODIFY);
         domainDAO.retrieveDomainWithUser(id).ifPresentOrElse(d -> {
             model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, d);
+            model.addAttribute(MODEL_ATTRIBUTE_ERROR, PurlServerError.createErrorOk());
         }, () -> {
-            pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.modify.exist", new Object[] { String.valueOf(id) }, locale));
-            pse.setStatus(HttpStatus.CONFLICT);
-            pse.setMessage(messages.getMessage("purl_server.error.api.domain.modify", null, locale));
+            PurlServerError pse = new PurlServerError(HttpStatus.NOT_FOUND,
+                messages.getMessage("purl_server.error.api.domain.modify", null, locale), List.of(
+                    messages.getMessage("purl_server.error.validate.domain.modify.exist",
+                        new Object[] { String.valueOf(id) }, locale)));
+            model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
         });
-        model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
         model.addAttribute(MODEL_ATTRIBUTE_USERS_LOGIN, userDAO.retrieveActiveUsers());
         return MODEL_VIEW_DOMAINMODIFY;
     }
@@ -277,15 +278,16 @@ public class AdminDomainController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(path = "/admin/manager/domain/delete")
     public String showDomainDelete(@RequestParam("id") int id, Locale locale, Model model) {
-        PurlServerError pse = PurlServerError.createErrorOk();
         domainDAO.retrieveDomain(id).ifPresentOrElse(d -> {
             model.addAttribute(MODEL_ATTRIBUTE_DOMAIN, d);
+            model.addAttribute(MODEL_ATTRIBUTE_ERROR, PurlServerError.createErrorOk());
         }, () -> {
-            pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.modify.exist", new Object[] { String.valueOf(id) }, locale));
-            pse.setStatus(HttpStatus.CONFLICT);
-            pse.setMessage(messages.getMessage("purl_server.error.api.domain.delete", null, locale));
+            PurlServerError pse = new PurlServerError(HttpStatus.NOT_FOUND,
+                messages.getMessage("purl_server.error.api.domain.delete", null, locale), List.of(
+                    messages.getMessage("purl_server.error.validate.domain.modify.exist",
+                        new Object[] { String.valueOf(id) }, locale)));
+            model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
         });
-        model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
         return MODEL_VIEW_DOMAINDELETE;
     }
 

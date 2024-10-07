@@ -128,17 +128,18 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(path = "/admin/manager/user/modify")
     public String showUserModify(@RequestParam("id") int id, Locale locale, Model model) {
-        PurlServerError pse = PurlServerError.createErrorOk();
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "modify");
         userDAO.retrieveUser(id).ifPresentOrElse(u -> {
             model.addAttribute(MODEL_ATTRIBUTE_USER, u);
+            model.addAttribute(MODEL_ATTRIBUTE_ERROR, PurlServerError.createErrorOk());
         }, () -> {
-            pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.create_modify.user",
-                new Object[] { String.valueOf(id) }, locale));
-            pse.setStatus(HttpStatus.CONFLICT);
-            pse.setMessage(messages.getMessage("purl_server.error.api.user.modify", null, locale));
+            PurlServerError pse = new PurlServerError(HttpStatus.NOT_FOUND,
+                messages.getMessage("purl_server.error.api.user.modify", null, locale), List.of(
+                    messages.getMessage("purl_server.error.validate.domain.create_modify.user",
+                        new Object[] { String.valueOf(id) }, locale)));
+            model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
         });
-        model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
+
         return "usermodify";
     }
 
@@ -230,16 +231,16 @@ public class AdminUserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(path = "/admin/manager/user/delete")
     public String showUserDelete(@RequestParam("id") int id, Locale locale, Model model) {
-        PurlServerError pse = PurlServerError.createErrorOk();
         userDAO.retrieveUser(id).ifPresentOrElse(u -> {
             model.addAttribute(MODEL_ATTRIBUTE_USER, u);
+            model.addAttribute(MODEL_ATTRIBUTE_ERROR, PurlServerError.createErrorOk());
         }, () -> {
-            pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.create_modify.user",
-                new Object[] { String.valueOf(id) }, locale));
-            pse.setStatus(HttpStatus.CONFLICT);
-            pse.setMessage(messages.getMessage("purl_server.error.api.user.delete", null, locale));
+            PurlServerError pse = new PurlServerError(HttpStatus.NOT_FOUND,
+                messages.getMessage("purl_server.error.api.user.delete", null, locale), List.of(
+                    messages.getMessage("purl_server.error.validate.user.create.exists",
+                        new Object[] { String.valueOf(id) }, locale)));
+            model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
         });
-        model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
         return "userdelete";
     }
 

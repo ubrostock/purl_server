@@ -13,9 +13,7 @@
         <div class="row">
           <div class="col">
             <h3 class="card-title" th:text="#{purl_server.purl.modify.title}">Modify a PURL</h3>
-            <div class="alert alert-danger" role="alert" th:if="${errors}" th:each="error : ${errors}">
-              <span th:text="${error}"></span>
-            </div>
+            <div th:replace="~{fragments/page :: errorView (${error})}"></div>
             <div th:if="${submitted}" class="alert alert-success" th:text="#{purl_server.purl.modify.modified}">
               Purl modified!</div>
             <form th:action="@{/admin/manager/purl/modify}" method="post" th:object="${purl}" th:if="${purl}">

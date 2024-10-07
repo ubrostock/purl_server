@@ -202,12 +202,10 @@ public class APIPurlController {
         inputPurl.setPath(path);
         Optional<User> u = purlAccess.retrieveUserFromRequest(request);
         if(u.isPresent()) {
-        List<String> errorList = purlValidateService.validateCreatePurl(inputPurl, u.get(), locale);
-        if (!errorList.isEmpty()) {
+        PurlServerError pse = purlValidateService.validateCreatePurl(inputPurl, u.get(), locale);
+        if (!pse.isOk()) {
             // TODO Fehlerliste ausgeben als JSON
-            PurlServerError e = new PurlServerError(HttpStatus.CONFLICT,
-                msgErrorPurlCreate, errorList);
-            return new ResponseEntity<PurlServerError>(e, HttpStatus.CONFLICT);
+            return new ResponseEntity<PurlServerError>(pse, pse.getStatus());
         }
         }
 
@@ -264,12 +262,9 @@ public class APIPurlController {
         }
         inputPurl.setPath(path);
         Optional<User> u = purlAccess.retrieveUserFromRequest(request);
-        List<String> errorList = purlValidateService.validateModifyPurl(inputPurl, u.orElse(null), locale);
-        if (!errorList.isEmpty()) {
-            PurlServerError e = new PurlServerError(HttpStatus.CONFLICT,
-                msgErrorPurlUpdate,
-                errorList);
-            return new ResponseEntity<PurlServerError>(e, HttpStatus.CONFLICT);
+        PurlServerError pse = purlValidateService.validateModifyPurl(inputPurl, u.orElse(null), locale);
+        if (!pse.isOk()) {
+            return new ResponseEntity<PurlServerError>(pse, pse.getStatus());
         }
         Optional<Purl> oPurl = purlDAO.retrievePurl(path);
         if (oPurl.isEmpty()) {

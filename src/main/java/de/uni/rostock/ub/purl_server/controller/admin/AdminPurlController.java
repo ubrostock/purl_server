@@ -18,16 +18,13 @@
  */
 package de.uni.rostock.ub.purl_server.controller.admin;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,8 +36,10 @@ import de.uni.rostock.ub.purl_server.common.PurlAccess;
 import de.uni.rostock.ub.purl_server.dao.DomainDAO;
 import de.uni.rostock.ub.purl_server.dao.PurlDAO;
 import de.uni.rostock.ub.purl_server.model.Purl;
+import de.uni.rostock.ub.purl_server.model.PurlServerError;
 import de.uni.rostock.ub.purl_server.model.User;
 import de.uni.rostock.ub.purl_server.validate.PurlValidateService;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class AdminPurlController {
@@ -56,7 +55,7 @@ public class AdminPurlController {
 
     private static final String MODEL_ATTRIBUTE_PATH = "path";
 
-    private static final String MODEL_ATTRIBUTE_ERRORS = "errors";
+    private static final String MODEL_ATTRIBUTE_ERROR = "error";
 
     private static final String MODEL_ATTRIBUTE_SUBMITTED = "submitted";
 
@@ -89,6 +88,7 @@ public class AdminPurlController {
      */
     @GetMapping(path = "/admin/manager/purl/create")
     public String showPurlCreate(Model model) {
+        model.addAttribute(MODEL_ATTRIBUTE_ERROR, PurlServerError.createErrorOk());
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "create");
         model.addAttribute(MODEL_ATTRIBUTE_PURL, new Purl());
         return "purlcreate";
@@ -105,10 +105,11 @@ public class AdminPurlController {
     public String createPurl(@ModelAttribute Purl purl, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "create");
         Optional<User> u = purlAccess.retrieveCurrentUser();
+        PurlServerError pse = PurlServerError.createErrorOk();
         if (u.isPresent()) {
             purl.setPath(purl.getPath().trim());
-            List<String> errorList = purlValidateService.validateCreatePurl(purl, u.get(), locale);
-            if (errorList.isEmpty()) {
+            pse = purlValidateService.validateCreatePurl(purl, u.get(), locale);
+            if (pse.isOk()) {
                 Optional<Purl> newPurl = purlDAO.createPurl(purl, u.get());
                 if (newPurl.isPresent()) {
                     model.addAttribute(MODEL_ATTRIBUTE_PURL, newPurl.get());
@@ -118,10 +119,11 @@ public class AdminPurlController {
                 model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, true);
             } else {
                 model.addAttribute(MODEL_ATTRIBUTE_PURL, purl);
-                model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
+
                 model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, false);
             }
         }
+        model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
         return "purlcreate";
     }
 
@@ -137,10 +139,13 @@ public class AdminPurlController {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "modify");
         purlDAO.retrievePurl(id).ifPresentOrElse(p -> {
             model.addAttribute(MODEL_ATTRIBUTE_PURL, p);
+            model.addAttribute(MODEL_ATTRIBUTE_ERROR, PurlServerError.createErrorOk());
         }, () -> {
-            model.addAttribute(MODEL_ATTRIBUTE_ERRORS, List.of(
-                messages.getMessage("purl_server.error.validate.purl.modify.exist",
-                    new Object[] { String.valueOf(id) }, locale)));
+            PurlServerError pse = new PurlServerError(HttpStatus.NOT_FOUND,
+                messages.getMessage("purl_server.error.api.purl.modify", null, locale), List.of(
+                    messages.getMessage("purl_server.error.validate.purl.modify.exist",
+                        new Object[] { String.valueOf(id) }, locale)));
+            model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
         });
         return "purlmodify";
     }
@@ -156,17 +161,19 @@ public class AdminPurlController {
     public String modifyPurl(@ModelAttribute Purl purl, HttpServletRequest request, Locale locale, Model model) {
         model.addAttribute(MODEL_ATTRIBUTE_FORM, "modify");
         Optional<User> u = purlAccess.retrieveCurrentUser();
+        PurlServerError pse = PurlServerError.createErrorOk();
         if (u.isPresent()) {
-            List<String> errorList = purlValidateService.validateModifyPurl(purl, u.get(), locale);
-            if (errorList.isEmpty()) {
+            pse = purlValidateService.validateModifyPurl(purl, u.get(), locale);
+            if (pse.isOk()) {
                 purlDAO.modifyPurl(purl, u.get());
                 model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, true);
             } else {
-                model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
+
                 model.addAttribute(MODEL_ATTRIBUTE_SUBMITTED, false);
             }
             model.addAttribute(MODEL_ATTRIBUTE_PURL, purlDAO.retrievePurl(purl.getId()).get());
         }
+        model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
         return "purlmodify";
     }
 
@@ -224,10 +231,13 @@ public class AdminPurlController {
     public String showPurlDelete(@RequestParam("id") int id, Locale locale, Model model) {
         purlDAO.retrievePurl(id).ifPresentOrElse(p -> {
             model.addAttribute(MODEL_ATTRIBUTE_PURL, p);
+            model.addAttribute(MODEL_ATTRIBUTE_ERROR, PurlServerError.createErrorOk());
         }, () -> {
-            model.addAttribute(MODEL_ATTRIBUTE_ERRORS, List.of(
-                messages.getMessage("purl_server.error.validate.purl.modify.exist",
-                    new Object[] { String.valueOf(id) }, locale)));
+            PurlServerError pse = new PurlServerError(HttpStatus.NOT_FOUND,
+                messages.getMessage("purl_server.error.api.purl.delete", null, locale), List.of(
+                    messages.getMessage("purl_server.error.validate.purl.modify.exist",
+                        new Object[] { String.valueOf(id) }, locale)));
+            model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
         });
         return "purldelete";
     }
@@ -240,26 +250,22 @@ public class AdminPurlController {
      * @return the purl delete page
      */
     @PostMapping(path = "/admin/manager/purl/delete")
-    public String deletePurl(@ModelAttribute Purl purl, HttpServletRequest request, Model model) {
+    public String deletePurl(@ModelAttribute Purl purl, Locale locale, HttpServletRequest request, Model model) {
         Optional<User> u = purlAccess.retrieveCurrentUser();
+        PurlServerError pse = PurlServerError.createErrorOk();
         if (u.isPresent()) {
-            purlDAO.retrievePurl(purl.getId()).ifPresent(deletePurl -> {
-                domainDAO.retrieveDomain(deletePurl).ifPresent(d -> {
-                    if (purlAccess.canModifyPurl(d, u.get())) {
-                        purlDAO.deletePurl(deletePurl, u.get());
-                        model.addAttribute(MODEL_ATTRIBUTE_DELETED, true);
-                    } else {
-                        List<String> errorList = new ArrayList<>();
-                        errorList.add(
-                            messages.getMessage("purl_server.error.user.delete.purl.unauthorized", null,
-                                Locale.getDefault()));
-                        model.addAttribute(MODEL_ATTRIBUTE_ERRORS, errorList);
-                    }
-                });
-            });
+            Purl deletePurl = purlDAO.retrievePurl(purl.getId()).get();
+            pse = purlValidateService.validateDeletePurl(deletePurl, u.get(), locale);
+            if (pse.isOk()) {
+                purlDAO.deletePurl(deletePurl, u.get());
+                model.addAttribute(MODEL_ATTRIBUTE_DELETED, true);
+            } else {
+                model.addAttribute(MODEL_ATTRIBUTE_DELETED, false);
+            }
             // TODO Was passiert im Fehlerfall, Domain not present.
             model.addAttribute(MODEL_ATTRIBUTE_PURL, purlDAO.retrievePurl(purl.getId()).get());
         }
+        model.addAttribute(MODEL_ATTRIBUTE_ERROR, pse);
         return "purldelete";
     }
 }

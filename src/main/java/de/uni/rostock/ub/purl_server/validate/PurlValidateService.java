@@ -74,10 +74,6 @@ public class PurlValidateService {
             return pse;
         }
         cleanUp(purl);
-        if (!StringUtils.hasText(purl.getPath())) {
-            pse.getDetails()
-                .add(messages.getMessage("purl_server.error.validate.purl.create.path.empty", null, locale));
-        }
         validatePurl(pse, purl, locale);
         if (!pse.getDetails().isEmpty()) {
             pse.setStatus(HttpStatus.CONFLICT);
@@ -110,7 +106,7 @@ public class PurlValidateService {
                 if (purl.getPath().length() == currentPurl.get().getPath().length()) {
                     pse.getDetails()
                         .add(messages.getMessage("purl_server.error.validate.purl.create_modify.path.exist", null,
-                            locale));
+                            locale));//TODO i18n partial error
                     pse.setStatus(HttpStatus.CONFLICT);
                     return pse;
                 }

@@ -33,7 +33,7 @@ class PurlValidateTests extends PURLServerBaseTest {
         Purl p = createTestPurl("/test/123", "http://example.com", Type.REDIRECT_302);
         Optional<User> u = createTestUser(101, "user1");
         PurlServerError pse = purlValidateService.validateCreatePurl(p, u, Locale.getDefault());
-        assertTrue(pse.isOk(), "Fehler bei ValidateCreatePurl");
+        assertTrue(pse.isOk());
     }
 
     @Test
@@ -44,7 +44,7 @@ class PurlValidateTests extends PURLServerBaseTest {
         assertFalse(pse.isOk(), "Fehler bei ValidateCreatePurl");
         String message = messages.getMessage("purl_server.error.validate.purl.create_modify.user.unknown",
             null, Locale.getDefault());
-        assertTrue(pse.getDetails().contains(message), "Fehler bei ValidateCreatePurl");
+        assertTrue(pse.getDetails().contains(message));
     }
     
     @Test
@@ -55,7 +55,7 @@ class PurlValidateTests extends PURLServerBaseTest {
         assertFalse(pse.isOk(), "Fehler bei ValidateCreatePurl");
         String message = messages.getMessage("purl_server.error.api.purl.input.empty",
             null, Locale.getDefault());
-        assertTrue(pse.getDetails().contains(message), "Fehler bei ValidateCreatePurl");
+        assertTrue(pse.getDetails().contains(message));
     }
     
     @Test
@@ -69,7 +69,7 @@ class PurlValidateTests extends PURLServerBaseTest {
         assertTrue(pse.getDetails().contains(messagePath), "Fehler bei ValidateCreatePurl");
         String messageTarget = messages.getMessage("purl_server.error.validate.purl.create_modify.target.empty",
             null, Locale.getDefault());
-        assertTrue(pse.getDetails().contains(messageTarget), "Fehler bei ValidateCreatePurl");
+        assertTrue(pse.getDetails().contains(messageTarget));
     }
     
     @Test
@@ -80,7 +80,7 @@ class PurlValidateTests extends PURLServerBaseTest {
         assertFalse(pse.isOk(), "Fehler bei ValidateCreatePurl");
         String message = messages.getMessage("purl_server.error.validate.purl.create_modify.path.start",
             null, Locale.getDefault());
-        assertTrue(pse.getDetails().contains(message), "Fehler bei ValidateCreatePurl");
+        assertTrue(pse.getDetails().contains(message));
     }
     
     @Test
@@ -91,7 +91,7 @@ class PurlValidateTests extends PURLServerBaseTest {
         assertFalse(pse.isOk(), "Fehler bei ValidateCreatePurl");
         String message = messages.getMessage("purl_server.error.validate.purl.create_modify.path.match",
             null, Locale.getDefault());
-        assertTrue(pse.getDetails().contains(message), "Fehler bei ValidateCreatePurl");
+        assertTrue(pse.getDetails().contains(message));
     }
     
     @Test
@@ -102,7 +102,7 @@ class PurlValidateTests extends PURLServerBaseTest {
         assertFalse(pse.isOk(), "Fehler bei ValidateCreatePurl");
         String message = messages.getMessage("purl_server.error.validate.purl.create_modify.target.start",
             null, Locale.getDefault());
-        assertTrue(pse.getDetails().contains(message), "Fehler bei ValidateCreatePurl");
+        assertTrue(pse.getDetails().contains(message));
     }
     
     @Test
@@ -113,7 +113,7 @@ class PurlValidateTests extends PURLServerBaseTest {
         assertFalse(pse.isOk(), "Fehler bei ValidateCreatePurl");
         String message = messages.getMessage("purl_server.error.validate.purl.create_modify.type.target.empty",
             null, Locale.getDefault());
-        assertTrue(pse.getDetails().contains(message), "Fehler bei ValidateCreatePurl");
+        assertTrue(pse.getDetails().contains(message));
     }
     
     @Test
@@ -124,7 +124,7 @@ class PurlValidateTests extends PURLServerBaseTest {
         assertFalse(pse.isOk(), "Fehler bei ValidateCreatePurl");
         String message = messages.getMessage("purl_server.error.validate.domain.modify.exist",
             new Object[] { p.getDomainPath() }, Locale.getDefault());
-        assertTrue(pse.getDetails().contains(message), "Fehler bei ValidateCreatePurl");
+        assertTrue(pse.getDetails().contains(message));
     }
     
     @Test
@@ -135,29 +135,29 @@ class PurlValidateTests extends PURLServerBaseTest {
         assertFalse(pse.isOk(), "Fehler bei ValidateCreatePurl");
         String message = messages.getMessage("purl_server.error.validate.domain.create.deleted",
             new Object[] { "/deleted" }, Locale.getDefault());
-        assertTrue(pse.getDetails().contains(message), "Fehler bei ValidateCreatePurl");
+        assertTrue(pse.getDetails().contains(message));
     }
     
     @Test
-    void testValidateCreatePurlCanCreatePurl() {
+    void testValidateCreatePurlCanCreatePurlUserCreateFalse() {
         Purl p = createTestPurl("/test/1234", "http://example.com", Type.REDIRECT_302);
         Optional<User> u = createTestUser(102, "user2");
         PurlServerError pse = purlValidateService.validateCreatePurl(p, u, Locale.getDefault());
         assertFalse(pse.isOk(), "Fehler bei ValidateCreatePurl");
         String message = messages.getMessage("purl_server.error.validate.domain.create.unauthorized",
             new Object[] { "/test" }, Locale.getDefault());
-        assertTrue(pse.getDetails().contains(message), "Fehler bei ValidateCreatePurl");
+        assertTrue(pse.getDetails().contains(message));
     }
     
     @Test
-    void testValidateCreatePurlCanCreatePurl2() {
+    void testValidateCreatePurlCanCreatePurUserNotInDomain() {
         Purl p = createTestPurl("/test/1234", "http://example.com", Type.REDIRECT_302);
         Optional<User> u = createTestUser(103, "user3");
         PurlServerError pse = purlValidateService.validateCreatePurl(p, u, Locale.getDefault());
         assertFalse(pse.isOk(), "Fehler bei ValidateCreatePurl");
         String message = messages.getMessage("purl_server.error.validate.domain.create.unauthorized",
             new Object[] { "/test" }, Locale.getDefault());
-        assertTrue(pse.getDetails().contains(message), "Fehler bei ValidateCreatePurl");
+        assertTrue(pse.getDetails().contains(message));
     }
     
     @Test
@@ -168,26 +168,18 @@ class PurlValidateTests extends PURLServerBaseTest {
         assertFalse(pse.isOk(), "Fehler bei ValidateCreatePurl");
         String message = messages.getMessage("purl_server.error.validate.purl.create_modify.path.exist",
             null, Locale.getDefault());
-        assertTrue(pse.getDetails().contains(message), "Fehler bei ValidateCreatePurl");
+        assertTrue(pse.getDetails().contains(message));
     }
     
     @Test
-    void testValidateCreatePurlExist2() {
+    void testValidateCreatePurlPartOfPartial() {
         Purl p = createTestPurl("/test/test123", "http://example.com", Type.REDIRECT_302);
         Optional<User> u = createTestUser(101, "user1");
         PurlServerError pse = purlValidateService.validateCreatePurl(p, u, Locale.getDefault());
         assertFalse(pse.isOk(), "Fehler bei ValidateCreatePurl");
         String message = messages.getMessage("purl_server.error.validate.purl.create.path.partial",
             null, Locale.getDefault());
-        assertTrue(pse.getDetails().contains(message), "Fehler bei ValidateCreatePurl");
-    }
-    
-    @Test
-    void testValidateCreatePurlExist3() {
-        Purl p = createTestPurl("/test/test1234", "http://example.com", Type.REDIRECT_302);
-        Optional<User> u = createTestUser(101, "user1");
-        PurlServerError pse = purlValidateService.validateCreatePurl(p, u, Locale.getDefault());
-        assertTrue(pse.isOk(), "Fehler bei ValidateCreatePurl");
+        assertTrue(pse.getDetails().contains(message));
     }
 
     @Test
@@ -195,7 +187,7 @@ class PurlValidateTests extends PURLServerBaseTest {
         Purl p = createTestPurl("/test/123", "http://example.com", Type.REDIRECT_302);
         Optional<User> u = createTestUser(101, "user1");
         PurlServerError pse = purlValidateService.validateModifyPurl(p, u, Locale.getDefault());
-        assertTrue(pse.isOk(), "Fehler bei ValidateModifyPurl");
+        assertTrue(pse.isOk());
     }
     
     @Test
@@ -206,7 +198,7 @@ class PurlValidateTests extends PURLServerBaseTest {
         assertFalse(pse.isOk(), "Fehler bei ValidateCreatePurl");
         String message = messages.getMessage("purl_server.error.validate.purl.create_modify.user.unknown",
             null, Locale.getDefault());
-        assertTrue(pse.getDetails().contains(message), "Fehler bei ValidateCreatePurl");
+        assertTrue(pse.getDetails().contains(message));
     }
     
     @Test
@@ -217,7 +209,7 @@ class PurlValidateTests extends PURLServerBaseTest {
         assertFalse(pse.isOk(), "Fehler bei ValidateCreatePurl");
         String message = messages.getMessage("purl_server.error.api.purl.input.empty",
             null, Locale.getDefault());
-        assertTrue(pse.getDetails().contains(message), "Fehler bei ValidateCreatePurl");
+        assertTrue(pse.getDetails().contains(message));
     }
     
     @Test
@@ -228,7 +220,7 @@ class PurlValidateTests extends PURLServerBaseTest {
         assertFalse(pse.isOk(), "Fehler bei ValidateCreatePurl");
         String message = messages.getMessage("purl_server.error.validate.purl.modify.domain.exist",
             new Object[] { p.getDomainPath() }, Locale.getDefault());
-        assertTrue(pse.getDetails().contains(message), "Fehler bei ValidateCreatePurl");
+        assertTrue(pse.getDetails().contains(message));
     }
     
     @Test
@@ -239,7 +231,7 @@ class PurlValidateTests extends PURLServerBaseTest {
         assertFalse(pse.isOk(), "Fehler bei ValidateCreatePurl");
         String message = messages.getMessage("purl_server.error.validate.purl.modify.unauthorized",
             new Object[] { "user4" }, Locale.getDefault());
-        assertTrue(pse.getDetails().contains(message), "Fehler bei ValidateCreatePurl");
+        assertTrue(pse.getDetails().contains(message));
     }
     
     @Test
@@ -251,7 +243,7 @@ class PurlValidateTests extends PURLServerBaseTest {
         assertFalse(pse.isOk(), "Fehler bei ValidateCreatePurl");
         String message = messages.getMessage("purl_server.error.validate.purl.create_modify.path.exist",
             null, Locale.getDefault());
-        assertTrue(pse.getDetails().contains(message), "Fehler bei ValidateCreatePurl");
+        assertTrue(pse.getDetails().contains(message));
     }
 
     @Test
@@ -259,7 +251,7 @@ class PurlValidateTests extends PURLServerBaseTest {
         Purl p = createTestPurl("/test/123", "http://example.com", Type.REDIRECT_302);
         Optional<User> u = createTestUser(101, "user1");
         PurlServerError pse = purlValidateService.validateDeletePurl(p, u, Locale.getDefault());
-        assertTrue(pse.isOk(), "Fehler bei ValidateModifyPurl");
+        assertTrue(pse.isOk());
     }
     
     @Test
@@ -270,7 +262,7 @@ class PurlValidateTests extends PURLServerBaseTest {
         assertFalse(pse.isOk(), "Fehler bei ValidateCreatePurl");
         String message = messages.getMessage("purl_server.error.validate.purl.create_modify.user.unknown",
             null, Locale.getDefault());
-        assertTrue(pse.getDetails().contains(message), "Fehler bei ValidateCreatePurl");
+        assertTrue(pse.getDetails().contains(message));
     }
     
     @Test
@@ -281,7 +273,7 @@ class PurlValidateTests extends PURLServerBaseTest {
         assertFalse(pse.isOk(), "Fehler bei ValidateCreatePurl");
         String message = messages.getMessage("purl_server.error.api.purl.delete.unauthorized",
             new Object[] { "user4" }, Locale.getDefault());
-        assertTrue(pse.getDetails().contains(message), "Fehler bei ValidateCreatePurl");
+        assertTrue(pse.getDetails().contains(message));
     }
 
 }

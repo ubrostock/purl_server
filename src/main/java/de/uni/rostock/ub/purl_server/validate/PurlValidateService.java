@@ -105,8 +105,8 @@ public class PurlValidateService {
             if (currentPurl.get().getType() == Type.PARTIAL_302) {
                 if (purl.getPath().length() == currentPurl.get().getPath().length()) {
                     pse.getDetails()
-                        .add(messages.getMessage("purl_server.error.validate.purl.create_modify.path.exist", null,
-                            locale));//TODO i18n partial error
+                        .add(messages.getMessage("purl_server.error.validate.purl.create.path.partial", null,
+                            locale));
                     pse.setStatus(HttpStatus.CONFLICT);
                     return pse;
                 }
@@ -197,7 +197,7 @@ public class PurlValidateService {
             return pse;
         }
 
-        purlDAO.retrievePurl(purl.getId()).ifPresent(deletePurl -> {
+        purlDAO.retrievePurl(purl.getPath()).ifPresent(deletePurl -> {
             domainDAO.retrieveDomain(deletePurl).ifPresent(d -> {
                 if (!purlAccess.canModifyPurl(d, u.get())) {
                     pse.getDetails().add(

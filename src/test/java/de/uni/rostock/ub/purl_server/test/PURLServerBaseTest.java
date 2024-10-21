@@ -54,9 +54,9 @@ public class PURLServerBaseTest {
     }
     
     public Optional<User> createTestUser(int id, String login) {
-        Optional<User> u = Optional.of(new User());
-        u.get().setLogin(login);
-        u.get().setId(id);
-        return u;
+        User u = new User();
+        u.setLogin(login);
+        u.setId(id);
+        return Optional.of(u);
     }
 }

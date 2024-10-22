@@ -24,8 +24,6 @@ import java.util.List;
 
 public class Domain implements PurlServerResponse {
 
-    public static final List<String> RESERVED_DOMAINS = List.of("admin", "api", "info", "static", "webjars");
-
     public static final String REGEX_VALID_DOMAINS = "(?!\\badmin\\b|\\bapi\\b|\\binfo\\b|\\bstatic\\b|\\bwebjars\\b).+";
 
     private int id = -1;

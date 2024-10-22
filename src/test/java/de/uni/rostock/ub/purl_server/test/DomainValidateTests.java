@@ -19,7 +19,7 @@ import de.uni.rostock.ub.purl_server.validate.DomainValidateService;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @ActiveProfiles("test")
-public class DomainValidateTests extends PURLServerBaseTest {
+class DomainValidateTests extends PURLServerBaseTest {
 
     @Autowired
     DomainValidateService domainValidateService;

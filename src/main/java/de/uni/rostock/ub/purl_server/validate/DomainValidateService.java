@@ -67,7 +67,7 @@ public class DomainValidateService {
         PurlServerError pse = new PurlServerError(HttpStatus.OK,
             messages.getMessage("purl_server.error.api.domain.modify", null, locale), null);
         cleanUp(d);
-        domainDAO.retrieveDomain(d.getId()).ifPresentOrElse(dd -> {
+        domainDAO.retrieveDomain(d.getPath()).ifPresentOrElse(dd -> {
             validateDomain(pse, d, locale);
         }, () -> {
             pse.getDetails()
@@ -102,10 +102,7 @@ public class DomainValidateService {
             return;
         }
 
-        if (domain.getPath().startsWith("/admin")) {
-            pse.getDetails()
-                .add(messages.getMessage("purl_server.error.validate.domain.create.path.start.admin", null, locale));
-        } else if (!domain.getPath().matches("/" + Domain.REGEX_VALID_DOMAINS)) {
+        if (!domain.getPath().matches("/" + Domain.REGEX_VALID_DOMAINS)) {
             pse.getDetails().add(
                 messages.getMessage("purl_server.error.validate.domain.create.path.reserved", null, locale));
         }

@@ -75,10 +75,10 @@ public class UserValidateService {
             messages.getMessage("purl_server.error.api.user.modify", null, locale), null);
         cleanUp(u);
 
-        userDAO.retrieveUser(u.getId()).ifPresentOrElse(uu -> {
+        userDAO.retrieveUser(u.getLogin()).ifPresentOrElse(uu -> {
         }, () -> {
             pse.getDetails().add(messages.getMessage("purl_server.error.validate.domain.create_modify.user",
-                new Object[] { String.valueOf(u.getId()) }, locale));
+                new Object[] { String.valueOf(u.getLogin()) }, locale));
         });
 
         if (!pse.getDetails().isEmpty()) {

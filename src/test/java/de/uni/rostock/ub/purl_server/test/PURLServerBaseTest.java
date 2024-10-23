@@ -11,6 +11,7 @@ import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
 
 import de.uni.rostock.ub.purl_server.dao.DomainDAO;
+import de.uni.rostock.ub.purl_server.model.Domain;
 import de.uni.rostock.ub.purl_server.model.Purl;
 import de.uni.rostock.ub.purl_server.model.Type;
 import de.uni.rostock.ub.purl_server.model.User;
@@ -51,6 +52,13 @@ public class PURLServerBaseTest {
         p.setTarget(target);
         p.setType(type);
         return p;
+    }
+    
+    public Domain createTestDomain(String path, String name) {
+        Domain d = new Domain();
+        d.setPath(path);
+        d.setName(name);
+        return d;
     }
     
     public Optional<User> createTestUser(int id, String login) {

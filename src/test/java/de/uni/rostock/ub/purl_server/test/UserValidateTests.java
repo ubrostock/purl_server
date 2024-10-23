@@ -27,14 +27,14 @@ class UserValidateTests extends PURLServerBaseTest {
     MessageSource messages;
 
     @Test
-    void testValidateCreateUser() {
+    void testValidateUser() {
         Optional<User> u = createTestUser(199, "userNeu");
         PurlServerError pse = userValidateService.validateUser(u.get(), Locale.getDefault());
         assertTrue(pse.isOk());
     }
 
     @Test
-    void testValidateCreateUserExists() {
+    void testValidateUserExists() {
         Optional<User> u = createTestUser(101, "user1");
         PurlServerError pse = userValidateService.validateUser(u.get(), Locale.getDefault());
         assertFalse(pse.isOk());
@@ -44,7 +44,7 @@ class UserValidateTests extends PURLServerBaseTest {
     }
 
     @Test
-    void testValidateCreateUserPasswordEmpty() {
+    void testValidateUserPasswordEmpty() {
         Optional<User> u = createTestUser(105, "user5");
         // SHA_EMPTY_STRING
         u.get().setPasswordSHA("da39a3ee5e6b4b0d3255bfef95601890afd80709");
@@ -56,7 +56,7 @@ class UserValidateTests extends PURLServerBaseTest {
     }
 
     @Test
-    void testValidateCreateUserNameEmpty() {
+    void testValidateUserNameEmpty() {
         Optional<User> u = createTestUser(109, "");
         PurlServerError pse = userValidateService.validateUser(u.get(), Locale.getDefault());
         assertFalse(pse.isOk());
@@ -67,8 +67,8 @@ class UserValidateTests extends PURLServerBaseTest {
     
     @Test
     void testValidateModifyUser() {
-        Optional<User> u = createTestUser(199, "userNeu");
-        PurlServerError pse = userValidateService.validateUser(u.get(), Locale.getDefault());
+        Optional<User> u = createTestUser(101, "user1");
+        PurlServerError pse = userValidateService.validateModifyUser(u.get(), Locale.getDefault());
         assertTrue(pse.isOk());
     }
     

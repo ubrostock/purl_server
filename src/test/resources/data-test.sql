@@ -54,7 +54,8 @@ INSERT INTO `domain` (`id`, `path`, `name`, `comment`, `created`, `lastmodified`
        VALUES (15, '/purlDAO', 'Test Domain', '', '2012-07-26 11:20:32.000', '2023-09-21 12:05:06.010', 'MODIFIED');
        
 INSERT INTO `domainuser` (`id`, `domain_id`, `user_id`, `can_create`, `can_modify`) 
-       VALUES (null, 15, 105, true, false);
+       VALUES (null, 15, 105, true, true);
        
 INSERT INTO `purl` (`path`, `domain_id`, `type`, `target`, `created`, `lastmodified`, `status`)
-       VALUES ('/purlDAO/123', 15, 'REDIRECT_302', 'https://example.com', NOW(3), NOW(3), 'CREATED');
+       VALUES ('/purlDAO/123', 15, 'PARTIAL_302', 'https://example.com', NOW(3), NOW(3), 'CREATED');
+       

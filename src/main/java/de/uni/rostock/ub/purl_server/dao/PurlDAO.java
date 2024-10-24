@@ -46,7 +46,8 @@ import de.uni.rostock.ub.purl_server.model.User;
 
 @Service
 public class PurlDAO {
-    private static final String SQL_INSERT_PURLHISTORY = "INSERT INTO purlhistory (purl_id, user_id, type, target, modified, status) VALUES(?,?,?,?,NOW(3),? );";
+    private static final String SQL_INSERT_PURLHISTORY
+        = "INSERT INTO purlhistory (purl_id, user_id, type, target, modified, status) VALUES(?,?,?,?,NOW(3),? );";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -67,19 +68,15 @@ public class PurlDAO {
         try {
             Purl p = jdbcTemplate.queryForObject("SELECT * FROM purl WHERE path=?;",
                 new PurlRowMapper(), path);
-            if (p != null) {
-                domainDAO.retrieveDomainWithUser(p.getDomainId()).ifPresent(d -> p.setDomain(d));
-                return Optional.of(p);
-            }
+            domainDAO.retrieveDomainWithUser(p.getDomainId()).ifPresent(d -> p.setDomain(d));
+            return Optional.of(p);
         } catch (DataAccessException e) {
             try {
                 Purl p2 = jdbcTemplate.queryForObject(
                     "SELECT * FROM purl p WHERE LOCATE(path, ?) = 1 AND type = 'partial_302' ORDER BY LENGTH(path) DESC LIMIT 1;",
                     new PurlRowMapper(), path);
-                if (p2 != null) {
-                    domainDAO.retrieveDomainWithUser(p2.getDomainId()).ifPresent(d -> p2.setDomain(d));
-                    return Optional.of(p2);
-                }
+                domainDAO.retrieveDomainWithUser(p2.getDomainId()).ifPresent(d -> p2.setDomain(d));
+                return Optional.of(p2);
             } catch (DataAccessException e2) {
                 //do nothing
             }
@@ -96,10 +93,8 @@ public class PurlDAO {
     public Optional<Purl> retrievePurl(int id) {
         try {
             Purl p = jdbcTemplate.queryForObject("SELECT * FROM purl WHERE id=?;", new PurlRowMapper(), id);
-            if (p != null) {
-                domainDAO.retrieveDomain(p.getDomainId()).ifPresent(d -> p.setDomain(d));
-                return Optional.of(p);
-            }
+            domainDAO.retrieveDomain(p.getDomainId()).ifPresent(d -> p.setDomain(d));
+            return Optional.of(p);
         } catch (DataAccessException e) {
             //do nothing
         }
@@ -155,33 +150,35 @@ public class PurlDAO {
         Integer domainId = jdbcTemplate.queryForObject("SELECT id FROM domain WHERE path = ?;", Integer.class,
             p.getDomainPath());
         KeyHolder purlId = new GeneratedKeyHolder();
-        if (domainId != null) {
-            jdbcTemplate.update(new PreparedStatementCreator() {
-                @Override
-                public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-                    PreparedStatement ps = con.prepareStatement(
-                        "INSERT INTO purl (path, domain_id, type, target, created, lastmodified, status) VALUES(?,?,?,?,NOW(3), NOW(3),?)"
-                            + " ON DUPLICATE KEY UPDATE type = ?, target = ?, lastmodified = NOW(3), status = ?;",
-                        Statement.RETURN_GENERATED_KEYS);
-                    ps.setString(1, p.getPath());
-                    ps.setInt(2, domainId);
-                    ps.setString(3, p.getType().name());
-                    ps.setString(4, p.getTarget());
-                    ps.setString(5, Status.CREATED.name());
-                    ps.setString(6, p.getType().name());
-                    ps.setString(7, p.getTarget());
-                    ps.setString(8, Status.CREATED.name());
-                    return ps;
-                }
-            }, purlId);
-            // TODO 2 Schlüssel werden generiert
-            // ALT: Number key = (Number) purlId.getKey();
-            Number key = (Number) purlId.getKeyList().get(0).get("GENERATED_KEY");
-            if (key != null) {
-                jdbcTemplate.update(SQL_INSERT_PURLHISTORY,
-                    key.intValue(), u.getId(), p.getType().name(), p.getTarget(), Status.CREATED.name());
-                return retrievePurl(p.getPath());
+        jdbcTemplate.update(new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+                PreparedStatement ps = con.prepareStatement(
+                    "INSERT INTO purl (path, domain_id, type, target, created, lastmodified, status) VALUES(?,?,?,?,NOW(3), NOW(3),?)"
+                        + " ON DUPLICATE KEY UPDATE type = ?, target = ?, lastmodified = NOW(3), status = ?;",
+                    Statement.RETURN_GENERATED_KEYS);
+                ps.setString(1, p.getPath());
+                ps.setInt(2, domainId);
+                ps.setString(3, p.getType().name());
+                ps.setString(4, p.getTarget());
+                ps.setString(5, Status.CREATED.name());
+                ps.setString(6, p.getType().name());
+                ps.setString(7, p.getTarget());
+                ps.setString(8, Status.CREATED.name());
+                return ps;
             }
+        }, purlId);
+        // TODO 2 Schlüssel werden generiert
+        // ALT: Number key = (Number) purlId.getKey();
+        Number key = (Number) purlId.getKeyList().get(0).get("GENERATED_KEY");
+        // h2
+        if (key == null) {
+            key = (Number) purlId.getKeyList().get(0).get("ID");
+        }
+        if (key != null) {
+            jdbcTemplate.update(SQL_INSERT_PURLHISTORY,
+                key.intValue(), u.getId(), p.getType().name(), p.getTarget(), Status.CREATED.name());
+            return retrievePurl(p.getPath());
         }
         return Optional.empty();
     }

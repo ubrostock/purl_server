@@ -1,8 +1,10 @@
 package de.uni.rostock.ub.purl_server.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import de.uni.rostock.ub.purl_server.dao.DomainDAO;
 import de.uni.rostock.ub.purl_server.model.Domain;
+import de.uni.rostock.ub.purl_server.model.DomainUser;
 import de.uni.rostock.ub.purl_server.model.Purl;
 import de.uni.rostock.ub.purl_server.model.Status;
 import de.uni.rostock.ub.purl_server.model.Type;
@@ -58,11 +61,17 @@ class DomainDAOTests extends PURLServerBaseTest {
 
     @Test
     void testModifyDomain() {
-        Optional<Domain> domain = domainDAO.retrieveDomain("/test");
+        Domain domain = domainDAO.retrieveDomain("/domainDAO").get();
         String domainNameNeu = "Test Domain modified";
-        domain.get().setName(domainNameNeu);
-        domain = domainDAO.modifyDomain(domain.get());
-        assertTrue(domain.get().getName().equals(domainNameNeu), "Domain wurde nicht bearbeitet.");
+        domain.setName(domainNameNeu);
+        DomainUser du = new DomainUser();
+        du.setCanModify(true);
+        du.setUser(createTestUser(201, "TestUser").get());
+        domain.getDomainUserList().add(du);
+        domainDAO.modifyDomain(domain);
+        domain = domainDAO.retrieveDomainWithUser("/domainDAO").get();
+        assertTrue(domain.getName().equals(domainNameNeu), "Domain wurde nicht bearbeitet.");
+        assertEquals("TestUser", domain.getDomainUserList().get(0).getUser().getLogin());
     }
 
     @Test
@@ -71,6 +80,12 @@ class DomainDAOTests extends PURLServerBaseTest {
         domainDAO.deleteDomain(domain.get());
         domain = domainDAO.retrieveDomain(12);
         assertTrue(domain.get().getStatus().equals(Status.DELETED), "Domain wurde nicht gelöscht");
+    }
+    
+    @Test
+    void testSearchDomainsWithoutLogin() {
+        List<Domain> domains = domainDAO.searchDomains("DAO", "", "", true, 5);
+        assertFalse(domains.isEmpty());
     }
 
 }

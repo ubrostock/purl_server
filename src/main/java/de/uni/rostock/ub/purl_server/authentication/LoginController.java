@@ -138,7 +138,7 @@ public class LoginController {
         jdbcTemplate.query(SQL_SELECT_FOR_EMAIL, new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet rs) throws SQLException {
-                sendEmail(rs.getString("login"), rs.getString("fullname"), rs.getString("email"),
+                sendEmail(rs.getString("login"), rs.getString("email"),
                     rs.getString("password_reset_token"), locale);
                 found.set(true);
             }
@@ -173,7 +173,7 @@ public class LoginController {
         }
     }
 
-    private void sendEmail(String login, String name, String email, String token, Locale locale) {
+    private void sendEmail(String login, String email, String token, Locale locale) {
         try {
             UriComponents uriComponents = MvcUriComponentsBuilder.fromMethodName(LoginController.class, "password")
                 .queryParam("login", login)

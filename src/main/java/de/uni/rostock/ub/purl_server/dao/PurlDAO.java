@@ -63,6 +63,7 @@ public class PurlDAO {
      * @param path
      * @return the retrieved purl
      */
+    @SuppressWarnings("PMD.EmptyCatchBlock")
     public Optional<Purl> retrievePurl(String path) {
         try {
             Purl p = jdbcTemplate.queryForObject("SELECT * FROM purl WHERE path=?;",
@@ -93,6 +94,7 @@ public class PurlDAO {
      * @param id
      * @return the retrieved purl
      */
+    @SuppressWarnings("PMD.EmptyCatchBlock")
     public Optional<Purl> retrievePurl(int id) {
         try {
             Purl p = jdbcTemplate.queryForObject("SELECT * FROM purl WHERE id=?;", new PurlRowMapper(), id);

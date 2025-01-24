@@ -75,7 +75,7 @@ public class DomainInfoController {
         @RequestParam(defaultValue = "") String format,
         @RequestHeader(name = HttpHeaders.ACCEPT, defaultValue = "") @Parameter(hidden = true) String accept) {
         Optional<Domain> op = domainDAO.retrieveDomainWithUser("/" + path);
-        if ("json".equals(format) || (accept.toLowerCase().contains("json"))) {
+        if ("json".equals(format) || accept.toLowerCase().contains("json")) {
             if (op.isEmpty()) {
                 return new ResponseEntity<Domain>(HttpStatus.NOT_FOUND);
             }

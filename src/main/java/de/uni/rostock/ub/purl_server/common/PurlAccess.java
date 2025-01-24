@@ -18,11 +18,8 @@
  */
 package de.uni.rostock.ub.purl_server.common;
 
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -37,6 +34,7 @@ import de.uni.rostock.ub.purl_server.model.DomainUser;
 import de.uni.rostock.ub.purl_server.model.Purl;
 import de.uni.rostock.ub.purl_server.model.Status;
 import de.uni.rostock.ub.purl_server.model.User;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class PurlAccess {

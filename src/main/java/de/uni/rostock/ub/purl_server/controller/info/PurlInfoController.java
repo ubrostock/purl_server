@@ -77,7 +77,7 @@ public class PurlInfoController {
         @RequestHeader(name = HttpHeaders.ACCEPT, defaultValue = "") @Parameter(hidden = true) String accept,
         Locale locale) {
         Optional<Purl> op = purlDAO.retrievePurlWithHistory(path);
-        if ("json".equals(format) || (accept.toLowerCase().contains("json"))) {
+        if ("json".equals(format) || accept.toLowerCase().contains("json")) {
             if (op.isEmpty()) {
                 return new ResponseEntity<Purl>(HttpStatus.NOT_FOUND);
             }

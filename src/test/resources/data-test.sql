@@ -69,3 +69,9 @@ INSERT INTO `user`
 
 INSERT INTO `domainuser` (`id`, `domain_id`, `user_id`, `can_create`, `can_modify`) 
        VALUES (null, 21, 201, true, true);
+
+-- UserDAOTest
+       
+INSERT INTO `user`
+  (`id`, `login`, `admin`, `fullname`, `affiliation`, `email`, `password_sha`, `password_reset_token`, `comment`, `created`, `lastmodified`, `status`) 
+       VALUES (301,  'User DAO Test', false, 'TestUser', 'My Institution', 'user1@my-institution.org', CONCAT('{SHA-256}', HASH('SHA-256', HASH('SHA-1', 'user4'))), null, 'user5 for PURL server', NOW(3), NOW(3), 'CREATED');
